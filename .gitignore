@@ -30,3 +30,14 @@
 *.exe
 *.out
 *.app
+
+# build
+build/*
+
+# credential
+*.pem
+
+#temp
+*.swp
+*.swo
+*.user
