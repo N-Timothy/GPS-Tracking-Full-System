@@ -1,5 +1,6 @@
 #include "GPS-Tracking/server/decodeMessage.hpp"
 #include "GPS-Tracking/server/data.hpp"
+#include "GPS-Tracking/server/messageComponent.hpp"
 
 #include "GPS-Tracking/database/database.hpp"
 
@@ -9,10 +10,11 @@ namespace karlo {
   namespace server {
 
     void getMessage(std::string rawMessage) {
-      
+
       trackingData data;
 
       //------------- this is the decoding part -----------------------
+
 
       // ---------------- end of decoding part --------------------
 

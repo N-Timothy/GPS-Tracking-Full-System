@@ -1,17 +1,18 @@
 #include "GPS-Tracking/server/tcp.hpp"
 
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <sys/time.h>
-
 #include <cstring>
 #include <string>  
 #include <stdlib.h>
 #include <errno.h>
 #include <iostream>
 #include <unistd.h>
+
+#define TRUE 1
+#define FALSE 0
+#define PORT 8080
+#define MAX_CLIENT 10
+#define MAX 80
+#define MAX_PENDING_CONNECTION 3
 
 namespace karlo {
   namespace server {
