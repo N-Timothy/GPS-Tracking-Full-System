@@ -31,7 +31,7 @@ namespace karlo {
       char buffer[MAX];
       int data = 0;
 
-      char reply[] = "Received. Thanks \n";
+      int ACCEPT = 0x01;
 
       // initialise all client socket to 0
       for (int i = 0; i < MAX_CLIENT; i++) {
@@ -142,6 +142,18 @@ namespace karlo {
 
             // valread = recv(sd, buffer, MAX, MSG_WAITALL);
 
+            // --- re-arrangeing imei data to buffer ---
+
+            for (int i = 0; i < IMEI_BYTES; i++) {
+              valread = recv(sd, (char*)&data, 1, 0);
+              i == 0 ? sprintf(buffer, "%02x", data) : sprintf(buffer + strlen(buffer), "%02x", data);
+
+              std::cout << "Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << " IMEI : " << buffer << std::endl;
+
+              send(sd, (char*)&ACCEPT, 1, 0);
+
+            // --- end of re-arranging imei and send ok -----
+
             // --- re-arrangeing gps data to buffer ----
 
             for (int i = 0; i < MAX_BYTES; i++) {
@@ -167,8 +179,10 @@ namespace karlo {
             else {
                 // set the string terminating NULL byte on the end of the data read
                 // buffer[valread] = '\0';
-                send(sd, reply, strlen(reply), 0);
-              }
+               //  send(sd, reply, strlen(reply), 0);
+              std::cout << "test" << std::endl;
+            }
+            }
           }
         }
       }
