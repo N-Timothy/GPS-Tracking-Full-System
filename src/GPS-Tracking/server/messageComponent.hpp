@@ -22,15 +22,15 @@
 namespace karlo {
   namespace server {
 
-    std::string getImei(int connfd, char* buff);
+    std::string getImei(int connfd);
 
-    std::string getTimeStamp(int connfd, char* buff);
+    std::string getTimeStamp(int connfd);
 
-    std::string getLongitude(int connfd, char* buff);
+    long getLongitude(int connfd);
 
-    std::string getLatitude(int connfd, char* buff);
+    long getLatitude(int connfd);
 
-    std::string getAltitude(int connfd, char* buff);
+    long getAltitude(int connfd);
 
   } // namespace server
 } // namespace karlo

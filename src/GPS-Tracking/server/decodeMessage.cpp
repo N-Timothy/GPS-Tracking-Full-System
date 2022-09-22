@@ -5,11 +5,12 @@
 #include "GPS-Tracking/database/database.hpp"
 
 #include <thread>
+#include <iostream>
 
 namespace karlo {
   namespace server {
 
-    void getMessage(std::string rawMessage) {
+    void getMessage(int connfd) {
 
       trackingData data;
 
@@ -21,24 +22,27 @@ namespace karlo {
       data.driver = "new driver";
       data.gpsOn = true;
       data.batteryLevel = 100;
-      data.latitude = 0.0;
-      data.longitude = 0.0;
-      data.altitude = 0.0;
+      data.latitude = getLatitude(connfd);
+      data.longitude = getLongitude(connfd);
+      data.altitude = getAltitude(connfd);
       data.speed = 10;
       data.bearing = 0;
       data.description = "This is a new value";
       data.truck = "new truck";
       data.city = 123;
       data.createdAt = "None";
-      data.updatedAt = "None";
+      data.updatedAt = "None"; 
       data.version = 0;
 
-      database::database(data);
+      std::cout << "Latitude : " << getLatitude(connfd) << std::endl;
+
+      //database::database(data);
     }
 
-    void decodeMessage (std::string rawMessage) {
-      std::thread decodedMessageThread {getMessage, std::ref(rawMessage)};
+    void decodeMessage (int connfd) {
+      std::thread decodedMessageThread {getMessage, std::ref(connfd)};
       decodedMessageThread.join();
     }
+
   } // namespace server
 } // namespace karlo

@@ -1,4 +1,5 @@
 #ifndef _GPS_TRACKING_SERVER_DATA_HPP_
+#define _GPS_TRACKING_SERVER_DATA_HPP_
 
 #include <string>
 
@@ -23,5 +24,4 @@ namespace karlo {
 
 } //namespace karlo
 
-#define _GPS_TRACKING_SERVER_DATA_HPP_
 #endif //_GPS_TRACKING_SERVER_DATA_HPP_

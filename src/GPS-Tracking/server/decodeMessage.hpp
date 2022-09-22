@@ -8,7 +8,7 @@
 namespace karlo {
   namespace server {
 
-    void decodeMessage(std::string rawMessage);
+    void decodeMessage(int connfd);
 
   } // namespace server
 } // namespace karlo

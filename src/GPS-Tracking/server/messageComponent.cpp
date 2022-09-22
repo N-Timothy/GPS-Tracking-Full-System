@@ -1,5 +1,7 @@
 #include "GPS-Tracking/server/messageComponent.hpp"
 
+#include "GPS-Tracking/server/hexToDecimal.hpp"
+
 #include <iomanip>
 #include <chrono>
 #include <sstream>
@@ -9,10 +11,11 @@
 namespace karlo {
   namespace server {
 
-    std::string getImei(int connfd, char* buff){
+    std::string getImei(int connfd){
       int n = 0;
       int number = 0;
       int ACCEPT = 0x01;
+      char buff[24];
 
       for(;;) {
         // IMEI
@@ -35,9 +38,10 @@ namespace karlo {
       return buff;
     }
 
-    std::string getTimeStamp(int connfd, char* buff){
+    std::string getTimeStamp(int connfd){
       int n = 0;
       int number = 0;
+      char buff[24];
 
       for(;;) {
         n++;
@@ -54,6 +58,8 @@ namespace karlo {
           }
         }
       }
+
+      // convert hex to timestamp
       std::istringstream is(buff);
       long long x;
       is >> std::hex >> x;
@@ -62,12 +68,14 @@ namespace karlo {
       std::time_t t_c = std::chrono::system_clock::to_time_t(sc);
       std::stringstream timeStamp;
       timeStamp << std::put_time(std::gmtime(&t_c), "%FT%TZ");
+
       return timeStamp.str();
     }
 
-    std::string getLongitude(int connfd, char* buff){
+    long getLongitude(int connfd){
       int n = 0;
       int number = 0;
+      char buff[24];
 
       for(;;) {
         n++;
@@ -84,12 +92,15 @@ namespace karlo {
           }
         }
       }
-      return buff;
+      long res = hexToDecimal(buff);
+      res = res / 10^7;
+      return res;
     }
 
-    std::string getLatitude(int connfd, char* buff){
+    long getLatitude(int connfd){
       int n = 0;
       int number = 0;
+      char buff[24];
 
       for(;;) {
         n++;
@@ -106,12 +117,15 @@ namespace karlo {
           }
         }
       }
-      return buff;
+      long res = hexToDecimal(buff);
+      res = res / 10^7;
+      return res;
     }
 
-    std::string getAltitude(int connfd, char* buff){
+    long getAltitude(int connfd){
       int n = 0;
       int number = 0;
+      char buff[24];
 
       for(;;) {
         n++;
@@ -128,7 +142,8 @@ namespace karlo {
           }
         }
       }
-      return buff;
+      long res = hexToDecimal(buff);
+      return res;
     }
 
   } // namespace server

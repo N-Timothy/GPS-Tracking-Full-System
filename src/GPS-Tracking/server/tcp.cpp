@@ -20,7 +20,7 @@ namespace karlo {
     void tcpServer () {
 
       int opt = true;
-      int master_socket, addrlen, new_socket, client_socket[MAX_CLIENT],
+      int master_socket, addrlen, new_socket, client_socket[MAX_CLIENT], imei_flag[MAX_CLIENT],
           activity, valread, sd, max_sd;
 
       struct sockaddr_in address;
@@ -29,6 +29,7 @@ namespace karlo {
       fd_set readfds;
 
       char buffer[MAX];
+      int data = 0;
 
       char reply[] = "Received. Thanks \n";
 
@@ -138,7 +139,18 @@ namespace karlo {
 
           if (FD_ISSET(sd, &readfds)) {
             // Check if it was for closing, and also read the incoming message
-            valread = recv(sd, buffer, MAX, MSG_WAITALL);
+
+            // valread = recv(sd, buffer, MAX, MSG_WAITALL);
+
+            // --- re-arrangeing gps data to buffer ----
+
+            for (int i = 0; i < MAX_BYTES; i++) {
+              valread = recv(sd, (char*)&data, 1, 0);
+              i == 0 ? sprintf(buffer, "%02x", data) : sprintf(buffer + strlen(buffer), "%02x", data);
+            }
+
+            // --- end ----
+
             std::cout << "Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << " Message : " << buffer << std::endl;
 
             if (valread == 0) {

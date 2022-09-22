@@ -2,7 +2,8 @@ add_library(GPS-Tracking-server
             tcp.cpp
             data.hpp
             decodeMessage.cpp
-            messageComponent.cpp)
+            messageComponent.cpp
+			      hexToDecimal.cpp)
 
 target_link_libraries(GPS-Tracking-server PRIVATE
                       GPS-Tracking-database
