@@ -5,7 +5,7 @@
 int main(int argc, char *argv[]){
 
   //karlo::server::decodeMessage("test");
-  //karlo::server::tcpServer();
+  karlo::server::tcpServer();
   // karlo::database::database();
 
   return 0;
