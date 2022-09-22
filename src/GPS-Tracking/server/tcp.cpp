@@ -146,16 +146,19 @@ namespace karlo {
 
             // --- re-arrangeing imei data to buffer ---
 
-            if(!imei_flag) {
+            if(!imei_test) {
               
               for (int i = 0; i < IMEI_BYTES; i++) {
                 valread = recv(sd, (char*)&data, 1, 0);
                 i == 0 ? sprintf(buffer, "%02x", data) : sprintf(buffer + strlen(buffer), "%02x", data);
+                std::cout << "bytes : " << i << std::endl;
             }
 
               std::cout << "Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << " IMEI : " << buffer << std::endl;
 
               send(sd, (char*)&ACCEPT, 1, 0);
+
+              imei_test = true;
             }
 
             // --- end of re-arranging imei and send ok -----
