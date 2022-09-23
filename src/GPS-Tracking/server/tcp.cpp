@@ -1,4 +1,5 @@
 #include "GPS-Tracking/server/tcp.hpp"
+#include "GPS-Tracking/server/decodeMessage.hpp"
 
 #include <cstring>
 #include <string>  
@@ -23,7 +24,8 @@ namespace karlo {
       int ACCEPT = 0x01;
       int data = 0;
       int valread;
-      bool imei_flag = false;
+
+      bool imei_guard = false;
 
       char buffer[MAX_BYTES*2];
 
@@ -41,12 +43,28 @@ namespace karlo {
 
          // --- re-arrangeing imei data to buffer ---
 
-          if (!imei_flag) {
-
             for (int j = 0; j < IMEI_BYTES; j++) {
               valread = recv(sd, (char*)&data, 1, MSG_WAITALL);
               j == 0 ? sprintf(buffer, "%02x", data) : sprintf(buffer + strlen(buffer), "%02x", data);
             }
+
+            // ------ antisipating wierd behavior on displying imei afer message was received ----
+
+            for(int j = 0; j < IMEI_BYTES * 2; j++) {
+              if(buffer[j] != '0'){
+                imei_guard = false;
+                break;
+              } else {
+                imei_guard = true;
+              }
+            }
+
+            if(imei_guard){
+              imei_guard = false;
+              continue;
+            }
+
+            // ------ end antisipating wierd behavior on displying imei afer message was received ----
 
             if(valread == 0){
               goto connectionTerminated;
@@ -54,14 +72,15 @@ namespace karlo {
 
             std::cout << "Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << " IMEI : " << buffer << std::endl;
 
+            // second parameters is indicating if this is an IMEI data.(true)
+            decodeMessage(buffer, true);
+
             send(sd, (char*)&ACCEPT, 1, 0);
 
-            imei_flag = true;
-          }
 
-            //// --- end of re-arranging imei and send ok -----
+          // --- end of re-arranging imei and send ok -----
 
-            //// --- re-arrangeing gps data to buffer ----
+          // --- re-arrangeing gps data to buffer ----
 
           for (int j = 0; j < MAX_BYTES; j++) {
             valread = recv(sd, (char*)&data, 1, MSG_WAITALL);
@@ -71,10 +90,13 @@ namespace karlo {
           if(valread == 0){
             goto connectionTerminated;
           }
-          //
+
             //// --- end ----
-          //
+
           std::cout << "Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << " Message : " << buffer << std::endl;
+
+          // second parameters is indicating if this is an IMEI data.(false)
+          decodeMessage(buffer, false);
 
           send(sd, (char*)&ACCEPT, 1, 0);
 
@@ -171,7 +193,7 @@ namespace karlo {
         activity = select(max_sd + 1, &readfds, NULL, NULL, NULL);
 
         if ((activity < 0) && (errno != EINTR)) {
-          std::cout << "select error !" << std::endl;
+          // std::cout << "select error !" << std::endl;
         }
 
         // If something happened on the master socket, then it's an incoming connection

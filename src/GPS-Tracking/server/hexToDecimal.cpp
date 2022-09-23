@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <bitset>
+#include <iostream>
 
 namespace karlo {
   
@@ -76,6 +77,7 @@ namespace karlo {
         dec_value += base;
       base = base * 2;
     }
+    //std::cout << "dec_value : " << dec_value * -1 << std::endl;
  
     return dec_value * -1;
   }

@@ -8,7 +8,7 @@
 namespace karlo {
   namespace server {
 
-    void decodeMessage(int connfd);
+    void decodeMessage(std::string buffer, bool imei_data);
 
   } // namespace server
 } // namespace karlo
