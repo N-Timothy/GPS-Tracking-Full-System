@@ -1,11 +1,14 @@
 // TCP Connection, GPS Data-retrieving
 
+#include "GPS-Tracking/server/data.hpp"
+#include "GPS-Tracking/database/database.hpp"
+
 #include <stdio.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -196,7 +199,7 @@ public:
     }
 };
 
-void timestampToDate (std::string hex) {
+std::string timestampToDate (std::string hex) {
     std::istringstream is(hex);
     unsigned long x;
     is >> std::hex >> x;
@@ -204,7 +207,10 @@ void timestampToDate (std::string hex) {
     std::chrono::time_point<std::chrono::system_clock> sc(ms);
 
     std::time_t t_c = std::chrono::system_clock::to_time_t(sc);
+    std::stringstream timeStamp;
+    timeStamp << std::put_time(std::localtime(&t_c), " (%F %T [%Z])\n");
     std::cout << std::put_time(std::localtime(&t_c), " (%F %T [%Z])\n");
+    return timeStamp.str();
 }
 
 const char* hexCharToBin (char hex_c) {
@@ -264,33 +270,58 @@ float hexToLongitudeLatitude(std::string hex) {
 
 // Function designed for chat between client and server.
 void func(int connfd) {
+
+    // init struct data
+    trackingData data;
+
     char buff[MAX];
     int n, i, numOfData;
     int numOfOneByteID, numOfTwoBytesID, numOfFourBytesID, numOfEightBytesID;
     std::string hex;
+    float result;
     getData gps;
 
     // Get IMEI number for initialization
     gps.getImei(connfd, buff, IMEI_BYTES);
+
     gps.getZeroBytes(connfd, buff, ZERO_BYTES);
+
     gps.getDataFieldLength(connfd, buff, DATA_FIELD_BYTES);
+
     gps.getCodecID(connfd, buff, CODEC_ID_BYTES);
+
     numOfData = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES), 0, 16);
+
     for (n = 0; n < numOfData; n++) {
         hex = gps.getTimestamp(connfd, buff, TIMESTAMP_BYTES);
-        timestampToDate(hex);
+
+        data.createdAt = timestampToDate(hex);
+
         gps.getPriority(connfd, buff, PRIORITY_BYTES);
+
         hex = gps.getLongitude(connfd, buff, LONGITUDE_BYTES);
         std::cout << std::fixed << std::setprecision(7) << " (" << hexToLongitudeLatitude(hex) << ")" << std::endl;
+        data.longitude = hexToLongitudeLatitude(hex);
+
         hex = gps.getLatitude(connfd, buff, LATITUDE_BYTES);
         std::cout << std::fixed << std::setprecision(7) << " (" << hexToLongitudeLatitude(hex) << ")" << std::endl;
+        data.latitude = hexToLongitudeLatitude(hex);
+
         gps.getAltitude(connfd, buff, ALTITUDE_BYTES);
+
         gps.getAngle(connfd, buff, ANGLE_BYTES);
+
         gps.getSatellites(connfd, buff, SATELLITE_BYTES);
+
         hex = std::stoi(gps.getSpeed(connfd, buff, SPEED_BYTES), 0, 16);
-        std::cout << " (" << hex << ")" << std::endl; 
+        hex == "" ? hex = '0' : hex = hex;
+        std::cout << " (" << hex << ")" << std::endl;
+        data.speed = stoi(hex);
+
         gps.getEventIOID(connfd, buff, 1);
+
         gps.getNumOfTotalID(connfd, buff, 1);
+
         numOfOneByteID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
         for (i = 0; i < numOfOneByteID; i++) {
             gps.getID(connfd, buff, 1);
@@ -313,11 +344,19 @@ void func(int connfd) {
         }
     }
     gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES);
+
     gps.getCRC16(connfd, buff, 4);
+
     gps.sendConfirmation(connfd, numOfData);
     memset(buff, 0, sizeof(buff));
+
+    // send to database to be saved
+    database::database(data);
+
     std::cout << "=== END OF DATA ===\n\n";
-}  } // namespace server
+}
+
+} // namespace server
 } //namespace karlo
 
 
