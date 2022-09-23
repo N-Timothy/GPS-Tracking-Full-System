@@ -102,17 +102,17 @@ public:
     }
     std::string getZeroBytes(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Zero Bytes\t\t: " << result << std::endl;
+//        std::cout << "Zero Bytes\t\t: " << result << std::endl;
         return result;
     }
     std::string getDataFieldLength(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Data Field Length\t: " << result << std::endl;
+//        std::cout << "Data Field Length\t: " << result << std::endl;
         return result;
     }
     std::string getCodecID(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Codec ID\t\t: " << result << std::endl;
+//        std::cout << "Codec ID\t\t: " << result << std::endl;
         return result;
     }
     std::string getNumOfData(int connfd, char* buff, int byteslen) {
@@ -127,67 +127,67 @@ public:
     }
     std::string getPriority(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Priority\t\t: " << result << std::endl;
+//        std::cout << "Priority\t\t: " << result << std::endl;
         return result;
     }
     std::string getLongitude(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Longitude\t\t: " << result << std::endl;
+        std::cout << "Longitude\t\t: " << result;
         return result;
     }
     std::string getLatitude(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Latitude\t\t: " << result << std::endl;
+        std::cout << "Latitude\t\t: " << result;
         return result;
     }
     std::string getAltitude(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Altitude\t\t: " << result << std::endl;
+//        std::cout << "Altitude\t\t: " << result << std::endl;
         return result;
     }
     std::string getAngle(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Angle\t\t\t: " << result << std::endl;
+//        std::cout << "Angle\t\t\t: " << result << std::endl;
         return result;
     }
     std::string getSatellites(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Satellites\t\t: " << result << std::endl;
+//        std::cout << "Satellites\t\t: " << result << std::endl;
         return result;
     }
     std::string getSpeed(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Speed\t\t\t: " << result << std::endl;
+        std::cout << "Speed\t\t\t: " << result;
         return result;
     }
     std::string getEventIOID(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Event IO ID\t\t: " << result << std::endl;
+//        std::cout << "Event IO ID\t\t: " << result << std::endl;
         return result;
     }
     std::string getNumOfTotalID(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "N of Total ID\t\t: " << result << std::endl;
+//        std::cout << "N of Total ID\t\t: " << result << std::endl;
         return result;
     }
     std::string getNumOfID(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "N1 of One Byte IO\t: " << result << std::endl;
+//        std::cout << "N1 of One Byte IO\t: " << result << std::endl;
         return result;
     }
     std::string getID(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "IO ID\t\t\t: " << result << std::endl;
+//        std::cout << "IO ID\t\t\t: " << result << std::endl;
         return result;
     }
     std::string getValue(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "IO Value\t\t: " << result << std::endl;
+//        std::cout << "IO Value\t\t: " << result << std::endl;
         return result;
     }
     std::string getCRC16(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "CRC-16\t\t\t: " << result << std::endl;
+//        std::cout << "CRC-16\t\t\t: " << result << std::endl;
         return result;
     }
     void sendConfirmation(int connfd, int numOfData) {
@@ -207,6 +207,60 @@ void timestampToDate (std::string hex) {
     std::cout << std::put_time(std::localtime(&t_c), " (%F %T [%Z])\n");
 }
 
+const char* hexCharToBin (char hex_c) {
+    switch(toupper(hex_c)) {
+        case '0': return "0000";
+        case '1': return "0001";
+        case '2': return "0010";
+        case '3': return "0011";
+        case '4': return "0100";
+        case '5': return "0101";
+        case '6': return "0110";
+        case '7': return "0111";
+        case '8': return "1000";
+        case '9': return "1001";
+        case 'A': return "1010";
+        case 'B': return "1011";
+        case 'C': return "1100";
+        case 'D': return "1101";
+        case 'E': return "1110";
+        case 'F': return "1111";
+    }
+}
+
+std::string hexToBin(std::string hex) {
+    std::string bin;
+    for (unsigned i = 0; i < hex.size(); i++)
+        bin += hexCharToBin(hex[i]);
+    return bin;
+}
+
+std::string TwoComplement(std::string binary) {
+    for(int i = 0; i < binary.size(); i++) {
+        if(binary[i] == '1'){
+            binary[i] = '0';
+        } else {
+            binary[i] = '1';
+        }
+    }
+    return binary;
+}
+
+int binToDecimal(std::string bin) {
+    int number = 0;
+    number += std::stoi(bin, 0, 2);
+    return number;
+}
+
+float hexToLongitudeLatitude(std::string hex) {
+    std::string bin;
+    bin = hexToBin(hex);
+    if (bin[0] == '0') {
+        return binToDecimal(bin) / 1e7;
+    } else {
+        return -(binToDecimal(TwoComplement(bin)) + 1) / 1e7;
+    }
+}
 
 // Function designed for chat between client and server.
 void func(int connfd) {
@@ -226,12 +280,15 @@ void func(int connfd) {
         hex = gps.getTimestamp(connfd, buff, TIMESTAMP_BYTES);
         timestampToDate(hex);
         gps.getPriority(connfd, buff, PRIORITY_BYTES);
-        gps.getLongitude(connfd, buff, LONGITUDE_BYTES);
-        gps.getLatitude(connfd, buff, LATITUDE_BYTES);
+        hex = gps.getLongitude(connfd, buff, LONGITUDE_BYTES);
+        std::cout << std::fixed << std::setprecision(7) << " (" << hexToLongitudeLatitude(hex) << ")" << std::endl;
+        hex = gps.getLatitude(connfd, buff, LATITUDE_BYTES);
+        std::cout << std::fixed << std::setprecision(7) << " (" << hexToLongitudeLatitude(hex) << ")" << std::endl;
         gps.getAltitude(connfd, buff, ALTITUDE_BYTES);
         gps.getAngle(connfd, buff, ANGLE_BYTES);
         gps.getSatellites(connfd, buff, SATELLITE_BYTES);
-        gps.getSpeed(connfd, buff, SPEED_BYTES);
+        hex = std::stoi(gps.getSpeed(connfd, buff, SPEED_BYTES), 0, 16);
+        std::cout << " (" << hex << ")" << std::endl; 
         gps.getEventIOID(connfd, buff, 1);
         gps.getNumOfTotalID(connfd, buff, 1);
         numOfOneByteID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
@@ -260,8 +317,7 @@ void func(int connfd) {
     gps.sendConfirmation(connfd, numOfData);
     memset(buff, 0, sizeof(buff));
     std::cout << "=== END OF DATA ===\n\n";
-}
-  } // namespace server
+}  } // namespace server
 } //namespace karlo
 
 
