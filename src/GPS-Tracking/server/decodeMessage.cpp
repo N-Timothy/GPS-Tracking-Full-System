@@ -40,8 +40,6 @@ namespace karlo {
     }
 
     void decodeMessage (int connfd) {
-      std::thread decodedMessageThread {getMessage, std::ref(connfd)};
-      decodedMessageThread.join();
     }
 
   } // namespace server

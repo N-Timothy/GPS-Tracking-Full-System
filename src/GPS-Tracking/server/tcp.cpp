@@ -19,85 +19,88 @@
 namespace karlo {
   namespace server {
 
-    void newClient(int client_socket, fd_set readfds, int sd) {
+    void newClient(int client_socket, fd_set readfds, int sd, sockaddr_in address) {
+      int ACCEPT = 0x01;
       int data = 0;
       int valread;
-      char buffer[MAX];
+      bool imei_flag = false;
+
+      char buffer[MAX_BYTES*2];
 
       //  If it's some IO operation on some other socket
 
-      std::cout << "this is a new thread " << std::endl;
+      std::cout << "New thread : " << client_socket << " initialized"<< std::endl;
 
       sd = client_socket;
 
       for(;;) {
-        
-          // default connection dosent enter here
-        
+
         if (FD_ISSET(sd, &readfds)) {
-        
-          //valread = recv(sd, (char*)&data, 1, 0);
-          valread = recv(sd, buffer, MAX, MSG_WAITALL);
-          std::cout << "Message : " << buffer << std::endl;
-        
-        if (valread == 0) {
-              // Somebody disconnected , get his details and print
-              //getpeername(sd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
-              std::cout << "Host Disconnected";
-              //std::cout << "Host disconnected, Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << std::endl;
-        
-              // Close the socket and mark as 0 in list for reuse
-              close(sd);
-              client_socket = 0;
-              break;
-        }
-        
-        
-            // Check if it was for closing, and also read the incoming message
-        
-            // --- re-arrangeing imei data to buffer ---
-        
-        //for (int j = 0; j < IMEI_BYTES; j++) {
-        //valread = recv(sd, (char*)&data, 1, 0);
-        //j == 0 ? sprintf(buffer, "%02x", data) : sprintf(buffer + strlen(buffer), "%02x", data);
-        //}
-        
-        //std::cout << "Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << " IMEI : " << buffer << std::endl;
-        
-        //send(sd, (char*)&ACCEPT, 1, 0);
-        
-            // --- end of re-arranging imei and send ok -----
-        
-            // --- re-arrangeing gps data to buffer ----
-        
-        //for (int j = 0; j < MAX_BYTES; j++) {
-        //valread = recv(sd, (char*)&data, 1, 0);
-        //j == 0 ? sprintf(buffer, "%02x", data) : sprintf(buffer + strlen(buffer), "%02x", data);
-        //}
-        
-            // --- end ----
-        
-        //std::cout << "Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << " Message : " << buffer << std::endl;
-        
-         
-        
+
+         // Check if it was for closing, and also read the incoming message
+
+         // --- re-arrangeing imei data to buffer ---
+
+          if (!imei_flag) {
+
+            for (int j = 0; j < IMEI_BYTES; j++) {
+              valread = recv(sd, (char*)&data, 1, MSG_WAITALL);
+              j == 0 ? sprintf(buffer, "%02x", data) : sprintf(buffer + strlen(buffer), "%02x", data);
+            }
+
+            if(valread == 0){
+              goto connectionTerminated;
+            }
+
+            std::cout << "Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << " IMEI : " << buffer << std::endl;
+
+            send(sd, (char*)&ACCEPT, 1, 0);
+
+            imei_flag = true;
+          }
+
+            //// --- end of re-arranging imei and send ok -----
+
+            //// --- re-arrangeing gps data to buffer ----
+
+          for (int j = 0; j < MAX_BYTES; j++) {
+            valread = recv(sd, (char*)&data, 1, MSG_WAITALL);
+            j == 0 ? sprintf(buffer, "%02x", data) : sprintf(buffer + strlen(buffer), "%02x", data);
+          }
+
+          if(valread == 0){
+            goto connectionTerminated;
+          }
+          //
+            //// --- end ----
+          //
+          std::cout << "Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << " Message : " << buffer << std::endl;
+
+          send(sd, (char*)&ACCEPT, 1, 0);
+
+        connectionTerminated:
+          if (valread == 0) {
+            //Somebody disconnected , get his details and print
+            std::cout << "Host Disconnected on socket : " << client_socket << std::endl;;
+            // Close the socket and mark as 0 in list for reuse
+            std::cout << "Terminating thread : "  << client_socket << std::endl;
+            close(sd);
+            client_socket = 0;
+            break;
+          }
         }
       }
-      std::cout << "thread done close" << std::endl;
     }
 
     void tcpServer () {
 
       int opt = true;
       int master_socket, addrlen, new_socket, client_socket[MAX_CLIENT],
-        activity, valread, sd, max_sd;
+        activity, sd, max_sd;
 
       struct sockaddr_in address;
 
       fd_set readfds;
-
-
-      int ACCEPT = 0x01;
 
       // initialise all client socket to 0
       for (int i = 0; i < MAX_CLIENT; i++) {
@@ -198,7 +201,7 @@ namespace karlo {
                 }
             }
             // Adding thread on each new connection
-            std::thread newClientThread(newClient, std::ref(client_socket[i]), std::ref(readfds), std::ref(sd));
+            std::thread newClientThread(newClient, std::cref(client_socket[i]), std::ref(readfds), std::ref(sd), std::ref(address));
             newClientThread.detach();
           }
       }
