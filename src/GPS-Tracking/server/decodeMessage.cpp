@@ -32,6 +32,12 @@ namespace karlo {
 
       // std::cout << "latitude : " << getLatitude(buffer) << std::endl;
 
+      std::cout << "imei : " << data.imei << std::endl;
+      std::cout << "Latitude : " << data.latitude << std::endl;
+      std::cout << "Longitude : " << data.longitude << std::endl;
+      std::cout << "Altitude : " << data.altitude << std::endl;
+      std::cout << "Created At : " << data.createdAt << std::endl;
+      std::cout << "updated At : " << data.updatedAt << std::endl;
       //database::database(data);
     }
 
