@@ -1,5 +1,5 @@
 #include "GPS-Tracking/server/tcp.hpp"
-#include "GPS-Tracking/server/decodeMessage.hpp"
+#include "GPS-Tracking/server/server2.hpp"
 
 #include <cstring>
 #include <string>  
@@ -21,97 +21,14 @@ namespace karlo {
   namespace server {
 
     void newClient(int client_socket, fd_set readfds, int sd, sockaddr_in address) {
-      int ACCEPT = 0x01;
-      int data = 0;
-      int valread;
-
-      bool imei_guard = false;
-
-      char buffer[MAX_BYTES*2];
-
-      //  If it's some IO operation on some other socket
 
       std::cout << "New thread : " << client_socket << " initialized"<< std::endl;
 
       sd = client_socket;
 
-      for(;;) {
+      func(sd);
 
-        if (FD_ISSET(sd, &readfds)) {
-
-         // Check if it was for closing, and also read the incoming message
-
-         // --- re-arrangeing imei data to buffer ---
-
-            for (int j = 0; j < IMEI_BYTES; j++) {
-              valread = recv(sd, (char*)&data, 1, MSG_WAITALL);
-              j == 0 ? sprintf(buffer, "%02x", data) : sprintf(buffer + strlen(buffer), "%02x", data);
-            }
-
-            // ------ antisipating wierd behavior on displying imei afer message was received ----
-
-            for(int j = 0; j < IMEI_BYTES * 2; j++) {
-              if(buffer[j] != '0'){
-                imei_guard = false;
-                break;
-              } else {
-                imei_guard = true;
-              }
-            }
-
-            if(imei_guard){
-              imei_guard = false;
-              continue;
-            }
-
-            // ------ end antisipating wierd behavior on displying imei afer message was received ----
-
-            if(valread == 0){
-              goto connectionTerminated;
-            }
-
-            std::cout << "Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << " IMEI : " << buffer << std::endl;
-
-            // second parameters is indicating if this is an IMEI data.(true)
-            decodeMessage(buffer, true);
-
-            send(sd, (char*)&ACCEPT, 1, 0);
-
-
-          // --- end of re-arranging imei and send ok -----
-
-          // --- re-arrangeing gps data to buffer ----
-
-          for (int j = 0; j < MAX_BYTES; j++) {
-            valread = recv(sd, (char*)&data, 1, MSG_WAITALL);
-            j == 0 ? sprintf(buffer, "%02x", data) : sprintf(buffer + strlen(buffer), "%02x", data);
-          }
-
-          if(valread == 0){
-            goto connectionTerminated;
-          }
-
-            //// --- end ----
-
-          std::cout << "Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << " Message : " << buffer << std::endl;
-
-          // second parameters is indicating if this is an IMEI data.(false)
-          decodeMessage(buffer, false);
-
-          send(sd, (char*)&ACCEPT, 1, 0);
-
-        connectionTerminated:
-          if (valread == 0) {
-            //Somebody disconnected , get his details and print
-            std::cout << "Host Disconnected on socket : " << client_socket << std::endl;;
-            // Close the socket and mark as 0 in list for reuse
-            std::cout << "Terminating thread : "  << client_socket << std::endl;
-            close(sd);
-            client_socket = 0;
-            break;
-          }
-        }
-      }
+      std::cout << "Terminating thread : "  << client_socket << std::endl;
     }
 
     void tcpServer () {

@@ -1,6 +1,5 @@
 //#include "GPS-Tracking/database/database.hpp"
 #include "GPS-Tracking/server/tcp.hpp"
-#include "GPS-Tracking/server/decodeMessage.hpp"
 
 int main(int argc, char *argv[]){
 
