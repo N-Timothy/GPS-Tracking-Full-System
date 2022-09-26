@@ -1,5 +1,4 @@
 #include "GPS-Tracking/server/tcp.hpp"
-#include "GPS-Tracking/server/decodeMessage.hpp"
 #include "GPS-Tracking/server/server2.hpp"
 
 #include <cstring>
@@ -22,15 +21,6 @@ namespace karlo {
   namespace server {
 
     void newClient(int client_socket, fd_set readfds, int sd, sockaddr_in address) {
-      int ACCEPT = 0x01;
-      int data = 0;
-      int valread;
-
-      bool imei_guard = false;
-
-      char buffer[MAX_BYTES*2];
-
-      //  If it's some IO operation on some other socket
 
       std::cout << "New thread : " << client_socket << " initialized"<< std::endl;
 

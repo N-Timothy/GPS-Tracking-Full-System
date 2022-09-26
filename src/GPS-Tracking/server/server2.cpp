@@ -1,49 +1,22 @@
 // TCP Connection, GPS Data-retrieving
-
+#include "GPS-Tracking/server/tcp.hpp"
 #include "GPS-Tracking/server/data.hpp"
 #include "GPS-Tracking/database/database.hpp"
+#include "GPS-Tracking/server/server2.hpp"
 
 #include <stdio.h>
 #include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <stdlib.h>
 #include <string>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <stdbool.h>
 #include <iomanip>
 #include <iostream>
 #include <errno.h>
+#include <unistd.h>
 
 #include <math.h>
 
 #include <sstream>
 #include <chrono>
-
-#define MAX 80
-#define PORT 8080
-#define MAX_CLIENT 10
-#define MAX_PENDING_CONNECTION 3
-#define SA struct sockaddr
-
-#define IMEI_BYTES 17
-#define ZERO_BYTES 4
-#define DATA_FIELD_BYTES 4
-#define CODEC_ID_BYTES 1
-#define NUM_OF_DATA_BYTES 1
-#define TIMESTAMP_BYTES 8
-#define PRIORITY_BYTES 1
-#define LONGITUDE_BYTES 4
-#define LATITUDE_BYTES 4
-#define ALTITUDE_BYTES 2
-#define ANGLE_BYTES 2
-#define SATELLITE_BYTES 1
-#define SPEED_BYTES 2
-
-//#define ACCEPT (0x01)
-//#define DECLINE (0x00)
 
 namespace karlo {
   namespace server {
@@ -354,6 +327,7 @@ void func(int connfd) {
     database::database(data);
 
     std::cout << "=== END OF DATA ===\n\n";
+
 }
 
 } // namespace server
