@@ -1,10 +1,5 @@
 #include "GPS-Tracking/server/tcp.hpp"
-
-#include <arpa/inet.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <sys/time.h>
+#include "GPS-Tracking/server/server2.hpp"
 
 #include <cstring>
 #include <string>  
@@ -13,23 +8,38 @@
 #include <iostream>
 #include <unistd.h>
 
+#include <thread>
+
+#define TRUE 1
+#define FALSE 0
+#define PORT 8080
+#define MAX_CLIENT 10
+#define MAX 80
+#define MAX_PENDING_CONNECTION 3
+
 namespace karlo {
   namespace server {
+
+    void newClient(int client_socket, fd_set readfds, int sd, sockaddr_in address) {
+
+      std::cout << "New thread : " << client_socket << " initialized"<< std::endl;
+
+      sd = client_socket;
+
+      func(sd);
+
+      std::cout << "Terminating thread : "  << client_socket << std::endl;
+    }
 
     void tcpServer () {
 
       int opt = true;
       int master_socket, addrlen, new_socket, client_socket[MAX_CLIENT],
-          activity, valread, sd, max_sd;
+        activity, sd, max_sd;
 
       struct sockaddr_in address;
-      //struct socket_client client;
 
       fd_set readfds;
-
-      char buffer[MAX];
-
-      char reply[] = "Received. Thanks \n";
 
       // initialise all client socket to 0
       for (int i = 0; i < MAX_CLIENT; i++) {
@@ -100,7 +110,7 @@ namespace karlo {
         activity = select(max_sd + 1, &readfds, NULL, NULL, NULL);
 
         if ((activity < 0) && (errno != EINTR)) {
-          std::cout << "select error !" << std::endl;
+          // std::cout << "select error !" << std::endl;
         }
 
         // If something happened on the master socket, then it's an incoming connection
@@ -118,7 +128,8 @@ namespace karlo {
             std::cout << "New connection established, socket : " << new_socket << " Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << std::endl;
 
             // Add new socket to array of sockets
-            for (int i = 0; i < MAX_CLIENT; i++) {
+            int i;
+            for (i = 0; i < MAX_CLIENT; i++) {
               // Check if position is empty
               if(client_socket[i] == 0 )
                 {
@@ -128,38 +139,11 @@ namespace karlo {
                   break;
                 }
             }
+            // Adding thread on each new connection
+            std::thread newClientThread(newClient, std::cref(client_socket[i]), std::ref(readfds), std::ref(sd), std::ref(address));
+            newClientThread.detach();
           }
-
-        // If it's some IO operation on some other socket
-        for (int i = 0; i < MAX_CLIENT; i++) {
-
-          sd = client_socket[i];
-
-          if (FD_ISSET(sd, &readfds)) {
-            // Check if it was for closing, and also read the incoming message
-            valread = recv(sd, buffer, MAX, MSG_WAITALL);
-            std::cout << "Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << " Message : " << buffer << std::endl;
-
-            if (valread == 0) {
-                // Somebody disconnected , get his details and print
-                getpeername(sd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
-                std::cout << "Host disconnected, Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << std::endl;
-
-                // Close the socket and mark as 0 in list for reuse
-                close(sd);
-                client_socket[i] = 0;
-              }
-
-            // Echo back the message that came in
-            else {
-                // set the string terminating NULL byte on the end of the data read
-                // buffer[valread] = '\0';
-                send(sd, reply, strlen(reply), 0);
-              }
-          }
-        }
       }
-
     }
 
   } // namespace server

@@ -4,7 +4,7 @@
 
 namespace karlo {
   namespace database {
-    void read(mongocxx::collection collection ) {
+    void read(mongocxx::collection collection) {
       mongocxx::cursor cursor = collection.find({});
       for(auto doc : cursor) {
         std::cout << bsoncxx::to_json(doc) << "\n";

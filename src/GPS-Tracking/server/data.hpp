@@ -1,4 +1,5 @@
 #ifndef _GPS_TRACKING_SERVER_DATA_HPP_
+#define _GPS_TRACKING_SERVER_DATA_HPP_
 
 #include <string>
 
@@ -6,6 +7,7 @@ namespace karlo {
 
   struct trackingData {
     std::string driver = "None";
+    std::string imei = "";
     bool gpsOn = true;
     int batteryLevel = 0;
     long latitude = 0;
@@ -23,5 +25,4 @@ namespace karlo {
 
 } //namespace karlo
 
-#define _GPS_TRACKING_SERVER_DATA_HPP_
 #endif //_GPS_TRACKING_SERVER_DATA_HPP_
