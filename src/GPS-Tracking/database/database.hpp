@@ -12,8 +12,12 @@
 
 #include "GPS-Tracking/server/data.hpp"
 
+#include <nlohmann//json.hpp>
+
 namespace karlo {
   namespace database {
+      
+      using json = nlohmann::json;
 
     using bsoncxx::builder::stream::close_array;
     using bsoncxx::builder::stream::close_document;
@@ -22,7 +26,8 @@ namespace karlo {
     using bsoncxx::builder::stream::open_array;
     using bsoncxx::builder::stream::open_document;
 
-    void database(trackingData data);
+    void createData(trackingData data);
+    json readData();
   } // namespace database
 } // namespace karlo
 

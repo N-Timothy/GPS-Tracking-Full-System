@@ -42,6 +42,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # -------------------------
 # ENVIROMENTS
 #---------------------------
+find_package(OpenSSL REQUIRED)
+if(OPENSSL_FOUND)
+    set(CPPHTTPLIB_OPENSSL_SUPPORT TRUE)
+endif()
 
 ## END OF PACKAGES -------------------------------------
 

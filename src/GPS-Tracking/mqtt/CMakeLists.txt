@@ -1,0 +1,18 @@
+add_library(GPS-Tracking-mqtt
+            subscriber.cpp)
+
+target_link_libraries(GPS-Tracking-mqtt PRIVATE
+    mosquitto)
+
+target_include_directories(GPS-Tracking-mqtt PUBLIC
+    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
+    "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/src>")
+
+set_target_properties(
+    GPS-Tracking-mqtt
+    PROPERTIES CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+)
+
+target_set_warnings(GPS-Tracking-mqtt ENABLE ALL DISABLE Annoying)

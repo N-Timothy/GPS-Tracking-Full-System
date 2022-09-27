@@ -324,7 +324,7 @@ void func(int connfd) {
     memset(buff, 0, sizeof(buff));
 
     // send to database to be saved
-    database::database(data);
+    database::createData(data);
 
     std::cout << "=== END OF DATA ===\n\n";
 

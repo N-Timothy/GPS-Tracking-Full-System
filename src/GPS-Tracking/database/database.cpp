@@ -14,11 +14,12 @@ namespace karlo {
     mongocxx::database db = client["tracking-data"];
     mongocxx::collection collection = db["tracking"];
 
-    void database(trackingData data) {
-
+    void createData(trackingData data) {
       create(data, collection);
+    }
 
-      read(collection);
+    json readData() {
+      return read(collection);
     }
 
   } // namespace database

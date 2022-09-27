@@ -4,11 +4,14 @@
 
 namespace karlo {
   namespace database {
-    void read(mongocxx::collection collection) {
+    json read(mongocxx::collection collection) {
       mongocxx::cursor cursor = collection.find({});
+      json data;
       for(auto doc : cursor) {
-        std::cout << bsoncxx::to_json(doc) << "\n";
+          data = bsoncxx::to_json(doc);
+          std::cout << data << "\n";
       }
+      return data;
     }
   } // namespace database
 } // namespace karlo

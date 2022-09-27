@@ -7,7 +7,7 @@
 
 namespace karlo {
   namespace database {
-    void read(mongocxx::collection collection);
+    json read(mongocxx::collection collection);
   } // namespace database
 } // namespace karlo
 
