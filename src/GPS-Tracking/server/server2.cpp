@@ -255,7 +255,8 @@ void func(int connfd) {
     getData gps;
 
     // Get IMEI number for initialization
-    gps.getImei(connfd, buff, IMEI_BYTES);
+    std::string imei = gps.getImei(connfd, buff, IMEI_BYTES);
+    data.imei = imei;
 
     gps.getZeroBytes(connfd, buff, ZERO_BYTES);
 

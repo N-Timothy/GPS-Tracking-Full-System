@@ -9,9 +9,9 @@ namespace karlo {
 
         using json = nlohmann::json;
 
-        json postData(){
+        json getData(){
             json data = database::readData();
-            std::cout << data << std::endl;
+            //std::cout << data << std::endl;
             return data;
         }
 
@@ -24,13 +24,16 @@ namespace karlo {
 
             std::string postUrl = "/api/tracking/last-location";
 
+            json dataBody = getData();
+
             httplib::Params params;
-                params.emplace("latitude", "-6.37373");
-                params.emplace("longitude", "107.482683");
-                params.emplace("altitude", "100");
-                params.emplace("speed", "100");
+                params.emplace("latitude", to_string(dataBody["latitude"]));
+                params.emplace("longitude", to_string(dataBody["longitude"]));
+                params.emplace("altitude", to_string(dataBody["altitude"]));
+                params.emplace("speed", to_string(dataBody["speed"]));
                 params.emplace("bearing", "100");
                 params.emplace("driver", imei);
+                //params.emplace("driver", static_cast<std::string>(dataBody["imei"]));
 
             auto res = cli.Post(postUrl, params);
             std::cout << "res : " << res->body << std::endl;

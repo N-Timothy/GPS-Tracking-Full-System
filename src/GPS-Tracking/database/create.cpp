@@ -11,6 +11,7 @@ namespace karlo {
       bsoncxx::document::value trackingDocValue = builder
         << "driver" << data.driver
         << "gpsOn" << data.gpsOn
+        << "imei" << data.imei
         << "betteryLevel" << data.batteryLevel
         << "latitude" << data.latitude
         << "longitude" << data.longitude
@@ -27,11 +28,24 @@ namespace karlo {
       return trackingDocValue;
     }
 
+    bsoncxx::document::value generateImeiDocument (trackingData data) {
+      auto builder = bsoncxx::builder::stream::document{};
+      bsoncxx::document::value trackingDocValue = builder
+        << "imei" << data.imei
+        << bsoncxx::builder::stream::finalize;
+      return trackingDocValue;
+    }
+
+
+
     void create (trackingData data, mongocxx::collection collection) {
       bsoncxx::document::value trackingDocValue = generateDocument(data);
+      bsoncxx::document::value trackingImeiValue = generateImeiDocument(data);
       bsoncxx::document::view trackingDocument = trackingDocValue.view();
-      bsoncxx::stdx::optional<mongocxx::result::insert_one> result =
-      collection.insert_one(trackingDocument);
+      bsoncxx::document::view trackingImeiDocument = trackingImeiValue.view();
+      //bsoncxx::stdx::optional<mongocxx::result::insert_one> result =
+      //collection.insert_one(trackingDocument);
+      collection.update_one(trackingImeiDocument, trackingDocument);
        }
 
   } // namespace database

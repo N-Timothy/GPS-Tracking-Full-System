@@ -8,8 +8,8 @@ namespace karlo {
       mongocxx::cursor cursor = collection.find({});
       json data;
       for(auto doc : cursor) {
-          data = bsoncxx::to_json(doc);
-          std::cout << data << "\n";
+          data = nlohmann::json::parse(bsoncxx::to_json(doc));
+//          std::cout << data << "\n";
       }
       return data;
     }
