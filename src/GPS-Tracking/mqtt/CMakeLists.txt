@@ -1,8 +1,12 @@
 add_library(GPS-Tracking-mqtt
+            connection.hpp
+            publisher.cpp
+            toggleController.cpp
             subscriber.cpp)
 
 target_link_libraries(GPS-Tracking-mqtt PRIVATE
-    mosquitto)
+    mosquitto
+    pthread)
 
 target_include_directories(GPS-Tracking-mqtt PUBLIC
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"

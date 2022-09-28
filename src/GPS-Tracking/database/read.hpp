@@ -7,7 +7,7 @@
 
 namespace karlo {
   namespace database {
-    json read(mongocxx::collection collection);
+    json read(mongocxx::collection collection, std::string imei);
   } // namespace database
 } // namespace karlo
 

@@ -18,8 +18,8 @@ namespace karlo {
       create(data, collection);
     }
 
-    json readData() {
-      return read(collection);
+    json readData(std::string imei) {
+      return read(collection, imei);
     }
 
   } // namespace database

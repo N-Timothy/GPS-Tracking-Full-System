@@ -2,7 +2,7 @@
 #include "GPS-Tracking/server/server2.hpp"
 
 #include <cstring>
-#include <string>  
+#include <string>
 #include <stdlib.h>
 #include <errno.h>
 #include <iostream>

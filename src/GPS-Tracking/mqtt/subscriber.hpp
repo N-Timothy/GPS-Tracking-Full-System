@@ -1,13 +1,14 @@
 #ifndef _GPS_TRACKING_MQTT_CLIENT_HPP_
 #define _GPS_TRACKING_MQTT_CLIENT_HPP_
 
-#include <mosquitto.h>
+#include "GPS-Tracking/mqtt/connection.hpp"
+
 #include <iostream>
 
 namespace karlo {
     namespace mqtt {
 
-        void client();
+        void subscriber();
 
     } // namesapce mqtt
 } // namespace karlo

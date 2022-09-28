@@ -43,8 +43,10 @@ namespace karlo {
       bsoncxx::document::value trackingImeiValue = generateImeiDocument(data);
       bsoncxx::document::view trackingDocument = trackingDocValue.view();
       bsoncxx::document::view trackingImeiDocument = trackingImeiValue.view();
+     
       //bsoncxx::stdx::optional<mongocxx::result::insert_one> result =
       //collection.insert_one(trackingDocument);
+      
       collection.update_one(trackingImeiDocument, trackingDocument);
        }
 

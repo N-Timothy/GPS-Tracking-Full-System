@@ -28,7 +28,7 @@ namespace karlo {
     using bsoncxx::builder::stream::open_document;
 
     void createData(trackingData data);
-    json readData();
+    json readData(std::string imei);
   } // namespace database
 } // namespace karlo
 

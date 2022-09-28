@@ -1,13 +1,12 @@
 #include "GPS-Tracking/mqtt/subscriber.hpp"
-
-#define MQTT_HOST "localhost"
-#define MQTT_TOPIC "test/t1"
-#define MQTT_PORT 1883
+#include "GPS-Tracking/mqtt/toggleController.hpp"
 
 #include <string>
 
 namespace karlo {
     namespace mqtt {
+
+        using json = nlohmann::json;
 
         void on_connect(struct mosquitto *mosq, void *obj, int rc) {
             std::cout << "ID: " << * (int *) obj << std::endl;
@@ -15,15 +14,16 @@ namespace karlo {
                 std::cout << "Error with result code: " << rc << std::endl;
 		        exit(-1);
 	        }
-	        mosquitto_subscribe(mosq, NULL, MQTT_TOPIC, 0);
+	        mosquitto_subscribe(mosq, NULL, MQTT_SUB_TOPIC, 0);
         }
 
         void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg) {
-            std::string Message = (char *) msg->payload;
-            std::cout <<"New message with topic " << msg->topic << " : " << Message << std::endl;
+            json Message = json::parse((char *) msg->payload);
+
+            toggleController(Message);
          }
 
-        void client () {
+        void subscriber() {
 
 	        int rc, id=12;
 

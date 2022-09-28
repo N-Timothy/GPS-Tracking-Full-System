@@ -9,12 +9,6 @@ namespace karlo {
 
         using json = nlohmann::json;
 
-        json getData(){
-            json data = database::readData();
-            //std::cout << data << std::endl;
-            return data;
-        }
-
         void post(std::string URL) {
 
             std::string imei = "5f105ae8a629de65677a0ce7"; //Temporarily using driver id
@@ -24,13 +18,13 @@ namespace karlo {
 
             std::string postUrl = "/api/tracking/last-location";
 
-            json dataBody = getData();
+            json postData = database::readData(imei);
 
             httplib::Params params;
-                params.emplace("latitude", to_string(dataBody["latitude"]));
-                params.emplace("longitude", to_string(dataBody["longitude"]));
-                params.emplace("altitude", to_string(dataBody["altitude"]));
-                params.emplace("speed", to_string(dataBody["speed"]));
+                params.emplace("latitude", to_string(postData["latitude"]));
+                params.emplace("longitude", to_string(postData["longitude"]));
+                params.emplace("altitude", to_string(postData["altitude"]));
+                params.emplace("speed", to_string(postData["speed"]));
                 params.emplace("bearing", "100");
                 params.emplace("driver", imei);
                 //params.emplace("driver", static_cast<std::string>(dataBody["imei"]));
