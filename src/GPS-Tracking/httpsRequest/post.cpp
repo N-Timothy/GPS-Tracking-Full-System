@@ -18,19 +18,22 @@ namespace karlo {
 
             std::string postUrl = "/api/tracking/last-location";
 
-            json postData = database::readData(imei);
+            //for () {
 
-            httplib::Params params;
-                params.emplace("latitude", to_string(postData["latitude"]));
-                params.emplace("longitude", to_string(postData["longitude"]));
-                params.emplace("altitude", to_string(postData["altitude"]));
-                params.emplace("speed", to_string(postData["speed"]));
-                params.emplace("bearing", "100");
-                params.emplace("driver", imei);
+                json postData = database::readData(imei);
+
+                httplib::Params params;
+                    params.emplace("latitude", to_string(postData["latitude"]));
+                    params.emplace("longitude", to_string(postData["longitude"]));
+                    params.emplace("altitude", to_string(postData["altitude"]));
+                    params.emplace("speed", to_string(postData["speed"]));
+                    params.emplace("bearing", "100");
+                    params.emplace("driver", imei);
                 //params.emplace("driver", static_cast<std::string>(dataBody["imei"]));
 
-            auto res = cli.Post(postUrl, params);
-            std::cout << "res : " << res->body << std::endl;
+                auto res = cli.Post(postUrl, params);
+                std::cout << "res : " << res->body << std::endl;
+            //}
         }
 
     } // namespace httpRequest

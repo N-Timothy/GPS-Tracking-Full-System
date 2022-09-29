@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <mongocxx/options/update.hpp>
 
 namespace karlo {
   namespace database {
@@ -37,7 +38,6 @@ namespace karlo {
     }
 
 
-
     void create (trackingData data, mongocxx::collection collection) {
       bsoncxx::document::value trackingDocValue = generateDocument(data);
       bsoncxx::document::value trackingImeiValue = generateImeiDocument(data);
@@ -47,7 +47,10 @@ namespace karlo {
       //bsoncxx::stdx::optional<mongocxx::result::insert_one> result =
       //collection.insert_one(trackingDocument);
       
-      collection.update_one(trackingImeiDocument, trackingDocument);
+      mongocxx::v_noabi::options::update options;
+      options.upsert(true);
+      
+      collection.update_one(trackingImeiDocument, trackingDocument,options);
        }
 
   } // namespace database

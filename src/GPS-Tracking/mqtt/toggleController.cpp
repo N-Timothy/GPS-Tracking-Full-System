@@ -40,7 +40,6 @@ namespace karlo {
         void realtimeMessage(std::string imei) {
 
             for(;;) {
-
                 if (vectorId.empty()){
                     std::cout << "Toggle switched off !" << std::endl;
                     break;
