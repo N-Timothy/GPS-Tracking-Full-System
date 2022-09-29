@@ -19,7 +19,11 @@ namespace karlo {
     }
 
     json readData(std::string imei) {
-      return read(collection, imei);
+      return readOne(collection, imei);
+    }
+
+    std::vector<json> readData() {
+      return readAll(collection);
     }
 
   } // namespace database

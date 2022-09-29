@@ -8,8 +8,12 @@
 namespace karlo {
     namespace httpsRequest {
 
-        void connect(int timeInterval) {
+        void connect(int timeInterval = INTERVAL) {
+
             std::string URL = "https://server-staging.karlo.id";
+
+            // temporary, can be used or not
+            post(URL);
 
             auto start = std::chrono::system_clock::now();
             auto now = std::chrono::system_clock::now();

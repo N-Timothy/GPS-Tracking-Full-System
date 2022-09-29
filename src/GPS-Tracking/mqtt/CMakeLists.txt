@@ -5,8 +5,9 @@ add_library(GPS-Tracking-mqtt
             subscriber.cpp)
 
 target_link_libraries(GPS-Tracking-mqtt PRIVATE
-    mosquitto
-    pthread)
+                      GPS-Tracking-database
+                      mosquitto
+                      pthread)
 
 target_include_directories(GPS-Tracking-mqtt PUBLIC
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"

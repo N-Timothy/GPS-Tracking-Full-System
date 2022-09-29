@@ -14,6 +14,7 @@
 #include "GPS-Tracking/server/data.hpp"
 
 #include <nlohmann/json.hpp>
+#include <vector>
 
 namespace karlo {
   namespace database {
@@ -29,6 +30,7 @@ namespace karlo {
 
     void createData(trackingData data);
     json readData(std::string imei);
+    std::vector<json> readData();
   } // namespace database
 } // namespace karlo
 

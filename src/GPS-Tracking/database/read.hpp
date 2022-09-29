@@ -4,10 +4,14 @@
 #include "GPS-Tracking/database/database.hpp"
 
 #include <string>
+#include <vector>
 
 namespace karlo {
   namespace database {
-    json read(mongocxx::collection collection, std::string imei);
+
+    json readOne(mongocxx::collection collection, std::string imei);
+    std::vector<json> readAll(mongocxx::collection collection);
+
   } // namespace database
 } // namespace karlo
 

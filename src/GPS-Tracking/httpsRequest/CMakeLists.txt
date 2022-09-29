@@ -4,6 +4,7 @@ add_library(GPS-Tracking-httpsRequest
             httplib.h)
 
 target_link_libraries(GPS-Tracking-httpsRequest PRIVATE
+                      GPS-Tracking-database
                       crypto
                       ssl)
 

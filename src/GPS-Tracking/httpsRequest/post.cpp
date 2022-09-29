@@ -3,6 +3,7 @@
 
 #include <nlohmann/json.hpp>
 #include <iostream>
+#include <vector>
 
 namespace karlo {
     namespace httpsRequest {
@@ -18,22 +19,23 @@ namespace karlo {
 
             std::string postUrl = "/api/tracking/last-location";
 
-            //for () {
-
-                json postData = database::readData(imei);
+            std::vector<json> postData = database::readData();
+            for (json data : postData) {
 
                 httplib::Params params;
-                    params.emplace("latitude", to_string(postData["latitude"]));
-                    params.emplace("longitude", to_string(postData["longitude"]));
-                    params.emplace("altitude", to_string(postData["altitude"]));
-                    params.emplace("speed", to_string(postData["speed"]));
+                    params.emplace("latitude", to_string(data["latitude"]));
+                    params.emplace("longitude", to_string(data["longitude"]));
+                    params.emplace("altitude", to_string(data["altitude"]));
+                    params.emplace("speed", to_string(data["speed"]));
                     params.emplace("bearing", "100");
                     params.emplace("driver", imei);
                 //params.emplace("driver", static_cast<std::string>(dataBody["imei"]));
 
                 auto res = cli.Post(postUrl, params);
-                std::cout << "res : " << res->body << std::endl;
-            //}
+
+                std::cout << "res : " << res->body << std::endl << std::endl; 
+            }
+
         }
 
     } // namespace httpRequest
