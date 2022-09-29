@@ -1,4 +1,5 @@
 #include "GPS-Tracking/database/create.hpp"
+#include <mongocxx/options/update.hpp>
 
 #include <iostream>
 #include <string>
@@ -10,6 +11,7 @@ namespace karlo {
     bsoncxx::document::value generateDocument (trackingData data) {
       auto builder = bsoncxx::builder::stream::document{};
       bsoncxx::document::value trackingDocValue = builder
+        << "$set" << bsoncxx::document::open_document
         << "driver" << data.driver
         << "gpsOn" << data.gpsOn
         << "imei" << data.imei
@@ -25,6 +27,7 @@ namespace karlo {
         << "createdAt" << data.createdAt
         << "updatedAt" << data.updatedAt
         << "_v" <<  data.version
+        << close_document
         << bsoncxx::builder::stream::finalize;
       return trackingDocValue;
     }
@@ -46,11 +49,10 @@ namespace karlo {
      
       //bsoncxx::stdx::optional<mongocxx::result::insert_one> result =
       //collection.insert_one(trackingDocument);
-      
+
       mongocxx::v_noabi::options::update options;
       options.upsert(true);
-      
-      collection.update_one(trackingImeiDocument, trackingDocument,options);
+      collection.update_one(trackingImeiDocument, trackingDocument, options);
        }
 
   } // namespace database

@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[]){
 
-  // karlo::server::tcpServer();
+  karlo::server::tcpServer();
   // karlo::database::database();
   karlo::mqtt::subscriber();
   // karlo::mqtt::publisher("5f105ae8a629de65677a0ce7");
