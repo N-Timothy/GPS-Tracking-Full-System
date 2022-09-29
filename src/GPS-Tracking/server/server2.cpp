@@ -37,34 +37,6 @@ public:
             valread = recv(connfd, (char *) &number, 1, 0);
             if (n == 0) sprintf(buff, "%02x", number);
             else sprintf(buff + strlen(buff), "%02x", number);
-
-            if (valread == 0) {
-                //Somebody disconnected , get his details and print
-                printf("\n=== Host disconnected ===\n\n");
-
-                //Close the socket and mark as 0 in list for reuse
-                close(connfd);
-            }
-        }
-        return buff;
-    }
-
-    std::string getBytesFinal (int connfd, char* buff, int byteslen) {
-        for (n = 0; n < byteslen; n++) {
-            valread = recv(connfd, (char*)&number, 1, 0);
-            if (n == 0) sprintf(buff, "%02x", number);
-            else sprintf(buff + strlen(buff), "%02x", number);
-
-            if (valread == 0) {
-                //Somebody disconnected , get his details and print
-                printf("\n=== Host disconnected ===\n\n");
-
-                //Close the socket and mark as 0 in list for reuse
-//                close(connfd);
-            }
-            else {
-                printf("[Nelson Checkpoint] Valread = %d\n", valread);
-            }
         }
         return buff;
     }

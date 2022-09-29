@@ -13,7 +13,7 @@
 namespace karlo {
     namespace httpsRequest {
 
-        void connect();
+        void connect(int timeInterval);
     
     } // namespace httpRequest
 } // namespace karlo
