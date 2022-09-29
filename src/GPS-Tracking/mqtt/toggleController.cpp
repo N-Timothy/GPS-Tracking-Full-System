@@ -6,19 +6,18 @@
 
 #include <thread>
 #include <chrono>
-#include <mutex>
-#include <condition_variable>
 
-
-std::mutex m;
-std::condition_variable cv;
-
-std::string t = "false";
+#include <vector>
+#include <algorithm>
 
 namespace karlo {
     namespace mqtt {
 
             using json = nlohmann::json;
+
+
+            std::vector<std::string> vectorId;
+            // not the best solution but temporarily working
 
             std::string messageSeparator(std::string message, int index) {
                 char delimiter = ',';
@@ -38,26 +37,29 @@ namespace karlo {
                 
         }
 
-        void realtimeMessage(std::string toggle, std::string imei) {
+        void realtimeMessage(std::string imei) {
 
             for(;;) {
-            
-                std::unique_lock<std::mutex> lk(m);
 
-                cv.wait( lk, [&toggle]{return t == "false";} );
-                if (t == "false"){
-                    std::cout << "hi" << std::endl;
+                if (vectorId.empty()){
+                    std::cout << "Toggle switched off !" << std::endl;
                     break;
                 }
 
-            //publishser(imei);
-                std::cout << "test" << std::endl;
-
+                std::cout << "Publishing Data !" << std::endl;
+                publisher(imei);
+                std::cout << std::endl;
                 std::this_thread::sleep_for (std::chrono::seconds(5));
             }
+        }
 
-            std::cout << "end here" << std::endl;
-            //publisher(imei);
+        void removeVectorElement(std::string id) {
+
+            auto it = find(vectorId.begin(), vectorId.end(), id);
+            if (it != vectorId.end()){
+                 vectorId.erase(it);
+            } 
+            
         }
 
         void toggleController(json subscribeMessage) {
@@ -65,7 +67,6 @@ namespace karlo {
             std::string imei = subscribeMessage["id"];
             std::string driverId = messageSeparator(subscribeMessage["toggle"], 0);
             std::string toggle = messageSeparator(subscribeMessage["toggle"], 1);
-            t = toggle;
 
             std::cout << "Imei Requested : " << imei << std::endl;
             std::cout << "Driver id : " << driverId << std::endl;
@@ -73,12 +74,23 @@ namespace karlo {
 
 
             if(toggle == "true") {
-            std::thread realtimeMessageThread (realtimeMessage, toggle, imei);
-            realtimeMessageThread.detach();
+                if(vectorId.empty()){
+                    vectorId.push_back(driverId);
+                    std::thread realtimeMessageThread (realtimeMessage, imei);
+                    realtimeMessageThread.detach();
+                } else {
+                    if(std::find(vectorId.begin(), vectorId.end(), driverId) == vectorId.end()) {
+                        vectorId.push_back(driverId);
+                    }
+                }
             } else {
-                cv.notify_one();
-            }
 
+                removeVectorElement(driverId);
+
+                std::cout << "Last Location Update !" << std::endl;
+                publisher(imei);
+                std::cout << std::endl;
+            }
         }
 
     } // namespace mqtt
