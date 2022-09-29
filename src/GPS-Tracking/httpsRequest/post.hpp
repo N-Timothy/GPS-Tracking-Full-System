@@ -1,10 +1,12 @@
 #ifndef _GPS_TRACKING_HTTPS_POST_HPP_
 #define _GPS_TRACKING_HTTPS_POST_HPP_
 
-#include "GPS-Tracking/httpsRequest/httpsRequest.hpp"
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+#include "httplib.h"
+
+#include "GPS-Tracking/database/database.hpp"
 
 #include <string>
-
 namespace karlo {
     namespace httpsRequest {
 
