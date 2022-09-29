@@ -11,7 +11,7 @@ namespace karlo {
     bsoncxx::document::value generateDocument (trackingData data) {
       auto builder = bsoncxx::builder::stream::document{};
       bsoncxx::document::value trackingDocValue = builder
-        << "$set" << bsoncxx::document::open_document
+        << "$set" << open_document
         << "driver" << data.driver
         << "gpsOn" << data.gpsOn
         << "imei" << data.imei
