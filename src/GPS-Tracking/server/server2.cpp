@@ -176,14 +176,14 @@ std::string timestampToDate (std::string hex) {
     std::istringstream is(hex);
     unsigned long x;
     is >> std::hex >> x;
-    std::chrono::milliseconds ms(x);
+    std::chrono::milliseconds ms(x + 3600*7*1000);
     std::chrono::time_point<std::chrono::system_clock> sc(ms);
 
     std::time_t t_c = std::chrono::system_clock::to_time_t(sc);
-    std::stringstream timeStamp;
-    timeStamp << std::put_time(std::localtime(&t_c), " (%F %T [%Z])\n");
-    std::cout << std::put_time(std::localtime(&t_c), " (%F %T [%Z])\n");
-    return timeStamp.str();
+    std::stringstream dateAndTime;
+    dateAndTime << std::put_time(std::localtime(&t_c), "%A, %F, %T [WIB])\n");
+    std::cout << std::put_time(std::localtime(&t_c), "(%A, %F, %T [WIB])\n");
+    return dateAndTime.str();
 }
 
 const char* hexCharToBin (char hex_c) {
@@ -204,6 +204,7 @@ const char* hexCharToBin (char hex_c) {
         case 'D': return "1101";
         case 'E': return "1110";
         case 'F': return "1111";
+        default: return "0000";
     }
 }
 
@@ -215,7 +216,7 @@ std::string hexToBin(std::string hex) {
 }
 
 std::string TwoComplement(std::string binary) {
-    for(int i = 0; i < binary.size(); i++) {
+    for(unsigned i = 0; i < binary.size(); i++) {
         if(binary[i] == '1'){
             binary[i] = '0';
         } else {
@@ -251,7 +252,7 @@ void func(int connfd) {
     int n, i, numOfData;
     int numOfOneByteID, numOfTwoBytesID, numOfFourBytesID, numOfEightBytesID;
     std::string hex;
-    float result;
+    
     getData gps;
 
     // Get IMEI number for initialization
@@ -287,13 +288,10 @@ void func(int connfd) {
 
         gps.getSatellites(connfd, buff, SATELLITE_BYTES);
 
-        hex = std::stoi(gps.getSpeed(connfd, buff, SPEED_BYTES), 0, 16);
-        hex == "" ? hex = '0' : hex = hex;
-        std::cout << " (" << hex << ")" << std::endl;
-        data.speed = stoi(hex);
+        data.speed = std::stoi(gps.getSpeed(connfd, buff, SPEED_BYTES), 0, 16);
+        std::cout << " (" << data.speed << ")" << std::endl;
 
         gps.getEventIOID(connfd, buff, 1);
-
         gps.getNumOfTotalID(connfd, buff, 1);
 
         numOfOneByteID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
