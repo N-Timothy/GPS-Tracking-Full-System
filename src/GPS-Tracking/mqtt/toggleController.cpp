@@ -9,14 +9,18 @@
 
 #include <vector>
 #include <algorithm>
+#include <map>
 
 namespace karlo {
     namespace mqtt {
 
             using json = nlohmann::json;
 
+            std::map<std::string, std::vector<std::string>> realTimeReq;
 
             std::vector<std::string> vectorId;
+
+            bool threadActive = false;
             // not the best solution but temporarily working
 
             std::string messageSeparator(std::string message, int index) {
@@ -37,31 +41,56 @@ namespace karlo {
                 
         }
 
-        void realtimeMessage(std::string imei) {
+        void realTimeMessage(std::string imei) {
+
+            int counter;
 
             for(;;) {
-                if (vectorId.empty()){
+
+                counter = 0;
+                for(auto it = realTimeReq.cbegin(); it != realTimeReq.cend(); ++it) {
+                    if(!it->second.empty()){
+
+                        std::cout << "Publishing Data ... " << std::endl;
+                        int ret = publisher(it->first);
+                        // check if data is null
+                        if (ret == -1) {
+                            realTimeReq.erase(it->first);
+                            std::cout << "No GPS FOUND ... : " << realTimeReq.size() << std::endl;
+                            if(realTimeReq.size() > 1 || counter > 0){
+                                continue;
+                            } else {
+                                break;
+                            }
+                        } else {
+                            std::cout << "Succeed ... " << std::endl;
+                            counter++;
+                        }
+                    }
+                }
+
+                std::cout << "counter : " << counter << std::endl;
+                if (counter < 1){
                     std::cout << "Toggle switched off !" << std::endl;
+                    threadActive = false;
                     break;
                 }
 
-                std::cout << "Publishing Data !" << std::endl;
-                publisher(imei);
+                std::cout << " 10 sec timer " << std::endl;
                 std::cout << std::endl;
-                std::this_thread::sleep_for (std::chrono::seconds(5));
+                std::this_thread::sleep_for (std::chrono::seconds(10));
             }
         }
 
-        void removeVectorElement(std::string id) {
-
-            auto it = find(vectorId.begin(), vectorId.end(), id);
-            if (it != vectorId.end()){
-                 vectorId.erase(it);
+        std::vector<std::string> removeVectorElement(std::vector<std::string> vecId, std::string id) {
+            auto it = find(vecId.begin(), vecId.end(), id);
+            if (it != vecId.end()){
+                 vecId.erase(it);
             } 
-            
+            return vecId;
         }
 
-        void toggleController(json subscribeMessage) {
+        void toggleController (json subscribeMessage) {
 
             std::string imei = subscribeMessage["id"];
             std::string driverId = messageSeparator(subscribeMessage["toggle"], 0);
@@ -71,23 +100,65 @@ namespace karlo {
             std::cout << "Driver id : " << driverId << std::endl;
             std::cout << "toggle : " << toggle << std::endl;
 
+            std::vector<std::string> emptyVec;
+
+            // try to make a new imei map, if imei exist does nothing
+            realTimeReq.try_emplace(imei, emptyVec);
+
+            auto data = realTimeReq.find(imei);
+            std::string imeiData = data->first;
+            std::vector<std::string> idVector = data->second;
+
 
             if(toggle == "true") {
-                if(vectorId.empty()){
-                    vectorId.push_back(driverId);
-                    std::thread realtimeMessageThread (realtimeMessage, imei);
-                    realtimeMessageThread.detach();
+                if(idVector.empty()) {
+                    idVector.push_back(driverId);
                 } else {
-                    if(std::find(vectorId.begin(), vectorId.end(), driverId) == vectorId.end()) {
-                        vectorId.push_back(driverId);
+                    if(std::find(idVector.begin(), idVector.end(), driverId) == idVector.end()) {
+                        idVector.push_back(driverId);
                     }
                 }
             } else {
+                if(std::find(idVector.begin(), idVector.end(), driverId) != idVector.end()) {
+                    idVector = removeVectorElement(idVector, driverId);
+                }
+                std::cout << "Last Location Update ! for imei : " << imei << std::endl;
+                int res = publisher(imei);
+                std::cout << std::endl;
 
-                removeVectorElement(driverId);
+                if (res == -1) {
+                    realTimeReq.erase(imei);
+                }
+            }
 
-                std::cout << "Last Location Update !" << std::endl;
-                publisher(imei);
+            data->second = idVector;
+
+            int idCounter = 0;
+
+                for(auto it = realTimeReq.cbegin(); it != realTimeReq.cend(); ++it) {
+                     if(!threadActive && !it->second.empty()) {
+                        std::cout << "new thread" << std::endl;
+                        std::thread realTimeMessageThread (realTimeMessage, imei);
+                        realTimeMessageThread.detach();
+                        threadActive = true;
+                        idCounter++;
+                        break;
+                    } else if (!it->second.empty()){
+                        idCounter++;
+                        break;
+                    } 
+                }
+                if(idCounter == 0){
+                    std::cout << "no thread active" << std::endl;
+                    threadActive = false;
+                }
+
+            // temporary printing MAP value
+            for(auto it = realTimeReq.cbegin(); it != realTimeReq.cend(); ++it) {
+                std::cout << "imei : " << it->first << " id : ";
+                for(auto cur : it->second){
+                    std::cout << cur << " | ";
+                }
                 std::cout << std::endl;
             }
         }
