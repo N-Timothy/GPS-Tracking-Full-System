@@ -1,8 +1,6 @@
 #ifndef _GPS_TRACKING_HTTPS_REQUEST_HPP_
 #define _GPS_TRACKING_HTTPS_REQUEST_HPP_
 
-#define INTERVAL 300000 // 5 minute in milliseconds
-
 /*
     #define CPPHTTPLIB_OPENSSL_SUPPORT is required for https
     this need to be placed before #include "httplib.h" 

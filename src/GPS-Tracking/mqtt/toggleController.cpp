@@ -78,7 +78,7 @@ namespace karlo {
 
                 std::cout << " 10 sec timer " << std::endl;
                 std::cout << std::endl;
-                std::this_thread::sleep_for (std::chrono::seconds(10));
+                std::this_thread::sleep_for (std::chrono::seconds(REALTIME_INTERVAL));
             }
         }
 

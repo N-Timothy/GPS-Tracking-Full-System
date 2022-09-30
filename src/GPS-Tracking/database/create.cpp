@@ -53,7 +53,7 @@ namespace karlo {
       mongocxx::v_noabi::options::update options;
       options.upsert(true);
       collection.update_one(trackingImeiDocument, trackingDocument, options);
-       }
+      }
 
   } // namespace database
 } // namespace karlo
