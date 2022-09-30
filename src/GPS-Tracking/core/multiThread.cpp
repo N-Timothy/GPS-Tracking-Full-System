@@ -12,12 +12,11 @@ namespace karlo {
         void multiThread() {
             
             //server::tcpServer
-            mqtt::subscriber();
 
             std::thread httpsRequestThread(httpsRequest::connect, 5000);
          //   std::thread mqttSubscriberThread(mqtt::subscriber);
-
             httpsRequestThread.detach();
+            mqtt::subscriber();
         //    mqttSubscriberThread.detach();
         }
 
