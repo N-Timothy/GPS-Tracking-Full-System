@@ -2,6 +2,7 @@ add_subdirectory(GPS-Tracking/database)
 add_subdirectory(GPS-Tracking/server)
 add_subdirectory(GPS-Tracking/httpsRequest)
 add_subdirectory(GPS-Tracking/mqtt)
+add_subdirectory(GPS-Tracking/core)
 
 add_executable(${PROJECT_NAME}
                 main.cpp
@@ -13,6 +14,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     GPS-Tracking-server
     GPS-Tracking-httpsRequest
     GPS-Tracking-mqtt
+    GPS-Tracking-core
     )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

@@ -1,6 +1,8 @@
 #ifndef _GPS_TRACKING_MQTT_TOGGLE_CONTROLLER_HPP_
 #define _GPS_TRACKING_MQTT_TOGGLE_CONTROLLER_HPP_
 
+#define REALTIME_INTERVAL 10
+
 #include "GPS-Tracking/mqtt/connection.hpp"
 
 namespace karlo {

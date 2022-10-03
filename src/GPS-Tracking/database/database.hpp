@@ -16,10 +16,12 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 
+extern bool ready;
+
 namespace karlo {
   namespace database {
       
-      using json = nlohmann::json;
+    using json = nlohmann::json;
 
     using bsoncxx::builder::stream::close_array;
     using bsoncxx::builder::stream::close_document;
