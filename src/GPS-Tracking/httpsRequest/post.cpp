@@ -28,6 +28,7 @@ namespace karlo {
             cv.wait(lk, []{return ready;});
 
             std::vector<json> postData = database::readData();
+
             for (json data : postData) {
 
                 httplib::Params params;

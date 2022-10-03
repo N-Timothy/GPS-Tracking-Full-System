@@ -20,13 +20,12 @@
 namespace karlo {
   namespace server {
 
-    void newClient(int client_socket, fd_set readfds, int sd, sockaddr_in address) {
+    void newClient(int client_socket, fd_set readfds, sockaddr_in address) {
 
       std::cout << "New thread : " << client_socket << " initialized"<< std::endl;
 
-      sd = client_socket;
-
-      func(sd);
+      if (func(client_socket) == -1) std::cout << "Thread terminated due to error in socket reading\n";
+      close(client_socket);
 
       std::cout << "Terminating thread : "  << client_socket << std::endl;
     }
@@ -35,7 +34,8 @@ namespace karlo {
 
       int opt = true;
       int master_socket, addrlen, new_socket, client_socket[MAX_CLIENT],
-        activity, sd, max_sd;
+              activity, sd, max_sd;
+      int i;
 
       struct sockaddr_in address;
 
@@ -95,54 +95,50 @@ namespace karlo {
           // socket descriptor
           sd = client_socket[i];
 
-            // if valid socket descriptor then add to read list
-            if(sd > 0) {
-              FD_SET(sd , &readfds);
-            }
+          // if valid socket descriptor then add to read list
+          if(sd > 0) {
+            FD_SET(sd , &readfds);
+          }
 
-            // highest file descriptor number, need it for the select function
-            if(sd > max_sd) {
-              max_sd = sd;
-            }
+          // highest file descriptor number, need it for the select function
+          if(sd > max_sd) {
+            max_sd = sd;
+          }
         }
 
         // wait for an activity on one of the sockets, timeout is NULL, so wait indefinitely
         activity = select(max_sd + 1, &readfds, NULL, NULL, NULL);
 
         if ((activity < 0) && (errno != EINTR)) {
-          // std::cout << "select error !" << std::endl;
+          std::cout << "select error !" << std::endl;
         }
 
         // If something happened on the master socket, then it's an incoming connection
-        if (FD_ISSET(master_socket, &readfds))
-          {
+        if (FD_ISSET(master_socket, &readfds)) {
           // If failed to accept connection
-          if ((new_socket = accept(master_socket,
-                                   (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0)
-              {
-              perror("Accept");
-              exit(EXIT_FAILURE);
-            }
-
-            // inform user of socket number - used in send and receive commands
-            std::cout << "New connection established, socket : " << new_socket << " Ip : " << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << std::endl;
-
-            // Add new socket to array of sockets
-            int i;
-            for (i = 0; i < MAX_CLIENT; i++) {
-              // Check if position is empty
-              if(client_socket[i] == 0 )
-                {
-                  client_socket[i] = new_socket;
-                  std::cout << "Adding socket : " << new_socket << " to list of sockets in position : " << i << std::endl;
-
-                  break;
-                }
-            }
-            // Adding thread on each new connection
-            std::thread newClientThread(newClient, std::cref(client_socket[i]), std::ref(readfds), std::ref(sd), std::ref(address));
-            newClientThread.detach();
+          if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
+            perror("Accept");
+            exit(EXIT_FAILURE);
           }
+
+          // inform user of socket number - used in send and receive commands
+          std::cout << "New connection established, socket : " << new_socket << " Ip : "
+                    << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << std::endl;
+
+          // Add new socket to array of sockets
+//          for (i = 0; i < MAX_CLIENT; i++) {
+//            // Check if position is empty
+//            if(client_socket[i] == 0 ) {
+//              client_socket[i] = new_socket;
+//              std::cout << "Adding socket : " << new_socket << " to list of sockets in position : " << i << std::endl;
+//
+//              break;
+//            }
+//          }
+          // Adding thread on each new connection
+          std::thread newClientThread(newClient, std::cref(client_socket[i]), std::ref(readfds), std::ref(address));
+          newClientThread.detach();
+        }
       }
     }
 
