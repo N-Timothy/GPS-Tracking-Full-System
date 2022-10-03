@@ -236,6 +236,7 @@ namespace karlo {
       // Get IMEI number for initialization
       std::string imei = gps.getImei(connfd, buff, IMEI_BYTES);
       data.imei = imei;
+      memset(buff, 0, sizeof(buff));
 
       if (gps.getZeroBytes(connfd, buff, ZERO_BYTES) == "") return -1;
 
