@@ -136,7 +136,7 @@ namespace karlo {
 //            }
 //          }
           // Adding thread on each new connection
-          std::thread newClientThread(newClient, std::cref(client_socket[i]), std::ref(readfds), std::ref(address));
+          std::thread newClientThread(newClient, std::cref(new_socket), std::ref(readfds), std::ref(address));
           newClientThread.detach();
         }
       }
