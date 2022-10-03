@@ -3,9 +3,15 @@
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <vector>
+#include <mutex>
+#include <condition_variable>
+
 
 namespace karlo {
     namespace httpsRequest {
+
+        std::mutex m;
+        std::condition_variable cv;
 
         using json = nlohmann::json;
 
@@ -17,6 +23,9 @@ namespace karlo {
             httplib::Client cli(URL);
 
             std::string postUrl = "/api/tracking/last-location";
+
+            std::unique_lock<std::mutex> lk(m);
+            cv.wait(lk, []{return ready;});
 
             std::vector<json> postData = database::readData();
             for (json data : postData) {
@@ -32,7 +41,7 @@ namespace karlo {
 
                 auto res = cli.Post(postUrl, params);
 
-                std::cout << "res : " << res->body << std::endl << std::endl; 
+                std::cout << res->body << std::endl << std::endl; 
             }
 
         }

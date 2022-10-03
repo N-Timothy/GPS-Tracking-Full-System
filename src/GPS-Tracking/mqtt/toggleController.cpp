@@ -69,14 +69,12 @@ namespace karlo {
                     }
                 }
 
-                std::cout << "counter : " << counter << std::endl;
                 if (counter < 1){
                     std::cout << "Toggle switched off !" << std::endl;
                     threadActive = false;
                     break;
                 }
 
-                std::cout << " 10 sec timer " << std::endl;
                 std::cout << std::endl;
                 std::this_thread::sleep_for (std::chrono::seconds(REALTIME_INTERVAL));
             }

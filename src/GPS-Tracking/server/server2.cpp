@@ -17,9 +17,14 @@
 
 #include <sstream>
 #include <chrono>
+#include <mutex>
+#include <condition_variable>
 
 namespace karlo {
   namespace server {
+
+      std::mutex m;
+      std::condition_variable cv;
 
 class getData {
 private:
@@ -295,6 +300,10 @@ void func(int connfd) {
     memset(buff, 0, sizeof(buff));
 
     // send to database to be saved
+    //
+    std::unique_lock<std::mutex> lk(m);
+    cv.wait(lk, []{return ready;});
+
     database::createData(data);
 
     std::cout << "=== END OF DATA ===\n\n";

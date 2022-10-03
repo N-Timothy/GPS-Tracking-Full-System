@@ -3,9 +3,14 @@
 
 #include <iostream>
 #include <string>
+#include <mutex>
+#include <condition_variable>
 
 namespace karlo { 
     namespace mqtt {
+
+        std::mutex m;
+        std::condition_variable cv;
 
         using json = nlohmann::json;
 
@@ -25,6 +30,9 @@ namespace karlo {
 		        return -2;
 	        }
 	        std::cout << "We are now connected to the broker! " << std::endl;
+
+            std::unique_lock<std::mutex> lk(m);
+            cv.wait(lk, []{return ready;});
 
             json data = database::readData(imei);
             if (data.is_null()){

@@ -13,7 +13,7 @@ namespace karlo {
             std::string URL = "https://server-staging.karlo.id";
 
             // This timer is temporarly neccessary to prevent reading the database simuntaniously
-            std::this_thread::sleep_for (std::chrono::seconds(2));
+//            std::this_thread::sleep_for (std::chrono::seconds(2));
             
             // temporary, can be used or not
             post(URL);
