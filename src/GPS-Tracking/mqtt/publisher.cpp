@@ -3,18 +3,13 @@
 
 #include <iostream>
 #include <string>
-#include <mutex>
-#include <condition_variable>
 
 namespace karlo { 
     namespace mqtt {
 
-        std::mutex m;
-        std::condition_variable cv;
-
         using json = nlohmann::json;
 
-        int publisher(std::string imei) {
+        void publisher(std::string imei) {
 
 	        int rc;
 	        struct mosquitto * mosq;
@@ -27,17 +22,11 @@ namespace karlo {
 	        if(rc != 0){
                 std::cout << "Client could not connect to broker! Error Code: " << rc << std::endl;
 		        mosquitto_destroy(mosq);
-		        return -2;
+		        return;
 	        }
 	        std::cout << "We are now connected to the broker! " << std::endl;
 
-            std::unique_lock<std::mutex> lk(m);
-            cv.wait(lk, []{return ready;});
-
             json data = database::readData(imei);
-            if (data.is_null()){
-                return -1;
-            }
 
             json publishMessage;
             publishMessage["latitude"] = to_string(data["latitude"]);
@@ -55,8 +44,6 @@ namespace karlo {
 	        mosquitto_destroy(mosq);
 
 	        mosquitto_lib_cleanup();
-            
-            return 0;
         }
 
     } // namespace mqtt

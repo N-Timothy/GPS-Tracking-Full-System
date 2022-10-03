@@ -7,7 +7,7 @@
 namespace karlo {
     namespace mqtt {
 
-        int publisher(std::string imei);
+        void publisher(std::string imei);
 
     } // namespace mqtt
 } // namespace karlo
