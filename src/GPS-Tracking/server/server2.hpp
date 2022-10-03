@@ -25,7 +25,7 @@
 namespace karlo {
   namespace server {
     
-    void func(int connfd); 
+    int func(int connfd); 
 
   } // namespace server
 } // namespace karlo

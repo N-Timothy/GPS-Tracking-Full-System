@@ -23,23 +23,9 @@
 namespace karlo {
   namespace server {
 
-<<<<<<< HEAD
       std::mutex m;
       std::condition_variable cv;
 
-class getData {
-private:
-    int n = 0;
-    int number = 0;
-    int ACCEPT = 0x01; // 1 byte
-    int valread;
-    char buff[MAX];
-    std::string result;
-
-
-public:
-    std::string getBytes (int connfd, char* buff, int byteslen) {
-=======
     class getData {
     private:
       int n = 0;
@@ -52,7 +38,6 @@ public:
 
     public:
       std::string getBytes (int connfd, char* buff, int byteslen) {
->>>>>>> origin/optimized
         for (n = 0; n < byteslen; n++) {
           connectivity = recv(connfd, (char *) &number, 1, 0);
           if (connectivity == 0) break;
@@ -260,7 +245,7 @@ public:
 
       numOfData1 = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES), 0, 16);
 
-      for (n = 0; n < numOfData; n++) {
+      for (n = 0; n < numOfData1; n++) {
         hex = gps.getTimestamp(connfd, buff, TIMESTAMP_BYTES);
 
         data.createdAt = timestampToDate(hex);
@@ -308,23 +293,18 @@ public:
           gps.getValue(connfd, buff, 8);
         }
       }
-      numOfData2 = gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES);
+      numOfData2 = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES));
 
       gps.getCRC16(connfd, buff, 4);
 
       gps.sendConfirmation(connfd, numOfData2);
 
-<<<<<<< HEAD
     // send to database to be saved
     //
-    std::unique_lock<std::mutex> lk(m);
-    cv.wait(lk, []{return ready;});
+      std::unique_lock<std::mutex> lk(m);
+      cv.wait(lk, []{return ready;});
 
-    database::createData(data);
-=======
-      // send to database to be saved
       database::createData(data);
->>>>>>> origin/optimized
 
       std::cout << "=== END OF DATA ===\n\n";
 
