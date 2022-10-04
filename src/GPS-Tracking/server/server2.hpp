@@ -2,10 +2,6 @@
 #define _GPS_TRACKING_SERVER_SERVER2_HPP_
 
 #define MAX 32
-#define PORT 8080
-#define MAX_CLIENT 10
-#define MAX_PENDING_CONNECTION 3
-#define SA struct sockaddr
 
 #define IMEI_BYTES 17
 #define ZERO_BYTES 4
@@ -21,6 +17,8 @@
 #define SATELLITE_BYTES 1
 #define SPEED_BYTES 2
 
+#include "GPS-Tracking/server/read_imei_json.hpp"
+
 
 namespace karlo {
   namespace server {
@@ -30,4 +28,4 @@ namespace karlo {
   } // namespace server
 } // namespace karlo
 
-#endif _GPS_TRACKING_SERVER_SERVER2_HPP_
+#endif // _GPS_TRACKING_SERVER_SERVER2_HPP_

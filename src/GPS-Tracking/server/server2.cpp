@@ -54,19 +54,29 @@ namespace karlo {
         return result;
       }
       int imeiRecognition(std::string imei, std::vector<json> imei_list) {
-        for (int i = imei_list.begin(); i != imei_list.end(); i++) {
-          if (imei == *i) return 1;
+        std::string imei_sliced;
+
+        if (imei.substr(0, 4) != "000f") return -1;
+
+        for (unsigned i = 5; i < imei.length(); i += 2) {
+          imei_sliced += imei[i];
         }
-        return 0;
+        for (auto i = imei_list.begin(); i != imei_list.end(); i++) {
+          if (imei_sliced == *i) return 0;
+        }
+        return -2;
       }
-      void imeiConfirmation(int connfd, int recognized) {
-        if (recognized == 1) {
+      int imeiConfirmation(int connfd, int recognized) {
+        if (recognized == 0) {
           send(connfd, (char *) &ACCEPT, sizeof(ACCEPT), 0);
-          printf("IMEI Recognized! [1]");
+          printf("IMEI Recognized! [1]\n");
+          return 0;
         }
         else {
+          if (recognized == -1) return -1;
+          else return -2;
           send(connfd, (char *) &DECLINE, sizeof(DECLINE), 0);
-          printf("IMEI NOT Recognized! [0]");
+          printf("IMEI NOT Recognized! [0]\n");
         }
       }
       std::string getZeroBytes(int connfd, char* buff, int byteslen) {
@@ -244,13 +254,16 @@ namespace karlo {
       char buff[MAX];
       int n, i, numOfData1, numOfData2;
       int numOfOneByteID, numOfTwoBytesID, numOfFourBytesID, numOfEightBytesID;
+      int confirm;
       std::string hex;
+      std::string imei;
 
       GetData gps;
 
       // Get IMEI number for initialization
-      std::string imei = gps.getImei(connfd, buff, IMEI_BYTES);
-      gps.imeiConfirmation(connfd, gps.imeiRecognition(imei, imei_list));
+      imei = gps.getImei(connfd, buff, IMEI_BYTES);
+      confirm = gps.imeiConfirmation(connfd, gps.imeiRecognition(imei, imei_list));
+      if (confirm == -2) return -2;
       data.imei = imei;
       memset(buff, 0, sizeof(buff));
 
@@ -310,7 +323,7 @@ namespace karlo {
           gps.getValue(connfd, buff, 8);
         }
       }
-      numOfData2 = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES));
+      numOfData2 = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES), 0, 16);
 
       gps.getCRC16(connfd, buff, 4);
 

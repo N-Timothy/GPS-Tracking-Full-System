@@ -1,5 +1,4 @@
 #include "GPS-Tracking/server/tcp.hpp"
-#include "GPS-Tracking/server/database.hpp" // new
 #include "GPS-Tracking/server/server2.hpp"
 #include "GPS-Tracking/server/read_imei_json.hpp"
 
@@ -12,22 +11,27 @@
 
 #include <thread>
 
-#define TRUE 1
-#define FALSE 0
 #define PORT 8080
 #define MAX_CLIENT 10
-#define MAX 80
 #define MAX_PENDING_CONNECTION 3
 
 namespace karlo {
   namespace server {
 
+    std::vector<json> imei_list;
+    std::string IMEI_JSON_LOCATION = "/home/" + getUsername() + "/" + IMEI_JSON_FILENAME;
+
     void newClient(int client_socket, std::vector<json> imei_list, fd_set readfds, sockaddr_in address) {
+      int comm;
 
       std::cout << "New thread: " << client_socket << " initialized"<< std::endl;
 
-      if (communicate(client_socket, imei_list) == -1) {
-        std::cout << "Thread terminated due to error in socket reading\n";
+      comm = communicate(client_socket, imei_list);
+      if (comm == -1) {
+        std::cout << "\x1b[31mThread terminated due to error in socket reading\x1b[0m\n";
+      }
+      else if (comm == -2) {
+        imei_list = readImeiJson(IMEI_JSON_LOCATION);
       }
       close(client_socket);
 
@@ -39,14 +43,13 @@ namespace karlo {
       int opt = true;
       int master_socket, addrlen, new_socket, client_socket[MAX_CLIENT],
               activity, sd, max_sd;
-      int i;
 
       struct sockaddr_in address;
 
       fd_set readfds;
 
-      // Initialize reading IMEI JSON
-      std::vector<json> imei_list = readImeiJson();
+      // Read IMEI JSON an
+      imei_list = readImeiJson(IMEI_JSON_LOCATION);
 
       // Initialize all client socket to 0
       for (int i = 0; i < MAX_CLIENT; i++) {
@@ -93,9 +96,6 @@ namespace karlo {
         //add master socket to set
         FD_SET(master_socket, &readfds);
         max_sd = master_socket;
-
-        // master socket = 3
-        // std::cout << "master_socket = " << max_sd << std::endl; 
 
         // add child sockets to set
         for (int i = 0 ; i < MAX_CLIENT ; i++) {
