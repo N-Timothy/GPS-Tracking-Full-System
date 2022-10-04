@@ -14,6 +14,7 @@
 #include "GPS-Tracking/server/data.hpp"
 
 #include <nlohmann/json.hpp>
+#include <fstream> // new
 #include <vector>
 
 extern bool ready;

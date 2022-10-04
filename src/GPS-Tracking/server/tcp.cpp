@@ -1,5 +1,7 @@
 #include "GPS-Tracking/server/tcp.hpp"
+#include "GPS-Tracking/server/database.hpp" // new
 #include "GPS-Tracking/server/server2.hpp"
+#include "GPS-Tracking/server/read_imei_json.hpp"
 
 #include <cstring>
 #include <string>
@@ -20,14 +22,16 @@
 namespace karlo {
   namespace server {
 
-    void newClient(int client_socket, fd_set readfds, sockaddr_in address) {
+    void newClient(int client_socket, std::vector<json> imei_list, fd_set readfds, sockaddr_in address) {
 
-      std::cout << "New thread : " << client_socket << " initialized"<< std::endl;
+      std::cout << "New thread: " << client_socket << " initialized"<< std::endl;
 
-      if (func(client_socket) == -1) std::cout << "Thread terminated due to error in socket reading\n";
+      if (communicate(client_socket, imei_list) == -1) {
+        std::cout << "Thread terminated due to error in socket reading\n";
+      }
       close(client_socket);
 
-      std::cout << "Terminating thread : "  << client_socket << std::endl;
+      std::cout << "Terminating thread: "  << client_socket << std::endl;
     }
 
     void tcpServer () {
@@ -41,7 +45,10 @@ namespace karlo {
 
       fd_set readfds;
 
-      // initialise all client socket to 0
+      // Initialize reading IMEI JSON
+      std::vector<json> imei_list = readImeiJson();
+
+      // Initialize all client socket to 0
       for (int i = 0; i < MAX_CLIENT; i++) {
         client_socket[i] = 0;
       }
@@ -70,7 +77,7 @@ namespace karlo {
       std::cout << "Listener on port : " << PORT << std::endl;
 
       //specify maximum pending connection for the master socket
-      if(listen(master_socket, MAX_PENDING_CONNECTION) < 0) {
+      if (listen(master_socket, MAX_PENDING_CONNECTION) < 0) {
         perror("listen");
         exit(EXIT_FAILURE);
       }
@@ -79,7 +86,7 @@ namespace karlo {
       addrlen = sizeof(address);
       puts("Waiting for connection ...");
 
-      for(;;) {
+      for (;;) {
         //clear the socket set
         FD_ZERO(&readfds);
 
@@ -96,12 +103,12 @@ namespace karlo {
           sd = client_socket[i];
 
           // if valid socket descriptor then add to read list
-          if(sd > 0) {
+          if (sd > 0) {
             FD_SET(sd , &readfds);
           }
 
           // highest file descriptor number, need it for the select function
-          if(sd > max_sd) {
+          if (sd > max_sd) {
             max_sd = sd;
           }
         }
@@ -121,22 +128,12 @@ namespace karlo {
             exit(EXIT_FAILURE);
           }
 
-          // inform user of socket number - used in send and receive commands
-          std::cout << "New connection established, socket : " << new_socket << " Ip : "
-                    << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << std::endl;
+          // inform server of socket number used in send and receive commands
+          std::cout << "New connection established! socket : " << new_socket << ", IP : "
+                    << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
 
-          // Add new socket to array of sockets
-//          for (i = 0; i < MAX_CLIENT; i++) {
-//            // Check if position is empty
-//            if(client_socket[i] == 0 ) {
-//              client_socket[i] = new_socket;
-//              std::cout << "Adding socket : " << new_socket << " to list of sockets in position : " << i << std::endl;
-//
-//              break;
-//            }
-//          }
           // Adding thread on each new connection
-          std::thread newClientThread(newClient, std::cref(new_socket), std::ref(readfds), std::ref(address));
+          std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list), std::ref(readfds), std::ref(address));
           newClientThread.detach();
         }
       }

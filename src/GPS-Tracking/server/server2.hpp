@@ -25,7 +25,7 @@
 namespace karlo {
   namespace server {
     
-    int func(int connfd); 
+    int communicate(int connfd, std::vector<json> imei_list);
 
   } // namespace server
 } // namespace karlo

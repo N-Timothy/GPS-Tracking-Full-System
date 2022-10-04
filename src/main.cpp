@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[]){
 
-  // karlo::server::tcpServer();
-    karlo::core::multiThread();
+  karlo::server::tcpServer();
+//    karlo::core::multiThread();
   return 0;
 }
