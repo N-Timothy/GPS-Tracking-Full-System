@@ -14,7 +14,10 @@ namespace karlo {
                 std::cout << "Error with result code: " << rc << std::endl;
 		        exit(-1);
 	        }
-	        mosquitto_subscribe(mosq, NULL, MQTT_SUB_TOPIC, 0);
+
+            std::string sub_topic = config["sub_topic"];
+
+	        mosquitto_subscribe(mosq, NULL, sub_topic.c_str(), 0);
         }
 
         void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg) {
@@ -34,8 +37,10 @@ namespace karlo {
 	        mosq = mosquitto_new("Karlo-tracker-MQTT-Subscriber" , true, &id);
 	        mosquitto_connect_callback_set(mosq, on_connect);
 	        mosquitto_message_callback_set(mosq, on_message);
+
+            std::string host = config["host"];
 	
-        	rc = mosquitto_connect(mosq, MQTT_HOST, MQTT_PORT, 10);
+        	rc = mosquitto_connect(mosq, host.c_str(), config["port"], 10);
         	if(rc) {
                 std::cout << "Could not connect to Broker with return code " << rc << std::endl;
 		        return ;
