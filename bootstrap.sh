@@ -1,4 +1,6 @@
 #!/bin/bash
+echo "---- updating submodule ----"
+git submodule update --init
 
 echo "---- making build directory ----"
 mkdir build
