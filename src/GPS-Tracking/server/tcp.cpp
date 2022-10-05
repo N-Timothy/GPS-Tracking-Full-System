@@ -7,18 +7,18 @@
 #include <errno.h>
 #include <iostream>
 #include <unistd.h>
-
 #include <thread>
-
-#define TRUE 1
-#define FALSE 0
-#define PORT 8080
-#define MAX_CLIENT 10
-#define MAX 80
-#define MAX_PENDING_CONNECTION 3
 
 namespace karlo {
   namespace server {
+
+    using json = nlohmann::json;
+
+    json config;
+
+    void setTcpConfig(json setTcpConfig){
+        config = setTcpConfig;
+    }
 
     void newClient(int client_socket, fd_set readfds, sockaddr_in address) {
 
@@ -33,7 +33,7 @@ namespace karlo {
     void tcpServer () {
 
       int opt = true;
-      int master_socket, addrlen, new_socket, client_socket[MAX_CLIENT],
+      int master_socket, addrlen, new_socket, client_socket[(int)config["max_client"]],
               activity, sd, max_sd;
       int i;
 
@@ -42,7 +42,7 @@ namespace karlo {
       fd_set readfds;
 
       // initialise all client socket to 0
-      for (int i = 0; i < MAX_CLIENT; i++) {
+      for (int i = 0; i < config["max_client"]; i++) {
         client_socket[i] = 0;
       }
 
@@ -60,14 +60,14 @@ namespace karlo {
 
       address.sin_family = AF_INET;
       address.sin_addr.s_addr = INADDR_ANY;
-      address.sin_port = htons(PORT);
+      address.sin_port = htons(config["port"]);
 
       // bind the socket into port
       if (bind(master_socket, (struct sockaddr *)&address, sizeof(address)) < 0) {
         perror("bind failed");
         exit(EXIT_FAILURE);
       }
-      std::cout << "Listener on port : " << PORT << std::endl;
+      std::cout << "Listener on port : " << config["port"] << std::endl;
 
       //specify maximum pending connection for the master socket
       if(listen(master_socket, MAX_PENDING_CONNECTION) < 0) {
@@ -91,7 +91,7 @@ namespace karlo {
         // std::cout << "master_socket = " << max_sd << std::endl; 
 
         // add child sockets to set
-        for (int i = 0 ; i < MAX_CLIENT ; i++) {
+        for (int i = 0 ; i < config["max_client"] ; i++) {
           // socket descriptor
           sd = client_socket[i];
 
@@ -125,16 +125,6 @@ namespace karlo {
           std::cout << "New connection established, socket : " << new_socket << " Ip : "
                     << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << std::endl;
 
-          // Add new socket to array of sockets
-//          for (i = 0; i < MAX_CLIENT; i++) {
-//            // Check if position is empty
-//            if(client_socket[i] == 0 ) {
-//              client_socket[i] = new_socket;
-//              std::cout << "Adding socket : " << new_socket << " to list of sockets in position : " << i << std::endl;
-//
-//              break;
-//            }
-//          }
           // Adding thread on each new connection
           std::thread newClientThread(newClient, std::cref(new_socket), std::ref(readfds), std::ref(address));
           newClientThread.detach();

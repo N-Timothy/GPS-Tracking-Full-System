@@ -1,5 +1,5 @@
 add_library(GPS-Tracking-mqtt
-            connection.hpp
+            connection.cpp
             publisher.cpp
             toggleController.cpp
             subscriber.cpp)

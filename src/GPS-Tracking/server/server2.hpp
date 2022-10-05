@@ -2,8 +2,6 @@
 #define _GPS_TRACKING_SERVER_SERVER2_HPP_
 
 #define MAX 32
-#define PORT 8080
-#define MAX_CLIENT 10
 #define MAX_PENDING_CONNECTION 3
 #define SA struct sockaddr
 
