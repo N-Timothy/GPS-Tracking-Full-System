@@ -1,7 +1,5 @@
 add_library(GPS-Tracking-core
-            multiThread.cpp
-            config.cpp )
-
+            multiThread.cpp)
 
 target_link_libraries(GPS-Tracking-core PRIVATE
                       GPS-Tracking-server

@@ -1,5 +1,4 @@
 #include "GPS-Tracking/core/multiThread.hpp"
-#include "GPS-Tracking/core/config.hpp"
 
 #include "GPS-Tracking/server/tcp.hpp"
 #include "GPS-Tracking/httpsRequest/httpsRequest.hpp"
@@ -11,10 +10,10 @@ namespace karlo {
     namespace core {
 
         void multiThread() {
+            
+            //server::tcpServer
 
-            config::config();
-
-            std::thread httpsRequestThread(httpsRequest::connect);
+            std::thread httpsRequestThread(httpsRequest::connect,INTERVAL );
             std::thread mqttSubscriberThread(mqtt::subscriber);
             std::thread tcpServerThread(server::tcpServer);
 

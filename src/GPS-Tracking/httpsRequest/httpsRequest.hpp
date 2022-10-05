@@ -10,17 +10,10 @@
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 #include "httplib.h"
 
-#include <nlohmann/json.hpp>
-
-
 namespace karlo {
     namespace httpsRequest {
-        
-        using json = nlohmann::json;
 
-        void setHttpsConfig(json httpsConfig);
-
-        void connect();
+        void connect(int timeInterval);
     
     } // namespace httpRequest
 } // namespace karlo

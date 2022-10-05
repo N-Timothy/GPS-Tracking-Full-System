@@ -9,10 +9,8 @@
 #include <string>
 namespace karlo {
     namespace httpsRequest {
-        
-        using json = nlohmann::json;
 
-        void post(std::string URL, json config);
+        void post(std::string URL);
 
     } // namespace httpRequest
 } // namespace karlo
