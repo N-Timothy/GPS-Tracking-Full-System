@@ -41,3 +41,6 @@ build/*
 *.swp
 *.swo
 *.user
+
+# config
+.config/*

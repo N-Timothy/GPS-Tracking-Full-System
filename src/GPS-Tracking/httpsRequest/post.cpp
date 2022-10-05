@@ -15,14 +15,14 @@ namespace karlo {
 
         using json = nlohmann::json;
 
-        void post(std::string URL) {
+        void post(std::string URL, json config) {
 
             std::string imei = "5f105ae8a629de65677a0ce7"; //Temporarily using driver id
-            std::string staticToken = "";
+            std::string staticToken = config["token"];
 
             httplib::Client cli(URL);
 
-            std::string postUrl = "/api/tracking/last-location";
+            std::string postUrl = config["api"];
 
             std::unique_lock<std::mutex> lk(m);
             cv.wait(lk, []{return ready;});
@@ -31,7 +31,7 @@ namespace karlo {
 
             for (json data : postData) {
 
-                httplib::Params params;
+              httplib::Params params;
                     params.emplace("latitude", to_string(data["latitude"]));
                     params.emplace("longitude", to_string(data["longitude"]));
                     params.emplace("altitude", to_string(data["altitude"]));
@@ -42,7 +42,9 @@ namespace karlo {
 
                 auto res = cli.Post(postUrl, params);
 
-                std::cout << res->body << std::endl << std::endl; 
+                if (res) {
+                    std::cout << res->body << std::endl;
+                }
             }
 
         }

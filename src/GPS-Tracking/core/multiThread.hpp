@@ -1,8 +1,6 @@
 #ifndef _GPS_TRACKING_CORE_MULTITHREAD_HPP_
 #define _GPS_TRACKING_CORE_MULTITHREAD_HPP_
 
-#define INTERVAL 30000 // 5 minute in milliseconds
-
 namespace karlo {
     namespace core {
 

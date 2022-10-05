@@ -13,7 +13,6 @@ namespace karlo {
         std::condition_variable cv;
 
         using json = nlohmann::json;
-
         int publisher(std::string imei) {
 
 	        int rc;
@@ -23,7 +22,9 @@ namespace karlo {
 
 	        mosq = mosquitto_new("Karlo-tracker-MQTT-Publisher", true, NULL);
 
-	        rc = mosquitto_connect(mosq, "localhost", 1883, 60);
+            std::string host = config["host"];
+
+	        rc = mosquitto_connect(mosq, host.c_str(), config["port"], 60);
 	        if(rc != 0){
                 std::cout << "Client could not connect to broker! Error Code: " << rc << std::endl;
 		        mosquitto_destroy(mosq);
@@ -49,7 +50,9 @@ namespace karlo {
 
             std::cout << "msg : " << publishMessage << std::endl;
 
-	        mosquitto_publish(mosq, NULL, MQTT_PUB_TOPIC, 250 ,publishMessage.dump().c_str(), 0, false);
+            std::string pub_topic = config["pub_topic"];
+
+	        mosquitto_publish(mosq, NULL, pub_topic.c_str(), 250 ,publishMessage.dump().c_str(), 0, false);
 
 	        mosquitto_disconnect(mosq);
 	        mosquitto_destroy(mosq);
