@@ -1,5 +1,6 @@
 #include "GPS-Tracking/server/tcp.hpp"
 #include "GPS-Tracking/server/server2.hpp"
+#include "GPS-Tracking/server/read_imei_json.hpp"
 
 #include <cstring>
 #include <string>
@@ -9,25 +10,42 @@
 #include <unistd.h>
 #include <thread>
 
+#define PORT 8080
+#define MAX_CLIENT 10
+#define MAX_PENDING_CONNECTION 3
+
 namespace karlo {
   namespace server {
+
+    std::vector<json> imei_list;
+    std::string IMEI_JSON_LOCATION = "/home/" + getUsername() + "/" + IMEI_JSON_FILENAME;
 
     using json = nlohmann::json;
 
     json config;
-
+    
     void setTcpConfig(json setTcpConfig){
         config = setTcpConfig;
     }
 
-    void newClient(int client_socket, fd_set readfds, sockaddr_in address) {
+    void newClient(int client_socket, std::vector<json> imei_list, fd_set readfds, sockaddr_in address) {
+      int comm;
 
-      std::cout << "New thread : " << client_socket << " initialized"<< std::endl;
+      std::cout << "New thread: " << client_socket << " initialized"<< std::endl;
 
-      if (func(client_socket) == -1) std::cout << "Thread terminated due to error in socket reading\n";
+      comm = communicate(client_socket, imei_list);
+      if (comm == -1) {
+        std::cout << "\x1b[31mIMEI is not recognized!\x1b[0m\n";
+      }
+      else if (comm == -2) {
+        imei_list = readImeiJson(IMEI_JSON_LOCATION);
+      }
+      else if (comm == -3) {
+        std::cout << "\x1b[31mThread terminated: Error in socket reading\x1b[0m\n";
+      }
       close(client_socket);
 
-      std::cout << "Terminating thread : "  << client_socket << std::endl;
+      std::cout << "Terminating thread: "  << client_socket << std::endl;
     }
 
     void tcpServer () {
@@ -35,11 +53,13 @@ namespace karlo {
       int opt = true;
       int master_socket, addrlen, new_socket, client_socket[(int)config["max_client"]],
               activity, sd, max_sd;
-      int i;
 
       struct sockaddr_in address;
 
       fd_set readfds;
+
+      // Read IMEI JSON an
+      imei_list = readImeiJson(IMEI_JSON_LOCATION);
 
       // initialise all client socket to 0
       for (int i = 0; i < config["max_client"]; i++) {
@@ -70,7 +90,7 @@ namespace karlo {
       std::cout << "Listener on port : " << config["port"] << std::endl;
 
       //specify maximum pending connection for the master socket
-      if(listen(master_socket, MAX_PENDING_CONNECTION) < 0) {
+      if (listen(master_socket, MAX_PENDING_CONNECTION) < 0) {
         perror("listen");
         exit(EXIT_FAILURE);
       }
@@ -79,7 +99,7 @@ namespace karlo {
       addrlen = sizeof(address);
       puts("Waiting for connection ...");
 
-      for(;;) {
+      for (;;) {
         //clear the socket set
         FD_ZERO(&readfds);
 
@@ -87,21 +107,18 @@ namespace karlo {
         FD_SET(master_socket, &readfds);
         max_sd = master_socket;
 
-        // master socket = 3
-        // std::cout << "master_socket = " << max_sd << std::endl; 
-
         // add child sockets to set
         for (int i = 0 ; i < config["max_client"] ; i++) {
           // socket descriptor
           sd = client_socket[i];
 
           // if valid socket descriptor then add to read list
-          if(sd > 0) {
+          if (sd > 0) {
             FD_SET(sd , &readfds);
           }
 
           // highest file descriptor number, need it for the select function
-          if(sd > max_sd) {
+          if (sd > max_sd) {
             max_sd = sd;
           }
         }
@@ -121,12 +138,12 @@ namespace karlo {
             exit(EXIT_FAILURE);
           }
 
-          // inform user of socket number - used in send and receive commands
-          std::cout << "New connection established, socket : " << new_socket << " Ip : "
-                    << inet_ntoa(address.sin_addr) << " Port : " << ntohs(address.sin_port) << std::endl;
+          // inform server of socket number used in send and receive commands
+          std::cout << "New connection established! socket : " << new_socket << ", IP : "
+                    << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
 
           // Adding thread on each new connection
-          std::thread newClientThread(newClient, std::cref(new_socket), std::ref(readfds), std::ref(address));
+          std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list), std::ref(readfds), std::ref(address));
           newClientThread.detach();
         }
       }

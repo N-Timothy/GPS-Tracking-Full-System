@@ -23,14 +23,15 @@
 namespace karlo {
   namespace server {
 
-      std::mutex m;
-      std::condition_variable cv;
+    std::mutex m;
+    std::condition_variable cv;
 
-    class getData {
+    class GetData {
     private:
       int n = 0;
       int number = 0;
-      int ACCEPT = 0x01; // 1 byte
+      int ACCEPT = 0x01;
+      int DECLINE = 0x00;
       int connectivity;
       char buff[MAX];
       std::string result;
@@ -50,9 +51,33 @@ namespace karlo {
       std::string getImei(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
         std::cout << "IMEI\t\t\t: " << result << std::endl;
-        send(connfd, (char*) &ACCEPT, sizeof(ACCEPT), 0);
-        printf("Request confirmation: %x\n\n", ACCEPT);
         return result;
+      }
+      int imeiRecognition(std::string imei, std::vector<json> imei_list) {
+        std::string imei_sliced;
+
+        if (imei.substr(0, 4) != "000f") return -1;
+
+        for (unsigned i = 5; i < imei.length(); i += 2) {
+          imei_sliced += imei[i];
+        }
+        for (auto i = imei_list.begin(); i != imei_list.end(); i++) {
+          if (imei_sliced == *i) return 0;
+        }
+        return -2;
+      }
+      int imeiConfirmation(int connfd, int recognized) {
+        if (recognized == 0) {
+          send(connfd, (char *) &ACCEPT, sizeof(ACCEPT), 0);
+          printf("IMEI Recognized! [1]\n");
+          return 0;
+        }
+        else {
+          send(connfd, (char *) &DECLINE, sizeof(DECLINE), 0);
+          printf("IMEI NOT Recognized! [0]\n");
+          if (recognized == -1) return -1;
+          else return -2;
+        }
       }
       std::string getZeroBytes(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
@@ -221,7 +246,7 @@ namespace karlo {
     }
 
 // Function designed for chat between client and server.
-    int func(int connfd) {
+    int communicate(int connfd, std::vector<json> imei_list) {
 
       // init struct data
       trackingData data;
@@ -229,16 +254,21 @@ namespace karlo {
       char buff[MAX];
       int n, i, numOfData1, numOfData2;
       int numOfOneByteID, numOfTwoBytesID, numOfFourBytesID, numOfEightBytesID;
+      int confirm;
       std::string hex;
+      std::string imei;
 
-      getData gps;
+      GetData gps;
 
       // Get IMEI number for initialization
-      std::string imei = gps.getImei(connfd, buff, IMEI_BYTES);
+      imei = gps.getImei(connfd, buff, IMEI_BYTES);
+      confirm = gps.imeiConfirmation(connfd, gps.imeiRecognition(imei, imei_list));
+      if (confirm == -1) return -1;
+      else if (confirm == -2) return -2;
       data.imei = imei;
       memset(buff, 0, sizeof(buff));
 
-      if (gps.getZeroBytes(connfd, buff, ZERO_BYTES) == "") return -1;
+      if (gps.getZeroBytes(connfd, buff, ZERO_BYTES) == "") return -3;
 
       gps.getDataFieldLength(connfd, buff, DATA_FIELD_BYTES);
 
@@ -294,27 +324,22 @@ namespace karlo {
           gps.getValue(connfd, buff, 8);
         }
       }
-      numOfData2 = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES));
+      numOfData2 = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES), 0, 16);
 
       gps.getCRC16(connfd, buff, 4);
 
       gps.sendConfirmation(connfd, numOfData2);
 
-    // send to database to be saved
-    //
+      // send to database to be saved
       std::unique_lock<std::mutex> lk(m);
       cv.wait(lk, []{return ready;});
 
       database::createData(data);
 
-      std::cout << "=== END OF DATA ===\n\n";
+      std::cout << "===================\n\n";
 
       return 0;
     }
 
   } // namespace server
 } //namespace karlo
-
-
-
-// Driver function
