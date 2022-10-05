@@ -15,7 +15,6 @@ else
 fi
 
 echo "---- Building ----"
-
 if ! command -v ninja &> /dev/null; then
    make
 else
