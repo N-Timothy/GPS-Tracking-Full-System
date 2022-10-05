@@ -73,10 +73,10 @@ namespace karlo {
           return 0;
         }
         else {
-          if (recognized == -1) return -1;
-          else return -2;
           send(connfd, (char *) &DECLINE, sizeof(DECLINE), 0);
           printf("IMEI NOT Recognized! [0]\n");
+          if (recognized == -1) return -1;
+          else return -2;
         }
       }
       std::string getZeroBytes(int connfd, char* buff, int byteslen) {
