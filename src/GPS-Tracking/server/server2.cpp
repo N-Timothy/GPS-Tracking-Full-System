@@ -61,7 +61,7 @@ namespace karlo {
         return imei_sliced;
       }
       int imeiRecognition(std::string imei, std::vector<json> imei_list) {
-        std:string imei_sliced = slice_imei(imei);
+        std::string imei_sliced = slice_imei(imei);
 
         if (imei.substr(0, 4) != "000f") return -1;
 
