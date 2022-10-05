@@ -53,14 +53,18 @@ namespace karlo {
         std::cout << "IMEI\t\t\t: " << result << std::endl;
         return result;
       }
-      int imeiRecognition(std::string imei, std::vector<json> imei_list) {
+      std::string slice_imei(std::string imei_raw) {
         std::string imei_sliced;
+        for (unsigned i = 5; i < imei_raw.length(); i += 2) {
+          imei_sliced += imei_raw[i];
+        }
+        return imei_sliced;
+      }
+      int imeiRecognition(std::string imei, std::vector<json> imei_list) {
+        std:string imei_sliced = slice_imei(imei);
 
         if (imei.substr(0, 4) != "000f") return -1;
 
-        for (unsigned i = 5; i < imei.length(); i += 2) {
-          imei_sliced += imei[i];
-        }
         for (auto i = imei_list.begin(); i != imei_list.end(); i++) {
           if (imei_sliced == *i) return 0;
         }
@@ -256,16 +260,16 @@ namespace karlo {
       int numOfOneByteID, numOfTwoBytesID, numOfFourBytesID, numOfEightBytesID;
       int confirm;
       std::string hex;
-      std::string imei;
+      std::string imei_raw;
 
       GetData gps;
 
       // Get IMEI number for initialization
-      imei = gps.getImei(connfd, buff, IMEI_BYTES);
-      confirm = gps.imeiConfirmation(connfd, gps.imeiRecognition(imei, imei_list));
+      imei_raw = gps.getImei(connfd, buff, IMEI_BYTES);
+      confirm = gps.imeiConfirmation(connfd, gps.imeiRecognition(imei_raw, imei_list));
       if (confirm == -1) return -1;
       else if (confirm == -2) return -2;
-      data.imei = imei;
+      data.imei = gps.slice_imei(imei_raw);
       memset(buff, 0, sizeof(buff));
 
       if (gps.getZeroBytes(connfd, buff, ZERO_BYTES) == "") return -3;

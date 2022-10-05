@@ -30,15 +30,9 @@ namespace karlo {
     using bsoncxx::builder::stream::open_array;
     using bsoncxx::builder::stream::open_document;
 
-    void setDatabaseConfig(json databaseConfig);
-
     void createData(trackingData data);
-
     json readData(std::string imei);
-
     std::vector<json> readData();
-
-
   } // namespace database
 } // namespace karlo
 

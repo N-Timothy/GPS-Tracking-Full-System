@@ -1,17 +1,9 @@
 #include "GPS-Tracking/database/database.hpp"
 #include "GPS-Tracking/database/create.hpp"
 #include "GPS-Tracking/database/read.hpp"
-#include "GPS-Tracking/core/config.hpp"
 
 #include <iostream>
 #include <condition_variable>
-
-#include <pwd.h>
-#include <fstream>
-#include <sys/types.h>
-#include <string>
-#include <iostream>
-#include <unistd.h>
 
 
 bool ready = true;
@@ -21,45 +13,14 @@ namespace karlo {
 
     std::condition_variable cv;
 
-    json config;
-
-    // this is a temporary solution
-    std::string getURI() {
-
-        json data;
-        uid_t userid;
-        struct passwd* pwd;
-        userid = getuid();
-        pwd = getpwuid(userid);
-                
-        std::string config = "/home/" + (std::string)pwd->pw_name + "/.config/tracker/config.json";
-                
-        std::ifstream ifs(config);
-        if(ifs){
-            data = json::parse(ifs);
-        } 
-        return data["database"]["uri"];
-    }
-
-    std::string URI = getURI();
-
     // Connecting to database
     mongocxx::instance instance{};
-    mongocxx::uri uri(URI);
+    mongocxx::uri uri("mongodb://localhost:27017");
     mongocxx::client client(uri);
-    mongocxx::database db;    
-    mongocxx::collection collection;
-
-    void setDatabaseConfig(json databaseConfig){
-        config = databaseConfig;
-        db = client[(std::string) config["table"]];
-        collection = db[(std::string) config["collection"]];
-    }
-
+    mongocxx::database db = client["tracking-data"];
+    mongocxx::collection collection = db["tracking"];
 
     void createData(trackingData data) {
-
-
       ready = false;
 
       std::cout << "creating" << std::endl;
@@ -73,7 +34,6 @@ namespace karlo {
     }
 
     json readData(std::string imei) {
-
       ready = false;
       
       std::cout << "read One" << std::endl;
@@ -89,7 +49,6 @@ namespace karlo {
     }
 
     std::vector<json> readData() {
-
       ready = false;
 
       std::cout << "read ALL" << std::endl;

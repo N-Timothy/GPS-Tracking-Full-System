@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <iostream>
 #include <unistd.h>
+
 #include <thread>
 
 #define PORT 8080
@@ -19,14 +20,6 @@ namespace karlo {
 
     std::vector<json> imei_list;
     std::string IMEI_JSON_LOCATION = "/home/" + getUsername() + "/" + IMEI_JSON_FILENAME;
-
-    using json = nlohmann::json;
-
-    json config;
-    
-    void setTcpConfig(json setTcpConfig){
-        config = setTcpConfig;
-    }
 
     void newClient(int client_socket, std::vector<json> imei_list, fd_set readfds, sockaddr_in address) {
       int comm;
@@ -51,7 +44,7 @@ namespace karlo {
     void tcpServer () {
 
       int opt = true;
-      int master_socket, addrlen, new_socket, client_socket[(int)config["max_client"]],
+      int master_socket, addrlen, new_socket, client_socket[MAX_CLIENT],
               activity, sd, max_sd;
 
       struct sockaddr_in address;
@@ -61,8 +54,8 @@ namespace karlo {
       // Read IMEI JSON an
       imei_list = readImeiJson(IMEI_JSON_LOCATION);
 
-      // initialise all client socket to 0
-      for (int i = 0; i < config["max_client"]; i++) {
+      // Initialize all client socket to 0
+      for (int i = 0; i < MAX_CLIENT; i++) {
         client_socket[i] = 0;
       }
 
@@ -80,14 +73,14 @@ namespace karlo {
 
       address.sin_family = AF_INET;
       address.sin_addr.s_addr = INADDR_ANY;
-      address.sin_port = htons(config["port"]);
+      address.sin_port = htons(PORT);
 
       // bind the socket into port
       if (bind(master_socket, (struct sockaddr *)&address, sizeof(address)) < 0) {
         perror("bind failed");
         exit(EXIT_FAILURE);
       }
-      std::cout << "Listener on port : " << config["port"] << std::endl;
+      std::cout << "Listener on port : " << PORT << std::endl;
 
       //specify maximum pending connection for the master socket
       if (listen(master_socket, MAX_PENDING_CONNECTION) < 0) {
@@ -108,7 +101,7 @@ namespace karlo {
         max_sd = master_socket;
 
         // add child sockets to set
-        for (int i = 0 ; i < config["max_client"] ; i++) {
+        for (int i = 0 ; i < MAX_CLIENT ; i++) {
           // socket descriptor
           sd = client_socket[i];
 
