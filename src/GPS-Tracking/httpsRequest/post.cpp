@@ -21,6 +21,8 @@ namespace karlo {
             std::string staticToken = config["token"];
 
             httplib::Client cli(URL);
+            
+            cli.set_default_headers({ { "Authorization", staticToken } });
 
             std::string postUrl = config["api"];
 
@@ -39,7 +41,6 @@ namespace karlo {
                     params.emplace("bearing", "100");
                     params.emplace("driver", imei);
                     //params.emplace("driver", to_string(data["imei"]));
-
                 auto res = cli.Post(postUrl, params);
 
                 if (res) {
