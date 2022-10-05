@@ -28,10 +28,13 @@ namespace karlo {
 
       comm = communicate(client_socket, imei_list);
       if (comm == -1) {
-        std::cout << "\x1b[31mThread terminated due to error in socket reading\x1b[0m\n";
+        std::cout << "\x1b[31mIMEI is not recognized!\x1b[0m\n";
       }
       else if (comm == -2) {
         imei_list = readImeiJson(IMEI_JSON_LOCATION);
+      }
+      else if (comm == -3) {
+        std::cout << "\x1b[31mThread terminated: Error in socket reading\x1b[0m\n";
       }
       close(client_socket);
 

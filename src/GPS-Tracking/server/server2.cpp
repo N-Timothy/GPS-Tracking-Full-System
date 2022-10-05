@@ -263,11 +263,12 @@ namespace karlo {
       // Get IMEI number for initialization
       imei = gps.getImei(connfd, buff, IMEI_BYTES);
       confirm = gps.imeiConfirmation(connfd, gps.imeiRecognition(imei, imei_list));
-      if (confirm == -2) return -2;
+      if (confirm == -1) return -1;
+      else if (confirm == -2) return -2;
       data.imei = imei;
       memset(buff, 0, sizeof(buff));
 
-      if (gps.getZeroBytes(connfd, buff, ZERO_BYTES) == "") return -1;
+      if (gps.getZeroBytes(connfd, buff, ZERO_BYTES) == "") return -3;
 
       gps.getDataFieldLength(connfd, buff, DATA_FIELD_BYTES);
 
@@ -335,7 +336,7 @@ namespace karlo {
 
       database::createData(data);
 
-      std::cout << "=== END OF DATA ===\n\n";
+      std::cout << "===================\n\n";
 
       return 0;
     }
