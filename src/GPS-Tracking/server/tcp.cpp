@@ -27,6 +27,7 @@ namespace karlo {
     std::vector<int> threads;
 
     using json = nlohmann::json;
+    using namespace std::chrono_literals;
 
     json config;
 
@@ -132,11 +133,6 @@ namespace karlo {
         for (int i = 0 ; i < config["max_client"] ; i++) {
           // socket descriptor
           sd = client_socket[i];
-
-          std::cout << " client socket [ ";
-          for (int i = 0; i < sizeof(client_socket); i++){
-            std::cout << client_socket[i] << " "; 
-          } std::cout << " ] " << std::endl;
 
           // if valid socket descriptor then add to read list
           if (sd > 0) {
