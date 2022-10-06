@@ -60,7 +60,7 @@ namespace karlo {
     void createData(trackingData data) {
 
 
-      ready = false;
+   //   ready = false;
 
       std::cout << "creating" << std::endl;
 
@@ -68,8 +68,8 @@ namespace karlo {
 
       std::cout << "done creating" << std::endl;
 
-      ready = true;
-      cv.notify_one();
+//      ready = true;
+ //     cv.notify_one();
     }
 
     json readData(std::string imei) {

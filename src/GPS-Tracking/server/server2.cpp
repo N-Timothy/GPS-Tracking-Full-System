@@ -335,8 +335,9 @@ namespace karlo {
       gps.sendConfirmation(connfd, numOfData2);
 
       // send to database to be saved
-      std::unique_lock<std::mutex> lk(m);
-      cv.wait(lk, []{return ready;});
+      
+      //std::unique_lock<std::mutex> lk(m);
+      //cv.wait(lk, []{return ready;});
 
       database::createData(data);
 
