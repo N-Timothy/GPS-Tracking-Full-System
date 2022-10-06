@@ -237,8 +237,10 @@ namespace karlo {
       int number = 0;
       try { 
           number += std::stoi(bin, 0, 2);
-      } catch (std::invalid_argument& e) {
+      } catch (const std::out_of_range& oor) {
+          std::cout << "catching out of range " << std::endl;
           return -3;
+          
       }
       return number;
     }
@@ -283,8 +285,10 @@ namespace karlo {
 
       try { 
         numOfData1 = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES), 0, 16);
-      } catch (std::invalid_argument& e) {
+      } catch (const std::out_of_range& oor) {
+          std::cout << "catching out of range " << std::endl;
           return -3;
+          
       }
 
       for (n = 0; n < numOfData1; n++) {
@@ -310,8 +314,10 @@ namespace karlo {
 
       try { 
         data.speed = std::stoi(gps.getSpeed(connfd, buff, SPEED_BYTES), 0, 16);
-      } catch (std::invalid_argument& e) {
+      } catch (const std::out_of_range& oor) {
+          std::cout << "catching out of range " << std::endl;
           return -3;
+          
       }
         std::cout << " (" << data.speed << ")" << std::endl;
 
@@ -320,8 +326,10 @@ namespace karlo {
 
       try { 
         numOfOneByteID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
-      } catch (std::invalid_argument& e) {
+      } catch (const std::out_of_range& oor) {
+          std::cout << "catching out of range " << std::endl;
           return -3;
+          
       }
         for (i = 0; i < numOfOneByteID; i++) {
           gps.getID(connfd, buff, 1);
@@ -329,8 +337,10 @@ namespace karlo {
         }
       try { 
         numOfTwoBytesID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
-      } catch (std::invalid_argument& e) {
+      } catch (const std::out_of_range& oor) {
+          std::cout << "catching out of range " << std::endl;
           return -3;
+          
       }
         for (i = 0; i < numOfTwoBytesID; i++) {
           gps.getID(connfd, buff, 1);
@@ -338,8 +348,10 @@ namespace karlo {
         }
       try { 
         numOfFourBytesID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
-      } catch (std::invalid_argument& e) {
+      } catch (const std::out_of_range& oor) {
+          std::cout << "catching out of range " << std::endl;
           return -3;
+          
       }
         for (i = 0; i < numOfFourBytesID; i++) {
           gps.getID(connfd, buff, 1);
@@ -347,8 +359,10 @@ namespace karlo {
         }
       try { 
         numOfEightBytesID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
-      } catch (std::invalid_argument& e) {
+      } catch (const std::out_of_range& oor) {
+          std::cout << "catching out of range " << std::endl;
           return -3;
+          
       }
         for (i = 0; i < numOfEightBytesID; i++) {
           gps.getID(connfd, buff, 1);
@@ -357,7 +371,8 @@ namespace karlo {
       }
       try { 
         numOfData2 = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES), 0, 16);
-      } catch (std::invalid_argument& e) {
+      } catch (const std::out_of_range& oor) {
+          std::cout << "catching out of range " << std::endl;
           return -3;
       }
 
