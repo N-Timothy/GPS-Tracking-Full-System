@@ -9,10 +9,9 @@
 #include <iostream>
 #include <unistd.h>
 #include <thread>
-#include <algorithm>
-#include <vector>
 
-#include<bits/stdc++.h>
+#include <mutex>
+#include <condition_variable>
 
 #define PORT 8080
 #define MAX_CLIENT 10
@@ -24,12 +23,15 @@ namespace karlo {
     std::vector<json> imei_list;
     std::string IMEI_JSON_LOCATION = "/home/" + getUsername() + "/" + IMEI_JSON_FILENAME;
 
-    std::vector<int> threads;
+    //std::vector<int> threads;
 
     using json = nlohmann::json;
 
+    //std::mutex m;
+    //std::condition_variable cv;
+
     json config;
-    
+
     void setTcpConfig(json setTcpConfig){
         config = setTcpConfig;
     }
@@ -50,7 +52,7 @@ namespace karlo {
         std::cout << "\x1b[31mThread terminated: Error in socket reading\x1b[0m\n";
       }
         
-      threads.erase(std::remove(threads.begin(), threads.end(), client_socket), threads.end());
+     // threads.erase(std::remove(threads.begin(), threads.end(), client_socket), threads.end());
       close(client_socket);
 
       std::cout << "Terminating thread: "  << client_socket << std::endl;
@@ -65,6 +67,8 @@ namespace karlo {
       struct sockaddr_in address;
 
       fd_set readfds;
+
+      bool lock = true;
 
       // Read IMEI JSON an
       imei_list = readImeiJson(IMEI_JSON_LOCATION);
@@ -139,18 +143,22 @@ namespace karlo {
         }
 
         // If something happened on the master socket, then it's an incoming connection
-        if (FD_ISSET(master_socket, &readfds)) {
+
+        if (FD_ISSET(master_socket, &readfds) && lock) {
           // If failed to accept connection
           if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
             perror("Accept");
             exit(EXIT_FAILURE);
           }
 
-          if (std::find(threads.begin(), threads.end(), new_socket) == threads.end()) {
-              threads.push_back(new_socket);
-              for(auto thread : threads){
-                  std::cout << " | " << thread;
-                } std::cout<< std::endl;
+            lock = false;
+
+          //if (std::find(threads.begin(), threads.end(), new_socket) == threads.end()) {
+            //  threads.push_back(new_socket);
+              //for(auto thread : threads){
+                //  std::cout << " | " << thread;
+                //} std::cout<< std::endl;
+                
           // inform server of socket number used in send and receive commands
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
@@ -158,7 +166,9 @@ namespace karlo {
           // Adding thread on each new connection
             std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list), std::ref(readfds), std::ref(address));
              newClientThread.detach();
-          }
+
+             lock = true;
+             //cv.notify_one();
 
         }
       }
