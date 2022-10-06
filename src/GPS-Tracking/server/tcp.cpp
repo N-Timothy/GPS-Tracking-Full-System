@@ -145,16 +145,18 @@ namespace karlo {
 
         // If something happened on the master socket, then it's an incoming connection
 
-        if (FD_ISSET(master_socket, &readfds)) {
+            if (FD_ISSET(master_socket, &readfds)) {
+
+                if (std::find(threads.begin(), threads.end(), new_socket) == threads.end() && lock) {
+
+                lock = false;
           // If failed to accept connection
-          if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
-            perror("Accept");
-            exit(EXIT_FAILURE);
-          }
+                if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
+                    perror("Accept");
+                    exit(EXIT_FAILURE);
+                }
 
-          if (std::find(threads.begin(), threads.end(), new_socket) == threads.end() && lock) {
 
-            lock = false;
 
               threads.push_back(new_socket);
               for(auto thread : threads){
