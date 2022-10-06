@@ -146,7 +146,7 @@ namespace karlo {
             exit(EXIT_FAILURE);
           }
 
-          if (std::find(threads.begin(), threads.end(), new_socket) != threads.end()) {
+          if (std::find(threads.begin(), threads.end(), new_socket) == threads.end()) {
               threads.push_back(new_socket);
               for(auto thread : threads){
                   std::cout << " | " << thread;
