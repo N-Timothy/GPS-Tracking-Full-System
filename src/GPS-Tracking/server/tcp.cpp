@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <iostream>
 #include <unistd.h>
+#include <vector>
 #include <thread>
 
 #include <mutex>
@@ -23,7 +24,7 @@ namespace karlo {
     std::vector<json> imei_list;
     std::string IMEI_JSON_LOCATION = "/home/" + getUsername() + "/" + IMEI_JSON_FILENAME;
 
-    //std::vector<int> threads;
+    std::vector<int> threads;
 
     using json = nlohmann::json;
 
@@ -153,11 +154,11 @@ namespace karlo {
 
             lock = false;
 
-          //if (std::find(threads.begin(), threads.end(), new_socket) == threads.end()) {
-            //  threads.push_back(new_socket);
-              //for(auto thread : threads){
-                //  std::cout << " | " << thread;
-                //} std::cout<< std::endl;
+          if (std::find(threads.begin(), threads.end(), new_socket) == threads.end()) {
+              threads.push_back(new_socket);
+              for(auto thread : threads){
+                  std::cout << " | " << thread;
+                } std::cout<< std::endl;
                 
           // inform server of socket number used in send and receive commands
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
@@ -169,6 +170,7 @@ namespace karlo {
 
              lock = true;
              //cv.notify_one();
+             }
 
         }
       }
