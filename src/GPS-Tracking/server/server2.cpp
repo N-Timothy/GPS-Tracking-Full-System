@@ -25,6 +25,8 @@ namespace karlo {
 
     std::mutex m;
     std::condition_variable cv;
+    
+    using namespace std::chrono_literals;
 
     class GetData {
     private:
@@ -336,10 +338,14 @@ namespace karlo {
 
       // send to database to be saved
       
-      //std::unique_lock<std::mutex> lk(m);
-      //cv.wait(lk, []{return ready;});
+      std::unique_lock<std::mutex> lk(m);
+    if(cv.wait_for(lk, 5s, []{return ready;})){ 
+        database::createData(data);}
+    else {
+        std::cout << "Timeout...! " << std::endl;
+    }
+        
 
-      database::createData(data);
 
       std::cout << "===================\n\n";
 
