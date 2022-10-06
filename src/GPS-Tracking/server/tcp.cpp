@@ -53,7 +53,7 @@ namespace karlo {
         std::cout << "\x1b[31mThread terminated: Error in socket reading\x1b[0m\n";
       }
         
-     // threads.erase(std::remove(threads.begin(), threads.end(), client_socket), threads.end());
+      threads.erase(std::remove(threads.begin(), threads.end(), client_socket), threads.end());
       close(client_socket);
 
       std::cout << "Terminating thread: "  << client_socket << std::endl;
