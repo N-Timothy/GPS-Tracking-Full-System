@@ -14,7 +14,7 @@ namespace karlo {
 
     using json = nlohmann::json;
 
-    void setTcpConfig(json tcpConfig);
+    void setTcpConfig(json setTcpConfig);
 
     void tcpServer();
 

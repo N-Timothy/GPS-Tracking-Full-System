@@ -267,7 +267,6 @@ namespace karlo {
       // Get IMEI number for initialization
       imei_raw = gps.getImei(connfd, buff, IMEI_BYTES);
       confirm = gps.imeiConfirmation(connfd, gps.imeiRecognition(imei_raw, imei_list));
-      if (confirm == -1) return -1;
       else if (confirm == -2) return -2;
       data.imei = gps.slice_imei(imei_raw);
       memset(buff, 0, sizeof(buff));
