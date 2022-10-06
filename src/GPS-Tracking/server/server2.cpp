@@ -235,7 +235,11 @@ namespace karlo {
 
     int binToDecimal(std::string bin) {
       int number = 0;
-      number += std::stoi(bin, 0, 2);
+      try { 
+          number += std::stoi(bin, 0, 2);
+      } catch (std::invalid_argument& e) {
+          return -3;
+      }
       return number;
     }
 
@@ -277,7 +281,11 @@ namespace karlo {
 
       gps.getCodecID(connfd, buff, CODEC_ID_BYTES);
 
-      numOfData1 = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES), 0, 16);
+      try { 
+        numOfData1 = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES), 0, 16);
+      } catch (std::invalid_argument& e) {
+          return -3;
+      }
 
       for (n = 0; n < numOfData1; n++) {
         hex = gps.getTimestamp(connfd, buff, TIMESTAMP_BYTES);
@@ -300,34 +308,58 @@ namespace karlo {
 
         gps.getSatellites(connfd, buff, SATELLITE_BYTES);
 
+      try { 
         data.speed = std::stoi(gps.getSpeed(connfd, buff, SPEED_BYTES), 0, 16);
+      } catch (std::invalid_argument& e) {
+          return -3;
+      }
         std::cout << " (" << data.speed << ")" << std::endl;
 
         gps.getEventIOID(connfd, buff, 1);
         gps.getNumOfTotalID(connfd, buff, 1);
 
+      try { 
         numOfOneByteID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
+      } catch (std::invalid_argument& e) {
+          return -3;
+      }
         for (i = 0; i < numOfOneByteID; i++) {
           gps.getID(connfd, buff, 1);
           gps.getValue(connfd, buff, 1);
         }
+      try { 
         numOfTwoBytesID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
+      } catch (std::invalid_argument& e) {
+          return -3;
+      }
         for (i = 0; i < numOfTwoBytesID; i++) {
           gps.getID(connfd, buff, 1);
           gps.getValue(connfd, buff, 2);
         }
+      try { 
         numOfFourBytesID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
+      } catch (std::invalid_argument& e) {
+          return -3;
+      }
         for (i = 0; i < numOfFourBytesID; i++) {
           gps.getID(connfd, buff, 1);
           gps.getValue(connfd, buff, 4);
         }
+      try { 
         numOfEightBytesID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
+      } catch (std::invalid_argument& e) {
+          return -3;
+      }
         for (i = 0; i < numOfEightBytesID; i++) {
           gps.getID(connfd, buff, 1);
           gps.getValue(connfd, buff, 8);
         }
       }
-      numOfData2 = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES), 0, 16);
+      try { 
+        numOfData2 = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES), 0, 16);
+      } catch (std::invalid_argument& e) {
+          return -3;
+      }
 
       gps.getCRC16(connfd, buff, 4);
 
