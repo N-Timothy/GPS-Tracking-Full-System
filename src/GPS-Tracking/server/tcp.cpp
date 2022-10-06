@@ -31,9 +31,22 @@ namespace karlo {
 
     json config;
 
+    int time;
+
     void setTcpConfig(json setTcpConfig){
         config = setTcpConfig;
     }
+    
+    void timer() {
+        for(;;){
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            time++;
+            if(time == 60) {
+                time = 0;
+            }
+        }
+    }
+
 
     void newClient(int client_socket, std::vector<json> imei_list, fd_set readfds, sockaddr_in address) {
 
@@ -64,6 +77,7 @@ namespace karlo {
         close(client_socket);
 
         }
+
         close(client_socket);
         std::cout << "Terminating thread: "  << client_socket << std::endl;
     }
@@ -72,7 +86,7 @@ namespace karlo {
 
       int opt = true;
       int master_socket, addrlen, new_socket, client_socket[(int)config["max_client"]],
-          client_socket_counter[(int)config["max_client"]], activity, sd, max_sd; 
+          thread_timer[(int)config["max_client"]], activity, sd, max_sd; 
 
       struct sockaddr_in address;
 
@@ -117,6 +131,10 @@ namespace karlo {
         exit(EXIT_FAILURE);
       }
 
+
+      std::thread timerThread(timer);
+      timerThread.detach();
+
       // accept incoming connection
       addrlen = sizeof(address);
       puts("Waiting for connection ...");
@@ -155,12 +173,20 @@ namespace karlo {
         // If something happened on the master socket, then it's an incoming connection
             if (FD_ISSET(master_socket, &readfds)) {
 
-                lock = false;
           // If failed to accept connection
                 if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
                     perror("Accept");
                     exit(EXIT_FAILURE);
                 }
+
+                int index;
+                for(int i = 0; i < sizeof(client_socket); i++){
+                    if(client_socket[i] == new_socket){
+                        index = i;
+                    }
+                }
+
+                std::cout << "index : " << index << std::endl;
 
           // inform server of socket number used in send and receive commands
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
