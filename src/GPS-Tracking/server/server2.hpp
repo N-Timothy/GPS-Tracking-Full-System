@@ -19,7 +19,6 @@
 
 #include "GPS-Tracking/server/read_imei_json.hpp"
 
-
 namespace karlo {
   namespace server {
     

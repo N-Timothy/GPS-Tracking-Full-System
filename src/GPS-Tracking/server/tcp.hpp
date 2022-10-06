@@ -9,7 +9,6 @@
 
 #include <nlohmann/json.hpp>
 
-
 namespace karlo {
   namespace server {
 

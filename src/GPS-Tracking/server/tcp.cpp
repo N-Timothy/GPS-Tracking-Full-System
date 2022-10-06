@@ -9,6 +9,10 @@
 #include <iostream>
 #include <unistd.h>
 #include <thread>
+#include <algorithm>
+#include <vector>
+
+#include<bits/stdc++.h>
 
 #define PORT 8080
 #define MAX_CLIENT 10
@@ -19,6 +23,8 @@ namespace karlo {
 
     std::vector<json> imei_list;
     std::string IMEI_JSON_LOCATION = "/home/" + getUsername() + "/" + IMEI_JSON_FILENAME;
+
+    std::vector<int> threads;
 
     using json = nlohmann::json;
 
@@ -43,6 +49,8 @@ namespace karlo {
       else if (comm == -3) {
         std::cout << "\x1b[31mThread terminated: Error in socket reading\x1b[0m\n";
       }
+        
+      threads.erase(std::remove(threads.begin(), threads.end(), client_socket), threads.end());
       close(client_socket);
 
       std::cout << "Terminating thread: "  << client_socket << std::endl;
@@ -138,16 +146,23 @@ namespace karlo {
             exit(EXIT_FAILURE);
           }
 
+          if (std::find(threads.begin(), threads.end(), new_socket) != threads.end()) {
+              threads.push_back(new_socket);
+              for(auto thread : threads){
+                  std::cout << " | " << thread;
+                } std::cout<< std::endl;
           // inform server of socket number used in send and receive commands
-          std::cout << "New connection established! socket : " << new_socket << ", IP : "
-                    << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
+            std::cout << "New connection established! socket : " << new_socket << ", IP : "
+                      << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
 
           // Adding thread on each new connection
-          std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list), std::ref(readfds), std::ref(address));
-          newClientThread.detach();
+            std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list), std::ref(readfds), std::ref(address));
+             newClientThread.detach();
+          }
+
         }
       }
     }
 
   } // namespace server
-} // namespace karlo
+} // namespace khrlo
