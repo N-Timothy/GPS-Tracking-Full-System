@@ -339,14 +339,12 @@ namespace karlo {
       // send to database to be saved
       
       std::unique_lock<std::mutex> lk(m);
-    if(cv.wait_for(lk, 5s, []{return ready;})){ 
+    if(cv.wait_for(lk, std::chrono::milliseconds(1000), [](){return ready;})){ 
         database::createData(data);}
     else {
         std::cout << "Timeout...! " << std::endl;
     }
         
-
-
       std::cout << "===================\n\n";
 
       return 0;
