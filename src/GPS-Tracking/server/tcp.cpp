@@ -152,13 +152,15 @@ namespace karlo {
             exit(EXIT_FAILURE);
           }
 
+          if (std::find(threads.begin(), threads.end(), new_socket) == threads.end() && lock) {
+
             lock = false;
 
-          if (std::find(threads.begin(), threads.end(), new_socket) == threads.end() && lock) {
               threads.push_back(new_socket);
               for(auto thread : threads){
                   std::cout << " | " << thread;
                 } std::cout<< std::endl;
+
                 
           // inform server of socket number used in send and receive commands
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
