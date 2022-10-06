@@ -14,8 +14,6 @@
 #include <mutex>
 #include <condition_variable>
 
-#define PORT 8080
-#define MAX_CLIENT 10
 #define MAX_PENDING_CONNECTION 3
 
 namespace karlo {
@@ -46,7 +44,6 @@ namespace karlo {
             }
         }
     }
-
 
     void newClient(int client_socket, std::vector<json> imei_list, fd_set readfds, sockaddr_in address) {
 
