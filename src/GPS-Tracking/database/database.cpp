@@ -62,11 +62,7 @@ namespace karlo {
 
       ready = false;
 
-      std::cout << "creating" << std::endl;
-
       create(data, collection);
-
-      std::cout << "done creating" << std::endl;
 
       ready = true;
       cv.notify_one();
@@ -76,11 +72,7 @@ namespace karlo {
 
       ready = false;
       
-      std::cout << "read One" << std::endl;
-
       json res = readOne(collection, imei);
-
-      std::cout << "done read One" << std::endl;
 
       ready = true;
       cv.notify_one();
@@ -92,11 +84,7 @@ namespace karlo {
 
       ready = false;
 
-      std::cout << "read ALL" << std::endl;
-
       std::vector<json> res = readAll(collection);
-
-      std::cout << "done read ALL" << std::endl;
 
       ready = true;
       cv.notify_one();

@@ -179,15 +179,6 @@ namespace karlo {
                     exit(EXIT_FAILURE);
                 }
 
-                int index;
-                for(int i = 0; i < sizeof(client_socket); i++){
-                    if(client_socket[i] == new_socket){
-                        index = i;
-                    }
-                }
-
-                std::cout << "index : " << index << std::endl;
-
           // inform server of socket number used in send and receive commands
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
@@ -199,6 +190,5 @@ namespace karlo {
         }
       }
     }
-
   } // namespace server
 } // namespace khrlo
