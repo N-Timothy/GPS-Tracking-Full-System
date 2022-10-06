@@ -39,6 +39,7 @@ namespace karlo {
       if (std::find(threads.begin(), threads.end(), client_socket) == threads.end()) {
 
         threads.push_back(client_socket);
+
         for(auto thread : threads){
             std::cout << " | " << thread;
         } std::cout<< std::endl;
@@ -62,6 +63,7 @@ namespace karlo {
         close(client_socket);
 
         }
+        close(client_socket);
         std::cout << "Terminating thread: "  << client_socket << std::endl;
     }
 
@@ -130,6 +132,11 @@ namespace karlo {
         for (int i = 0 ; i < config["max_client"] ; i++) {
           // socket descriptor
           sd = client_socket[i];
+
+          std::cout << " client socket [ ";
+          for (int i = 0; i < sizeof(client_socket); i++){
+            std::cout << client_socket[i] << " "; 
+          } std::cout << " ] " << std::endl;
 
           // if valid socket descriptor then add to read list
           if (sd > 0) {
