@@ -28,9 +28,6 @@ namespace karlo {
 
     using json = nlohmann::json;
 
-    //std::mutex m;
-    //std::condition_variable cv;
-
     json config;
 
     void setTcpConfig(json setTcpConfig){
@@ -38,25 +35,34 @@ namespace karlo {
     }
 
     void newClient(int client_socket, std::vector<json> imei_list, fd_set readfds, sockaddr_in address) {
-      int comm;
 
-      std::cout << "New thread: " << client_socket << " initialized"<< std::endl;
+      if (std::find(threads.begin(), threads.end(), client_socket) == threads.end()) {
 
-      comm = communicate(client_socket, imei_list);
-      if (comm == -1) {
-        std::cout << "\x1b[31mIMEI is not recognized!\x1b[0m\n";
-      }
-      else if (comm == -2) {
-        imei_list = readImeiJson(IMEI_JSON_LOCATION);
-      }
-      else if (comm == -3) {
-        std::cout << "\x1b[31mThread terminated: Error in socket reading\x1b[0m\n";
-      }
+        threads.push_back(client_socket);
+        for(auto thread : threads){
+            std::cout << " | " << thread;
+        } std::cout<< std::endl;
+      
+        int comm;
+
+        std::cout << "New thread: " << client_socket << " initialized"<< std::endl;
+
+        comm = communicate(client_socket, imei_list);
+        if (comm == -1) {
+            std::cout << "\x1b[31mIMEI is not recognized!\x1b[0m\n";
+        }
+        else if (comm == -2) {
+            imei_list = readImeiJson(IMEI_JSON_LOCATION);
+        }
+        else if (comm == -3) {
+            std::cout << "\x1b[31mThread terminated: Error in socket reading\x1b[0m\n";
+        }
         
-      threads.erase(std::remove(threads.begin(), threads.end(), client_socket), threads.end());
-      close(client_socket);
+        threads.erase(std::remove(threads.begin(), threads.end(), client_socket), threads.end());
+        close(client_socket);
 
-      std::cout << "Terminating thread: "  << client_socket << std::endl;
+        }
+        std::cout << "Terminating thread: "  << client_socket << std::endl;
     }
 
     void tcpServer () {
@@ -147,7 +153,6 @@ namespace karlo {
 
             if (FD_ISSET(master_socket, &readfds)) {
 
-                if (std::find(threads.begin(), threads.end(), new_socket) == threads.end() && lock) {
 
                 lock = false;
           // If failed to accept connection
@@ -156,14 +161,6 @@ namespace karlo {
                     exit(EXIT_FAILURE);
                 }
 
-
-
-              threads.push_back(new_socket);
-              for(auto thread : threads){
-                  std::cout << " | " << thread;
-                } std::cout<< std::endl;
-
-                
           // inform server of socket number used in send and receive commands
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
@@ -171,10 +168,6 @@ namespace karlo {
           // Adding thread on each new connection
             std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list), std::ref(readfds), std::ref(address));
              newClientThread.detach();
-
-             lock = true;
-             //cv.notify_one();
-             }
 
         }
       }
