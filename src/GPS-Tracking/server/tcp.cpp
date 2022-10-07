@@ -81,6 +81,8 @@ namespace karlo {
             if (close(socket) < 0) {
                 failed_count++;
                 failed_socket.push_back(socket);
+            } else {
+                failed_count--;
             }
         }
 
