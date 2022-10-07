@@ -46,7 +46,7 @@ namespace karlo {
         }
     }
 
-    void newClient(int socket, std::vector<json> imei_list, fd_set readfds, sockaddr_in address) {
+    void newClient(int socket, std::vector<json> imei_list) {
 
       if (std::find(threads.begin(), threads.end(), socket) == threads.end()) {
 
@@ -87,21 +87,14 @@ namespace karlo {
     void tcpServer () {
 
       int opt = true;
-      int master_socket, addrlen, new_socket, activity, sd, max_sd, client_socket[(int) config["max_client"]]; 
+      int master_socket, address_len, new_socket; 
 
       struct sockaddr_in address;
 
       fd_set readfds;
 
-      bool lock = true;
-
       // Read IMEI JSON an
       imei_list = readImeiJson(IMEI_JSON_LOCATION);
-
-      // initialise all client socket to 0
-      for (int i = 0; i < config["max_client"]; i++) {
-        client_socket[i] = 0;
-      }
 
       // create master socket
       if ((master_socket = socket (AF_INET, SOCK_STREAM, 0)) == 0) {
@@ -137,7 +130,7 @@ namespace karlo {
       timerThread.detach();
 
       // accept incoming connection
-      addrlen = sizeof(address);
+      address_len = sizeof(address);
       puts("Waiting for connection ...");
 
       for (;;) {
@@ -146,30 +139,6 @@ namespace karlo {
 
         //add master socket to set
         FD_SET(master_socket, &readfds);
-        max_sd = master_socket;
-
-        // add child sockets to set
-        for (int i = 0 ; i < config["max_client"] ; i++) {
-          // socket descriptor
-          sd = client_socket[i];
-
-          // if valid socket descriptor then add to read list
-          if (sd > 0) {
-            FD_SET(sd , &readfds);
-          }
-
-          // highest file descriptor number, need it for the select function
-          if (sd > max_sd) {
-            max_sd = sd;
-          }
-        }
-
-        // wait for an activity on one of the sockets, timeout is NULL, so wait indefinitely
-        activity = select(max_sd + 1, &readfds, NULL, NULL, NULL);
-
-        if ((activity < 0) && (errno != EINTR)) {
-          std::cout << "select error !" << std::endl;
-        }
 
         if(failed_socket.size() == 3) {
             std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -177,6 +146,7 @@ namespace karlo {
                 std::cout << "closing socket : " << fSocket << std::endl;
                 failed_socket.erase(std::remove(failed_socket.begin(), failed_socket.end(), fSocket), failed_socket.end());
                 close(fSocket);
+                failed_count = 0;
             } 
         }
 
@@ -184,7 +154,7 @@ namespace karlo {
         if (FD_ISSET(master_socket, &readfds)) {
 
           // If failed to accept connection
-            if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
+            if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&address_len)) < 0) {
                     perror("Accept");
                     exit(EXIT_FAILURE);
                 }
@@ -194,10 +164,10 @@ namespace karlo {
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
 
           // Adding thread on each new connection
-            std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list), std::ref(readfds), std::ref(address));
+            std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list));
              newClientThread.detach();
         }
       }
     }
   } // namespace server
-} // namespace khrlo
+} // namespace karlo
