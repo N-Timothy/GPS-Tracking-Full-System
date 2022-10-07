@@ -76,7 +76,6 @@ namespace karlo {
             std::cout << "\x1b[31mThread terminated: Error in socket reading\x1b[0m\n";
         }
         
-        threads.erase(std::remove(threads.begin(), threads.end(), socket), threads.end());
         //close(socket);
 
         }
@@ -86,9 +85,13 @@ namespace karlo {
             std::this_thread::sleep_for(std::chrono::seconds(1));
             if (close(socket) < 0) {
                 failed_socket.push_back(socket);
+                std::cout << "\x1b[31msocket that failed : \x1b[0m" << socket << std::endl;
             } else {
+                threads.erase(std::remove(threads.begin(), threads.end(), socket), threads.end());
                 failed_count--;
             }
+        } else {
+            threads.erase(std::remove(threads.begin(), threads.end(), socket), threads.end());
         }
 
         std::cout << "Terminating thread: "  << socket << std::endl;
