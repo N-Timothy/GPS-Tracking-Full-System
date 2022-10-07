@@ -29,7 +29,8 @@ namespace karlo {
     json config;
 
     int time;
-    int thread_timer[10]; // 10 max client temporary
+    int thread_timer[10]; // 1client_socket[10], 0 max client temporary
+    std::vector<int> failed_socket;
 
     void setTcpConfig(json setTcpConfig){
         config = setTcpConfig;
@@ -75,7 +76,10 @@ namespace karlo {
 
         }
 
-        if (close(socket) < 0) { failed_count++; }
+        if (close(socket) < 0) { 
+            failed_count++;
+            failed_socket.push_back(socket);
+        }
         std::cout << "Terminating thread: "  << socket << std::endl;
         std::cout << "Failed closing socket count: " << failed_count << "\n";
     }
@@ -165,6 +169,14 @@ namespace karlo {
 
         if ((activity < 0) && (errno != EINTR)) {
           std::cout << "select error !" << std::endl;
+        }
+
+        if(failed_socket.size() == 3) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            for(int fSocket : failed_socket){
+                std::cout << "closing socket : " << fSocket << std::endl;
+                close(fSocket);
+            } 
         }
 
         // If something happened on the master socket, then it's an incoming connection
