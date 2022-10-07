@@ -171,13 +171,16 @@ namespace karlo {
 
             if (std::find(threads.begin(), threads.end(), new_socket) == threads.end()) {
             threads.push_back(new_socket);
+            std::cout << "new socket : " << new_socket << std::endl;
+            auto tmp = std::find(threads.begin(), threads.end(), new_socket) ;
+            int indx = tmp - threads.begin();
           // inform server of socket number used in send and receive commands
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
 
 
           // Adding thread on each new connection
-            std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list));
+            std::thread newClientThread(newClient, std::cref(threads[indx]), std::ref(imei_list));
             newClientThread.detach();
         }
 
