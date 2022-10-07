@@ -77,9 +77,9 @@ namespace karlo {
         }
 
         if (close(socket) < 0) { 
+            failed_count++;
             std::this_thread::sleep_for(std::chrono::seconds(1));
             if (close(socket) < 0) {
-                failed_count++;
                 failed_socket.push_back(socket);
             } else {
                 failed_count--;
