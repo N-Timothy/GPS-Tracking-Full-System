@@ -50,11 +50,10 @@ namespace karlo {
 
     void newClient(int socket, std::vector<json> imei_list) {
 
-      if (std::find(threads.begin(), threads.end(), socket) == threads.end()) {
 
         // inserting into map need to be warap with std::make_pair
       //  timeOutStatus.insert(std::make_pair(socket, std::make_pair(time, false)));
-
+      //
         threads.push_back(socket);
 
         for(auto thread : threads){
@@ -63,8 +62,9 @@ namespace karlo {
       
         int comm;
 
-        std::cout << "New thread: " << socket << " initialized"<< std::endl;
+        std::cout << "New thread: " << socket << " initialized " << std::endl;
 
+        
         comm = communicate(socket, imei_list);
         if (comm == -1) {
             std::cout << "\x1b[31mIMEI is not recognized!\x1b[0m\n";
@@ -77,8 +77,6 @@ namespace karlo {
         }
         
         //close(socket);
-
-        }
 
         if (close(socket) < 0) { 
             failed_count++;
@@ -157,7 +155,7 @@ namespace karlo {
         // If something happened on the master socket, then it's an incoming connection
         if (FD_ISSET(master_socket, &readfds)) {
 
-            if(failed_socket.size() > 3) {
+            if(failed_socket.size() >= 3) {
                 std::this_thread::sleep_for(std::chrono::seconds(1));
                 for(int fSocket : failed_socket){
                     std::cout << "closing socket : " << fSocket << std::endl;
@@ -173,15 +171,20 @@ namespace karlo {
                     exit(EXIT_FAILURE);
                 }
 
+            if (std::find(threads.begin(), threads.end(), new_socket) == threads.end()) {
+            threads.push_back(new_socket);
           // inform server of socket number used in send and receive commands
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
 
+
           // Adding thread on each new connection
             std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list));
-             newClientThread.detach();
+            newClientThread.detach();
         }
+
       }
+    }
     }
   } // namespace server
 } // namespace karlo
