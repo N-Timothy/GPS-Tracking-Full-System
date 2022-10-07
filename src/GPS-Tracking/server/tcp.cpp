@@ -175,6 +175,7 @@ namespace karlo {
             std::this_thread::sleep_for(std::chrono::seconds(1));
             for(int fSocket : failed_socket){
                 std::cout << "closing socket : " << fSocket << std::endl;
+                failed_socket.erase(std::remove(failed_socket.begin(), failed_socket.end(), fSocket), failed_socket.end());
                 close(fSocket);
             } 
         }
