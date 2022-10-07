@@ -3,7 +3,6 @@
 #include "GPS-Tracking/server/read_imei_json.hpp"
 
 #include <cstring>
-#include <string>
 #include <stdlib.h>
 #include <errno.h>
 #include <iostream>
@@ -21,6 +20,7 @@ namespace karlo {
     std::string IMEI_JSON_LOCATION = "/home/" + getUsername() + "/" + IMEI_JSON_FILENAME;
 
     std::vector<int> threads;
+    std::vector<int> failed_socket;
 
     int failed_count = 0;
 
@@ -29,8 +29,8 @@ namespace karlo {
     json config;
 
     int time;
-    int thread_timer[10]; // 1client_socket[10], 0 max client temporary
-    std::vector<int> failed_socket;
+
+    std::map<int, std::pair<int, bool>> timeOutStatus;
 
     void setTcpConfig(json setTcpConfig){
         config = setTcpConfig;
@@ -49,6 +49,11 @@ namespace karlo {
     void newClient(int socket, std::vector<json> imei_list) {
 
       if (std::find(threads.begin(), threads.end(), socket) == threads.end()) {
+
+        // inserting into map need to be warap with std::make_pair
+        timeOutStatus.insert(std::make_pair(socket, std::make_pair(time, false)));
+
+        std::cout << "tiemout : " << timeOutStatus[socket].second << std::endl;
 
         threads.push_back(socket);
 

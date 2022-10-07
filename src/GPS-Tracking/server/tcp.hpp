@@ -11,10 +11,15 @@
 
 #include <nlohmann/json.hpp>
 
+#include <map>
+#include <string>
+
 namespace karlo {
   namespace server {
 
     using json = nlohmann::json;
+
+    extern std::map<int, std::pair<int, bool>> timeOutStatus;
 
     void setTcpConfig(json setTcpConfig);
 
