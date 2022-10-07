@@ -2273,7 +2273,7 @@ inline int close_socket(socket_t sock) {
 #ifdef _WIN32
   return closesocket(sock);
 #else
-  printf("socket : %d closed", sock);
+  printf("socket : %d closed \n", sock);
   return close(sock);
 #endif
 }

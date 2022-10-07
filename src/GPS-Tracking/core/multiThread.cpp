@@ -16,11 +16,11 @@ namespace karlo {
 
             std::thread httpsRequestThread(httpsRequest::connect);
   //          std::thread mqttSubscriberThread(mqtt::subscriber);
-     //       std::thread tcpServerThread(server::tcpServer);
+            std::thread tcpServerThread(server::tcpServer);
 
-            httpsRequestThread.join();
-   //         tcpServerThread.join();
-      //      mqttSubscriberThread.join();
+            httpsRequestThread.detach();
+            tcpServerThread.join();
+            //mqttSubscriberThread.join();
 
         }
 
