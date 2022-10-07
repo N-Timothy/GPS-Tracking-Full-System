@@ -30,30 +30,30 @@ namespace karlo {
 
     int time;
 
-    std::map<int, std::pair<int, bool>> timeOutStatus;
+    // std::map<int, std::pair<int, bool>> timeOutStatus;
 
     void setTcpConfig(json setTcpConfig){
         config = setTcpConfig;
     }
     
-    void timer() {
-        for(;;){
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            time++;
-            if(time == 60) {
-                time = 0;
-            }
-        }
-    }
+    //void timer() {
+      //  for(;;){
+        //    std::this_thread::sleep_for(std::chrono::seconds(1));
+          //  time++;
+            //if(time == 60) {
+              //  time = 0;
+            //}
+
+            //if()
+       // }
+   // }
 
     void newClient(int socket, std::vector<json> imei_list) {
 
       if (std::find(threads.begin(), threads.end(), socket) == threads.end()) {
 
         // inserting into map need to be warap with std::make_pair
-        timeOutStatus.insert(std::make_pair(socket, std::make_pair(time, false)));
-
-        std::cout << "tiemout : " << timeOutStatus[socket].second << std::endl;
+      //  timeOutStatus.insert(std::make_pair(socket, std::make_pair(time, false)));
 
         threads.push_back(socket);
 
@@ -137,8 +137,8 @@ namespace karlo {
       }
 
 
-      std::thread timerThread(timer);
-      timerThread.detach();
+      //std::thread timerThread(timer);
+      //timerThread.detach();
 
       // accept incoming connection
       address_len = sizeof(address);
