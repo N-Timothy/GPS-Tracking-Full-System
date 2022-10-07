@@ -77,12 +77,10 @@ namespace karlo {
         }
 
         if (close(socket) < 0) { 
-            failed_count++;
-            //failed_socket.push_back(socket);
-        } else {
             std::this_thread::sleep_for(std::chrono::seconds(1));
             if (close(socket) < 0) {
-                failed_count--;
+                failed_count++;
+                failed_socket.push_back(socket);
             }
         }
 
@@ -146,18 +144,18 @@ namespace karlo {
         //add master socket to set
         FD_SET(master_socket, &readfds);
 
-        if(failed_socket.size() > 3) {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            for(int fSocket : failed_socket){
-                std::cout << "closing socket : " << fSocket << std::endl;
-                failed_socket.erase(std::remove(failed_socket.begin(), failed_socket.end(), fSocket), failed_socket.end());
-                close(fSocket);
-                failed_count = 0;
-            } 
-        }
-
         // If something happened on the master socket, then it's an incoming connection
         if (FD_ISSET(master_socket, &readfds)) {
+
+            if(failed_socket.size() > 3) {
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                for(int fSocket : failed_socket){
+                    std::cout << "closing socket : " << fSocket << std::endl;
+                    failed_socket.erase(std::remove(failed_socket.begin(), failed_socket.end(), fSocket), failed_socket.end());
+                    close(fSocket);
+                    failed_count = 0;
+                } 
+            }
 
           // If failed to accept connection
             if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&address_len)) < 0) {
