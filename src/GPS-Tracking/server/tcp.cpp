@@ -54,8 +54,6 @@ namespace karlo {
         // inserting into map need to be warap with std::make_pair
       //  timeOutStatus.insert(std::make_pair(socket, std::make_pair(time, false)));
       //
-        threads.push_back(socket);
-
         for(auto thread : threads){
             std::cout << " | " << thread;
         } std::cout<< std::endl;
