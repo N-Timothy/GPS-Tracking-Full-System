@@ -29,7 +29,7 @@ namespace karlo {
     json config;
 
     int time;
-    int client_socket[10], thread_timer[10]; // 10 max client temporary
+    int thread_timer[10]; // 10 max client temporary
 
     void setTcpConfig(json setTcpConfig){
         config = setTcpConfig;
@@ -83,7 +83,7 @@ namespace karlo {
     void tcpServer () {
 
       int opt = true;
-      int master_socket, addrlen, new_socket, activity, sd, max_sd; 
+      int master_socket, addrlen, new_socket, activity, sd, max_sd, client_socket[(int) config["max_client"]]; 
 
       struct sockaddr_in address;
 
@@ -175,10 +175,6 @@ namespace karlo {
                     perror("Accept");
                     exit(EXIT_FAILURE);
                 }
-
-            for(int i = 0; i < 10; i++){
-                std::cout << client_socket[i] << std::endl;
-            }
 
           // inform server of socket number used in send and receive commands
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
