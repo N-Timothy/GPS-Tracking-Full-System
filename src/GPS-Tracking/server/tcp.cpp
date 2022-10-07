@@ -14,8 +14,6 @@
 #include <mutex>
 #include <condition_variable>
 
-#define MAX_PENDING_CONNECTION 3
-
 namespace karlo {
   namespace server {
 
@@ -24,12 +22,14 @@ namespace karlo {
 
     std::vector<int> threads;
 
+    int failed_count = 0;
+
     using json = nlohmann::json;
-    using namespace std::chrono_literals;
 
     json config;
 
     int time;
+    int client_socket[10], thread_timer[10]; // 10 max client temporary
 
     void setTcpConfig(json setTcpConfig){
         config = setTcpConfig;
@@ -45,11 +45,11 @@ namespace karlo {
         }
     }
 
-    void newClient(int client_socket, std::vector<json> imei_list, fd_set readfds, sockaddr_in address) {
+    void newClient(int socket, std::vector<json> imei_list, fd_set readfds, sockaddr_in address) {
 
-      if (std::find(threads.begin(), threads.end(), client_socket) == threads.end()) {
+      if (std::find(threads.begin(), threads.end(), socket) == threads.end()) {
 
-        threads.push_back(client_socket);
+        threads.push_back(socket);
 
         for(auto thread : threads){
             std::cout << " | " << thread;
@@ -57,9 +57,9 @@ namespace karlo {
       
         int comm;
 
-        std::cout << "New thread: " << client_socket << " initialized"<< std::endl;
+        std::cout << "New thread: " << socket << " initialized"<< std::endl;
 
-        comm = communicate(client_socket, imei_list);
+        comm = communicate(socket, imei_list);
         if (comm == -1) {
             std::cout << "\x1b[31mIMEI is not recognized!\x1b[0m\n";
         }
@@ -70,20 +70,20 @@ namespace karlo {
             std::cout << "\x1b[31mThread terminated: Error in socket reading\x1b[0m\n";
         }
         
-        threads.erase(std::remove(threads.begin(), threads.end(), client_socket), threads.end());
-        close(client_socket);
+        threads.erase(std::remove(threads.begin(), threads.end(), socket), threads.end());
+        //close(socket);
 
         }
 
-        close(client_socket);
-        std::cout << "Terminating thread: "  << client_socket << std::endl;
+        if (close(socket) < 0) { failed_count++; }
+        std::cout << "Terminating thread: "  << socket << std::endl;
+        std::cout << "Failed closing socket count: " << failed_count << "\n";
     }
 
     void tcpServer () {
 
       int opt = true;
-      int master_socket, addrlen, new_socket, client_socket[(int)config["max_client"]],
-          thread_timer[(int)config["max_client"]], activity, sd, max_sd; 
+      int master_socket, addrlen, new_socket, activity, sd, max_sd; 
 
       struct sockaddr_in address;
 
@@ -168,13 +168,17 @@ namespace karlo {
         }
 
         // If something happened on the master socket, then it's an incoming connection
-            if (FD_ISSET(master_socket, &readfds)) {
+        if (FD_ISSET(master_socket, &readfds)) {
 
           // If failed to accept connection
-                if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
+            if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {
                     perror("Accept");
                     exit(EXIT_FAILURE);
                 }
+
+            for(int i = 0; i < 10; i++){
+                std::cout << client_socket[i] << std::endl;
+            }
 
           // inform server of socket number used in send and receive commands
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
@@ -183,7 +187,6 @@ namespace karlo {
           // Adding thread on each new connection
             std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list), std::ref(readfds), std::ref(address));
              newClientThread.detach();
-
         }
       }
     }
