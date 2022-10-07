@@ -16,6 +16,9 @@
 namespace karlo {
   namespace server {
 
+    std::mutex mtx;
+    std::condition_variable con_var;
+
     std::vector<json> imei_list;
     std::string IMEI_JSON_LOCATION = "/home/" + getUsername() + "/" + IMEI_JSON_FILENAME;
 
@@ -29,6 +32,8 @@ namespace karlo {
     json config;
 
     int time;
+
+    bool threadReady = true;
 
     // std::map<int, std::pair<int, bool>> timeOutStatus;
 
@@ -49,6 +54,9 @@ namespace karlo {
    // }
 
     void newClient(int socket, std::vector<json> imei_list) {
+
+        threadReady = true;
+        con_var.notify_one();
 
 
         // inserting into map need to be warap with std::make_pair
@@ -171,16 +179,19 @@ namespace karlo {
 
             if (std::find(threads.begin(), threads.end(), new_socket) == threads.end()) {
             threads.push_back(new_socket);
-            std::cout << "new socket : " << new_socket << std::endl;
-            auto tmp = std::find(threads.begin(), threads.end(), new_socket) ;
-            int indx = tmp - threads.begin();
           // inform server of socket number used in send and receive commands
+          //
+            std::unique_lock<std::mutex> lock(mtx);
+            con_var.wait(lock, [] {return threadReady;});
+
+            threadReady = false;
+
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
-
-
+            
           // Adding thread on each new connection
-            std::thread newClientThread(newClient, std::cref(threads[indx]), std::ref(imei_list));
+
+            std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list));
             newClientThread.detach();
         }
 
