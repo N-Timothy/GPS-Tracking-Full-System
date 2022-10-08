@@ -93,13 +93,12 @@ namespace karlo {
         if (close(socket) < 0) { 
             std::cout << "failed"<< std::endl;
             failed_count++;
-            thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), socket), thread_socket.end());
         } else {
             std::cout << "success" << std::endl;
-            thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), socket), thread_socket.end());
             init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), socket), init_socket.end());
         }
 
+        thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), socket), thread_socket.end());
         std::cout << "Terminating thread: "  << socket << std::endl;
         std::cout << "Failed closing socket count: " << failed_count << "\n";
     }
@@ -205,13 +204,13 @@ namespace karlo {
                     std::cout << std::endl;
 
                     for (auto i : diff) {
-                        if(close(i) >= 0) {
+                        if(close(i) < 0) {
+                            std::cout << "Failed to close socket try again next time" << std::endl;
+                        } else {
                             std::cout << "\033[1;34mclosing : \033[0m" << i << ' ' << std::endl;
                             init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
                             diff.erase(std::remove(diff.begin(), diff.end(), i), diff.end());
                             failed_count--;
-                        } else {
-                            std::cout << "Failed to close socket try again next time" << std::endl;
                         }
                     } 
             }
