@@ -10,6 +10,7 @@
 #include <vector>
 #include <thread>
 #include <algorithm>
+#include <signal.h>
 
 #include <mutex>
 #include <condition_variable>
@@ -102,7 +103,7 @@ namespace karlo {
         std::cout << "Terminating thread: "  << socket << std::endl;
         std::cout << "Failed closing socket count: " << failed_count << "\n";
     }
-
+    
     void tcpServer () {
 
       int opt = true;
@@ -114,6 +115,8 @@ namespace karlo {
 
       // Read IMEI JSON an
       imei_list = readImeiJson(IMEI_JSON_LOCATION);
+    
+      signal(SIGPIPE, SIG_IGN);
 
       // create master socket
       if ((master_socket = socket (AF_INET, SOCK_STREAM, 0)) == 0) {
