@@ -192,7 +192,7 @@ namespace karlo {
       dateAndTime << std::put_time(std::localtime(&t_c), "%A, %F, %T [WIB])\n");
       std::cout << std::endl;
       Time << std::put_time(std::localtime(&t_c), "%F \n");
-      std::cout << std::put_time(std::localtime(&t_c), "%T \n");
+      std::cout << std::put_time(std::localtime(&t_c), "%F \n");
       std::cout << std::put_time(std::localtime(&t_c), "(%A, %F, %T [WIB])\n");
       return dateAndTime.str();
     }
