@@ -200,11 +200,16 @@ namespace karlo {
             
             std::cout << "diff : ";
                 if(!diff.empty()){
+                    std::cout << std::endl;
+                    std::cout << "TRY TO CLOSE UNCLOSED SOCKET" << std::endl;
+                    std::cout << std::endl;
+
                     for (auto i : diff) {
                         if(close(i) >= 0) {
-                            std::cout << "closing : " << i << ' ' << std::endl;
+                            std::cout << "\033[1;34mclosing : \033[0m" << i << ' ' << std::endl;
                             init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
                             diff.erase(std::remove(diff.begin(), diff.end(), i), diff.end());
+                            failed_count--;
                         };
                     } 
             }
