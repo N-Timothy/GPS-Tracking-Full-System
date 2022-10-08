@@ -29,6 +29,7 @@ namespace karlo {
         << "_v" <<  data.version
         << close_document
         << bsoncxx::builder::stream::finalize;
+      std::cout << "longitude : " << data.longitude << std::endl;
       return trackingDocValue;
     }
 
