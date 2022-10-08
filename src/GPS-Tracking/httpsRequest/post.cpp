@@ -41,8 +41,8 @@ namespace karlo {
               httplib::Params params;
                     params.emplace("latitude", std::to_string(latitude));
                     params.emplace("longitude", std::to_string(longitude));
-                    params.emplace("altitude", (std::string) data["altitude"]);
-                    params.emplace("speed", (std::string) data["speed"]);
+                    params.emplace("altitude", to_string(data["altitude"]));
+                    params.emplace("speed", to_string(data["speed"]));
                     params.emplace("bearing", "100");
                     params.emplace("driver", imei);
                     //params.emplace("driver", to_string(data["imei"]));
