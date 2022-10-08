@@ -90,9 +90,11 @@ namespace karlo {
         }
         
         if (close(socket) < 0) { 
+            std::cout << "failed"<< std::endl;
             failed_count++;
             thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), socket), thread_socket.end());
         } else {
+            std::cout << "success" << std::endl;
             thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), socket), thread_socket.end());
             init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), socket), init_socket.end());
         }
