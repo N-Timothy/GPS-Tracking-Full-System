@@ -188,7 +188,10 @@ namespace karlo {
 
       std::time_t t_c = std::chrono::system_clock::to_time_t(sc);
       std::stringstream dateAndTime;
+      std::stringstream Time;
       dateAndTime << std::put_time(std::localtime(&t_c), "%A, %F, %T [WIB])\n");
+      Time << std::put_time(std::localtime(&t_c), "%T \n");
+      std::cout << std::put_time(std::localtime(&t_c), "%T \n");
       std::cout << std::put_time(std::localtime(&t_c), "(%A, %F, %T [WIB])\n");
       return dateAndTime.str();
     }

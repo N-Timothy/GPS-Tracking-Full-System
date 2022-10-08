@@ -203,6 +203,7 @@ namespace karlo {
                             init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
                         };
                     } 
+                //failed_count = 0;
                 diff.clear();
             }
             std::cout << std::endl;
