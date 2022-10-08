@@ -6,7 +6,6 @@
 #include <mutex>
 #include <condition_variable>
 
-
 namespace karlo {
     namespace httpsRequest {
 
@@ -33,11 +32,17 @@ namespace karlo {
 
             for (json data : postData) {
 
+              int tmp = ((float) data["latitude"] * 10000000);
+              float latitude = tmp / 10000000;
+
+              tmp = ((float) data["longitude"] * 10000000);
+              float longitude = tmp / 10000000;
+
               httplib::Params params;
-                    params.emplace("latitude", to_string(data["latitude"]));
-                    params.emplace("longitude", to_string(data["longitude"]));
-                    params.emplace("altitude", to_string(data["altitude"]));
-                    params.emplace("speed", to_string(data["speed"]));
+                    params.emplace("latitude", std::to_string(latitude));
+                    params.emplace("longitude", std::to_string(longitude));
+                    params.emplace("altitude", (std::string) data["altitude"]);
+                    params.emplace("speed", (std::string) data["speed"]);
                     params.emplace("bearing", "100");
                     params.emplace("driver", imei);
                     //params.emplace("driver", to_string(data["imei"]));
