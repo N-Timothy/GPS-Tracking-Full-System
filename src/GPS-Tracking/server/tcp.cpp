@@ -197,12 +197,12 @@ namespace karlo {
             
             std::cout << "diff : ";
                 if(!diff.empty()){
-                for (auto i : diff) {
-                    std::cout << "closing : " << i << ' ' << std::endl;
-                    if(close(i) > 0) {
-                        init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
-                    };
-                } 
+                    for (auto i : diff) {
+                        if(close(i) >= 0) {
+                            std::cout << "closing : " << i << ' ' << std::endl;
+                            init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
+                        };
+                    } 
                 diff.clear();
             }
             std::cout << std::endl;
