@@ -210,7 +210,9 @@ namespace karlo {
                             init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
                             diff.erase(std::remove(diff.begin(), diff.end(), i), diff.end());
                             failed_count--;
-                        };
+                        } else {
+                            std::cout << "Failed to close socket try again next time" << std::endl;
+                        }
                     } 
             }
             std::cout << std::endl;
