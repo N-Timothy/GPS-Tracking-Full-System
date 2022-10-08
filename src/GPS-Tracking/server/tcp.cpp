@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <vector>
 #include <thread>
+#include <algorithm>
 
 #include <mutex>
 #include <condition_variable>
@@ -22,8 +23,9 @@ namespace karlo {
     std::vector<json> imei_list;
     std::string IMEI_JSON_LOCATION = "/home/" + getUsername() + "/" + IMEI_JSON_FILENAME;
 
-    std::vector<int> threads;
-    std::vector<int> failed_socket;
+    std::vector<int> init_socket;
+    std::vector<int> thread_socket;
+    std::vector<int> diff;
 
     int failed_count = 0;
 
@@ -61,41 +63,34 @@ namespace karlo {
 
         // inserting into map need to be warap with std::make_pair
       //  timeOutStatus.insert(std::make_pair(socket, std::make_pair(time, false)));
-      //
-        for(auto thread : threads){
-            std::cout << " | " << thread;
-        } std::cout<< std::endl;
+        
+        if (std::find(thread_socket.begin(), thread_socket.end(), socket) == thread_socket.end()) {
+            
+            thread_socket.push_back(socket);
+
+            for(auto thread : init_socket){
+                std::cout << " | " << thread;
+            } std::cout<< std::endl;
       
-        int comm;
+            int comm;
 
-        std::cout << "New thread: " << socket << " initialized " << std::endl;
+            std::cout << "New thread: " << socket << " initialized " << std::endl;
 
         
-        comm = communicate(socket, imei_list);
-        if (comm == -1) {
-            std::cout << "\x1b[31mIMEI is not recognized!\x1b[0m\n";
-        }
-        else if (comm == -2) {
-            imei_list = readImeiJson(IMEI_JSON_LOCATION);
-        }
-        else if (comm == -3) {
-            std::cout << "\x1b[31mThread terminated: Error in socket reading\x1b[0m\n";
+            comm = communicate(socket, imei_list);
+            if (comm == -1) {
+                std::cout << "\x1b[31mIMEI is not recognized!\x1b[0m\n";
+            }
+            else if (comm == -2) {
+                imei_list = readImeiJson(IMEI_JSON_LOCATION);
+            }
+            else if (comm == -3) {
+                std::cout << "\x1b[31mThread terminated: Error in socket reading\x1b[0m\n";
+            }
         }
         
-        //close(socket);
-
         if (close(socket) < 0) { 
             failed_count++;
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            if (close(socket) < 0) {
-                failed_socket.push_back(socket);
-                std::cout << "\x1b[31msocket that failed : \x1b[0m" << socket << std::endl;
-            } else {
-                threads.erase(std::remove(threads.begin(), threads.end(), socket), threads.end());
-                failed_count--;
-            }
-        } else {
-            threads.erase(std::remove(threads.begin(), threads.end(), socket), threads.end());
         }
 
         std::cout << "Terminating thread: "  << socket << std::endl;
@@ -161,33 +156,47 @@ namespace karlo {
         // If something happened on the master socket, then it's an incoming connection
         if (FD_ISSET(master_socket, &readfds)) {
 
-            if(failed_socket.size() >= 3) {
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-                for(int fSocket : failed_socket){
-                    std::cout << "closing socket : " << fSocket << std::endl;
-                    failed_socket.erase(std::remove(failed_socket.begin(), failed_socket.end(), fSocket), failed_socket.end());
-                    close(fSocket);
-                    failed_count = 0;
-                } 
-            }
-
           // If failed to accept connection
             if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&address_len)) < 0) {
                     perror("Accept");
                     exit(EXIT_FAILURE);
                 }
 
-            if (std::find(threads.begin(), threads.end(), new_socket) == threads.end()) {
-            threads.push_back(new_socket);
+            // Adding socket vector comparison
+            std::set_difference(init_socket.begin(), init_socket.end(), thread_socket.begin(), thread_socket.end(),
+                std::inserter(diff, diff.begin()));
+
+
+            if (std::find(init_socket.begin(), init_socket.end(), new_socket) == init_socket.end()) {
+ 
+            init_socket.push_back(new_socket);
           // inform server of socket number used in send and receive commands
           //
   //          std::unique_lock<std::mutex> lock(mtx);
    //         con_var.wait(lock, [] {return threadReady;});
 
     //        threadReady = false;
+    
+            std::cout << "INIT SOCKET : ";
+            for (auto i : init_socket) { 
+                std::cout << i << ' ';
+            }
+            std::cout << std::endl;
+
+            std::cout << "THREAD SOCKET : ";
+            for (auto i : thread_socket) {
+                std::cout << i << ' ';
+            }
+            std::cout << std::endl;
+            
+            std::cout << "diff : ";
+            for (auto i : diff) {
+                std::cout << i << ' ';
+            } std::cout << std::endl;
 
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
+            
             
           // Adding thread on each new connection
 
