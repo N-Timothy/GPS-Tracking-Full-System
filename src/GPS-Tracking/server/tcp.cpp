@@ -43,7 +43,7 @@ namespace karlo {
     void setTcpConfig(json setTcpConfig){
         config = setTcpConfig;
     }
-    
+
     //void timer() {
       //  for(;;){
         //    std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -154,6 +154,8 @@ namespace karlo {
       address_len = sizeof(address);
       puts("Waiting for connection ...");
 
+start_listening: 
+
       for (;;) {
         //clear the socket set
         FD_ZERO(&readfds);
@@ -170,12 +172,22 @@ namespace karlo {
                     exit(EXIT_FAILURE);
                 }
 
+            // adding hard reset socket;
+            if(new_socket >= 25){
+                for(int i = 4; i < 20; i++){
+                    close(i);
+                }  
+                goto start_listening;
+            }
+
             // Adding socket vector comparison
             std::set_difference(init_socket.begin(), init_socket.end(), thread_socket.begin(), thread_socket.end(),
                 std::inserter(diff, diff.begin()));
 
 
             if (std::find(init_socket.begin(), init_socket.end(), new_socket) == init_socket.end()) {
+
+
  
             init_socket.push_back(new_socket);
           // inform server of socket number used in send and receive commands
@@ -210,7 +222,7 @@ namespace karlo {
                             std::cout << "\033[1;34mclosing : \033[0m" << i << ' ' << std::endl;
                             init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
                             diff.erase(std::remove(diff.begin(), diff.end(), i), diff.end());
-                            failed_count--;
+                            //failed_count--;
                         }
                     } 
             }
@@ -220,15 +232,13 @@ namespace karlo {
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
             
-            
           // Adding thread on each new connection
-
             std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list));
             newClientThread.detach();
         }
 
       }
-    }
+     }
     }
   } // namespace server
 } // namespace karlo

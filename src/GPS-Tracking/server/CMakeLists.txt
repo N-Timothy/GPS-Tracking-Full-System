@@ -2,6 +2,7 @@ add_library(GPS-Tracking-server
             tcp.cpp
             data.hpp
             server2.cpp
+            #resetSocket.cpp
             read_imei_json.cpp)
 
 target_link_libraries(GPS-Tracking-server PRIVATE
