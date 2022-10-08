@@ -33,9 +33,7 @@ namespace karlo {
             for (json data : postData) {
 
               int tmp = ((float) data["latitude"] * 10000000);
-              std::cout << "tmp : " << tmp << std::endl;
               float latitude = (float) tmp / 10000000;
-              std::cout << "latitude : " << latitude << std::endl;
 
               tmp = ((float) data["longitude"] * 10000000);
               float longitude = (float) tmp / 10000000;

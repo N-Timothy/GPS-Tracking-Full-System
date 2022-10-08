@@ -198,11 +198,15 @@ namespace karlo {
             std::cout << "diff : ";
                 if(!diff.empty()){
                 for (auto i : diff) {
-                    std::cout << "closing : " << i << ' ';
-                    close(i);
-                } std::cout << std::endl;
+                    std::cout << "closing : " << i << ' ' << std::endl;
+                    if(close(i) > 0) {
+                        init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
+                    };
+                } 
                 diff.clear();
             }
+            std::cout << std::endl;
+
 
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
