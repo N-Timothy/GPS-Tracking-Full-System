@@ -91,6 +91,10 @@ namespace karlo {
         
         if (close(socket) < 0) { 
             failed_count++;
+            thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), socket), thread_socket.end());
+        } else {
+            thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), socket), thread_socket.end());
+            init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), socket), init_socket.end());
         }
 
         std::cout << "Terminating thread: "  << socket << std::endl;
@@ -191,6 +195,7 @@ namespace karlo {
             
             std::cout << "diff : ";
             for (auto i : diff) {
+                close(i);
                 std::cout << i << ' ';
             } std::cout << std::endl;
 
