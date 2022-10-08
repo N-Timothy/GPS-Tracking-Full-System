@@ -55,8 +55,8 @@ namespace karlo {
 
     void newClient(int socket, std::vector<json> imei_list) {
 
-        threadReady = true;
-        con_var.notify_one();
+//        threadReady = true;
+ //       con_var.notify_one();
 
 
         // inserting into map need to be warap with std::make_pair
@@ -181,10 +181,10 @@ namespace karlo {
             threads.push_back(new_socket);
           // inform server of socket number used in send and receive commands
           //
-            std::unique_lock<std::mutex> lock(mtx);
-            con_var.wait(lock, [] {return threadReady;});
+  //          std::unique_lock<std::mutex> lock(mtx);
+   //         con_var.wait(lock, [] {return threadReady;});
 
-            threadReady = false;
+    //        threadReady = false;
 
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
