@@ -192,7 +192,9 @@ namespace karlo {
       dateAndTime << std::put_time(std::localtime(&t_c), "%A, %F, %T [WIB])\n");
       std::cout << std::endl;
       Time << std::put_time(std::localtime(&t_c), "%F \n");
-      std::cout << std::put_time(std::localtime(&t_c), "%F \n");
+      if(Time.str() == "1970-01-01" || Time.str() == ""){
+        return "";
+      }
       std::cout << std::put_time(std::localtime(&t_c), "(%A, %F, %T [WIB])\n");
       return dateAndTime.str();
     }
@@ -299,6 +301,9 @@ namespace karlo {
         hex = gps.getTimestamp(connfd, buff, TIMESTAMP_BYTES);
 
         data.createdAt = timestampToDate(hex);
+        if (data.createdAt == ""){
+            return -3;
+        }
 
         gps.getPriority(connfd, buff, PRIORITY_BYTES);
 
