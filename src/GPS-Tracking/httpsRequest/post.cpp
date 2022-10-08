@@ -34,11 +34,11 @@ namespace karlo {
 
               int tmp = ((float) data["latitude"] * 10000000);
               std::cout << "tmp : " << tmp << std::endl;
-              float latitude = tmp / 10000000;
+              float latitude = (float) tmp / 10000000;
               std::cout << "latitude : " << latitude << std::endl;
 
               tmp = ((float) data["longitude"] * 10000000);
-              float longitude = tmp / 10000000;
+              float longitude = (float) tmp / 10000000;
 
               httplib::Params params;
                     params.emplace("latitude", std::to_string(latitude));
