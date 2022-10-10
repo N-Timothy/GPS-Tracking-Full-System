@@ -175,6 +175,10 @@ start_listening:
                 for(int i = 4; i < 20; i++){
                     close(i);
                 }  
+
+                thread_socket.clear();
+                init_socket.clear();
+
                 goto start_listening;
             }
 
