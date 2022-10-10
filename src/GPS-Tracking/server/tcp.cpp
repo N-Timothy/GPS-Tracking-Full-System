@@ -66,7 +66,7 @@ namespace karlo {
                std::cout << "timeout time : " << std::put_time(std::localtime(&it->second.first), "%T") << " | time : " << std::put_time(std::localtime(&time), "%T") << std::endl;
                //std::cout << "diff time : " << std::difftime(it->second.first, time) << std::endl;
 
-                if(std::difftime(it->second.first, time) == 0){
+                if(std::difftime(time, it->second.first) > 0){
                     std::cout << std::endl;
                     std::cout << "TIMEOUT .... !!";
                     std::cout << std::endl;
