@@ -10,6 +10,9 @@
 #include <vector>
 #include <thread>
 #include <algorithm>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
 
 #include <mutex>
 #include <condition_variable>
@@ -33,31 +36,29 @@ namespace karlo {
 
     json config;
 
-    int time;
+    std::time_t time;
 
     bool threadReady = true;
 
-    std::map<int, std::pair<int, bool>> timeOutStatus;
+    std::map<int, std::pair<std::time_t, bool>> timeOutStatus;
 
     void setTcpConfig(json setTcpConfig){
         config = setTcpConfig;
     }
 
     void timer() {
+
         for(;;){
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            time++;
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+            std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+
+            time = std::chrono::system_clock::to_time_t(now);
             
-            // timer
-
-            if(time == 60) {
-                time = 0;
-            }
-
             // checking timeout
 
-            for(std::map<int, std::pair<int, bool>>::iterator it = timeOutStatus.begin(); it != timeOutStatus.end(); ++it){
-                std::cout << "timeout time : " << it->second.first << std::endl;
+            for(std::map<int, std::pair<std::time_t, bool>>::iterator it = timeOutStatus.begin(); it != timeOutStatus.end(); ++it){
+               std::cout << "timeout time : " << std::put_time(std::localtime(&it->second.first), "%F %T") << std::endl;
 
                // if(it->first.first == (time + 3)){
                //   it->second.second = true;
