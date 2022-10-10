@@ -402,6 +402,8 @@ namespace karlo {
       gps.sendConfirmation(connfd, numOfData2);
 
       // send to database to be saved
+      //
+      std::cout << "testing timout : " << timeOutStatus[connfd].second << std::endl;
       
       std::unique_lock<std::mutex> lk(m);
       cv.wait(lk, [&connfd]{return ready || timeOutStatus[connfd].second;});
@@ -410,7 +412,7 @@ namespace karlo {
             std::cout << std::endl;
             std::cout << "\033[1;32mTIMEOUT .... !! \033[0m";
             std::cout << std::endl;
-         return -3;  
+            return -3;  
       } else {
         if(gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
             database::createData(data);

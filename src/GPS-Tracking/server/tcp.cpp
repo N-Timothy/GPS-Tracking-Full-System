@@ -66,7 +66,7 @@ namespace karlo {
                 std::cout <<"socket  : " << it->first << " | timeout time : " << std::put_time(std::localtime(&it->second.first), "%T") << " | time : " << std::put_time(std::localtime(&time), "%T") << " | diff : " << std::difftime(time, it->second.first) << std::endl;
 
                 if(std::difftime(time, it->second.first) > 0){
-                  std::cout << "-----------()------------";
+                  std::cout << "-----------()------------ : "<< it->first << std::endl;;
                   it->second.second = true;
                   con_var.notify_one();
                }
