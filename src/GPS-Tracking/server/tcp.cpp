@@ -63,7 +63,7 @@ namespace karlo {
             checkTimeout = false;
             
             for(std::map<int, std::pair<std::time_t, bool>>::iterator it = timeOutStatus.begin(); it != timeOutStatus.end(); ++it){
-               std::cout << "timeout time : " << std::put_time(std::localtime(&it->second.first), "%T") << " | time : " << std::put_time(std::localtime(&time), "%T") << std::endl;
+               std::cout <<"socket  : " << it->first << " | timeout time : " << std::put_time(std::localtime(&it->second.first), "%T") << " | time : " << std::put_time(std::localtime(&time), "%T") << std::endl;
                //std::cout << "diff time : " << std::difftime(it->second.first, time) << std::endl;
 
                 if(std::difftime(time, it->second.first) > 0){
