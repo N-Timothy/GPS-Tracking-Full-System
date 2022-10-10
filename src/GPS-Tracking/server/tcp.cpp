@@ -251,7 +251,6 @@ start_listening:
             }
             std::cout << std::endl;
 
-
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
             
