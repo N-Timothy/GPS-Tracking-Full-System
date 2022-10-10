@@ -38,7 +38,7 @@ namespace karlo {
 
     std::time_t time;
 
-    bool threadReady = true;
+    bool checkTimeout = true;
 
     std::map<int, std::pair<std::time_t, bool>> timeOutStatus;
 
@@ -56,8 +56,12 @@ namespace karlo {
             time = std::chrono::system_clock::to_time_t(now);
             
             // checking timeout
-            //
+            
+            std::unique_lock<std::mutex> lk(mtx);
+            con_var.wait(lk, []{return checkTimeout;});
 
+            checkTimeout = false;
+            
             for(std::map<int, std::pair<std::time_t, bool>>::iterator it = timeOutStatus.begin(); it != timeOutStatus.end(); ++it){
                std::cout << "timeout time : " << std::put_time(std::localtime(&it->second.first), "%F %T") << std::endl;
                std::cout << "diff time : " << std::difftime(it->second.first, time) << std::endl;
@@ -70,6 +74,9 @@ namespace karlo {
                   //cv.notify_one();
                //}
             }
+            
+            checkTimeout = true;
+            con_var.notify_one();
 
         }
     }
@@ -115,7 +122,17 @@ namespace karlo {
 
         thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), socket), thread_socket.end());
         std::cout << "Terminating thread: "  << socket << std::endl;
+
+        // preventing core dump because deleteing map while beeing check
+        std::unique_lock<std::mutex> lk(mtx);
+        con_var.wait(lk, []{return checkTimeout;});
+
+        checkTimeout = false;
         timeOutStatus.erase(socket);
+        checkTimeout = true;
+        con_var.notify_one();
+
+
         std::cout << "Failed closing socket count: " << failed_count << "\n";
     }
     
