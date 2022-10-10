@@ -83,6 +83,12 @@ namespace karlo {
           else return -2;
         }
       }
+      int imeiCheckForDatabase(std::string imei, std::vector<json> imei_list) {
+        for (auto i = imei_list.begin(); i != imei_list.end(); i++) {
+          if (imei == *i) return 0;
+        }
+        return -1;
+      }
       std::string getZeroBytes(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
 //        std::cout << "Zero Bytes\t\t: " << result << std::endl;
@@ -279,7 +285,8 @@ namespace karlo {
       // Get IMEI number for initialization
       imei_raw = gps.getImei(connfd, buff, IMEI_BYTES);
       confirm = gps.imeiConfirmation(connfd, gps.imeiRecognition(imei_raw, imei_list));
-      if (confirm == -2) return -2;
+      if (confirm == -1) return -1;
+      else if (confirm == -2) return -2;
       data.imei = gps.slice_imei(imei_raw);
       memset(buff, 0, sizeof(buff));
 
@@ -399,7 +406,11 @@ namespace karlo {
         // std::cout << "timeout" << std::endl;
          //return -3;  
       //} else {
+      if(gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
         database::createData(data);
+      } else {
+        return -1;
+      }
       //}
       std::cout << "===================\n\n";
 
