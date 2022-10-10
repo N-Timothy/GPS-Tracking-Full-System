@@ -56,13 +56,18 @@ namespace karlo {
             time = std::chrono::system_clock::to_time_t(now);
             
             // checking timeout
+            //
 
             for(std::map<int, std::pair<std::time_t, bool>>::iterator it = timeOutStatus.begin(); it != timeOutStatus.end(); ++it){
                std::cout << "timeout time : " << std::put_time(std::localtime(&it->second.first), "%F %T") << std::endl;
+               std::cout << "diff time : " << std::difftime(it->second.first, time) << std::endl;
 
-               // if(it->first.first == (time + 3)){
-               //   it->second.second = true;
-               //   cv.notify_one();
+                //if(time == it->first.first){
+                  //  std::cout << std::endl;
+                    //std::cout << "TIMEOUT .... !!";
+                    //std::cout << std::endl;
+                  //it->second.second = true;
+                  //cv.notify_one();
                //}
             }
 
@@ -73,7 +78,7 @@ namespace karlo {
 
 
         //   inserting into map need to be warap with std::make_pair
-        timeOutStatus.insert(std::make_pair(socket, std::make_pair(time, false)));
+        timeOutStatus.insert(std::make_pair(socket, std::make_pair(time + 5, false)));
         
         if (std::find(thread_socket.begin(), thread_socket.end(), socket) == thread_socket.end()) {
             
