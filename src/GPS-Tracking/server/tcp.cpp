@@ -63,10 +63,10 @@ namespace karlo {
             checkTimeout = false;
             
             for(std::map<int, std::pair<std::time_t, bool>>::iterator it = timeOutStatus.begin(); it != timeOutStatus.end(); ++it){
-               std::cout <<"socket  : " << it->first << " | timeout time : " << std::put_time(std::localtime(&it->second.first), "%T") << " | time : " << std::put_time(std::localtime(&time), "%T") << std::endl;
-               //std::cout << "diff time : " << std::difftime(it->second.first, time) << std::endl;
+                std::cout <<"socket  : " << it->first << " | timeout time : " << std::put_time(std::localtime(&it->second.first), "%T") << " | time : " << std::put_time(std::localtime(&time), "%T") << " | diff : " << std::difftime(time, it->second.first) << std::endl;
 
                 if(std::difftime(time, it->second.first) > 0){
+                  std::cout << "-----------()------------";
                   it->second.second = true;
                   con_var.notify_one();
                }
@@ -74,12 +74,10 @@ namespace karlo {
             
             checkTimeout = true;
             con_var.notify_one();
-
         }
     }
 
     void newClient(int socket, std::vector<json> imei_list) {
-
 
         //   inserting into map need to be warap with std::make_pair
         timeOutStatus.insert(std::make_pair(socket, std::make_pair(time + 5, false)));
@@ -203,7 +201,7 @@ start_listening:
 
             // adding hard reset socket;
             if(new_socket >= 25){
-                for(int i = 4; i < 20; i++){
+                for(int i = 4; i <= 25; i++){
                     close(i);
                 }  
 
@@ -217,9 +215,7 @@ start_listening:
             std::set_difference(init_socket.begin(), init_socket.end(), thread_socket.begin(), thread_socket.end(),
                 std::inserter(diff, diff.begin()));
 
-
             if (std::find(init_socket.begin(), init_socket.end(), new_socket) == init_socket.end()) {
-
 
  
             init_socket.push_back(new_socket);

@@ -324,7 +324,12 @@ namespace karlo {
 
         gps.getAltitude(connfd, buff, ALTITUDE_BYTES);
 
+      try { 
         data.bearing = std::stoi(gps.getAngle(connfd, buff, ANGLE_BYTES), 0, 16);
+      } catch (const std::out_of_range& oor){
+          std::cout << "catching out of range " << std::endl;
+          return -3;
+      }
 
         gps.getSatellites(connfd, buff, SATELLITE_BYTES);
 
@@ -397,7 +402,7 @@ namespace karlo {
       gps.sendConfirmation(connfd, numOfData2);
 
       // send to database to be saved
-      //
+      
       std::unique_lock<std::mutex> lk(m);
       cv.wait(lk, [&connfd]{return ready || timeOutStatus[connfd].second;});
 

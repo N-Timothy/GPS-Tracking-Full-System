@@ -40,12 +40,18 @@ namespace karlo {
                 return -1;
             }
 
+            int tmp = ((float) data["latitude"] * 10000000);
+            float latitude = (float) tmp / 10000000;
+
+            tmp = ((float) data["longitude"] * 10000000);
+            float longitude = (float) tmp / 10000000;
+
             json publishMessage;
-            publishMessage["latitude"] = to_string(data["latitude"]);
-            publishMessage["longitude"] = to_string(data["longitude"]);
+            publishMessage["latitude"] = std::to_string(latitude);
+            publishMessage["longitude"] = std::to_string(longitude);
             publishMessage["altitude"] = to_string(data["altitude"]);
             publishMessage["speed"] = to_string(data["speed"]);
-            publishMessage["bearing"] = "100";
+            publishMessage["bearing"] = to_string(data["bearing"]);
             publishMessage["driverid"] = data["imei"];
 
             std::cout << "msg : " << publishMessage << std::endl;
