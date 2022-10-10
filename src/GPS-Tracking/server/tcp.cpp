@@ -63,16 +63,16 @@ namespace karlo {
             checkTimeout = false;
             
             for(std::map<int, std::pair<std::time_t, bool>>::iterator it = timeOutStatus.begin(); it != timeOutStatus.end(); ++it){
-               std::cout << "timeout time : " << std::put_time(std::localtime(&it->second.first), "%F %T") << std::endl;
-               std::cout << "diff time : " << std::difftime(it->second.first, time) << std::endl;
+               std::cout << "timeout time : " << std::put_time(std::localtime(&it->second.first), "%T") << " | time : " << std::put_time(std::localtime(&time), "%T") << std::endl;
+               //std::cout << "diff time : " << std::difftime(it->second.first, time) << std::endl;
 
-                //if(time == it->first.first){
-                  //  std::cout << std::endl;
-                    //std::cout << "TIMEOUT .... !!";
-                    //std::cout << std::endl;
+                if(std::difftime(it->second.first, time) == 0){
+                    std::cout << std::endl;
+                    std::cout << "TIMEOUT .... !!";
+                    std::cout << std::endl;
                   //it->second.second = true;
                   //cv.notify_one();
-               //}
+               }
             }
             
             checkTimeout = true;
