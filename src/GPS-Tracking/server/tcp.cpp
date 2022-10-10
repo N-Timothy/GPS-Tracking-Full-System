@@ -37,32 +37,42 @@ namespace karlo {
 
     bool threadReady = true;
 
-    // std::map<int, std::pair<int, bool>> timeOutStatus;
+    std::map<int, std::pair<int, bool>> timeOutStatus;
 
     void setTcpConfig(json setTcpConfig){
         config = setTcpConfig;
     }
 
-    //void timer() {
-      //  for(;;){
-        //    std::this_thread::sleep_for(std::chrono::seconds(1));
-          //  time++;
-            //if(time == 60) {
-              //  time = 0;
-            //}
+    void timer() {
+        for(;;){
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            time++;
+            
+            // timer
 
-            //if()
-       // }
-   // }
+            if(time == 60) {
+                time = 0;
+            }
+
+            // checking timeout
+
+            for(std::map<int, std::pair<int, bool>>::iterator it = timeOutStatus.begin(); it != timeOutStatus.end(); ++it){
+                std::cout << "timeout time : " << it->second.first << std::endl;
+
+               // if(it->first.first == (time + 3)){
+               //   it->second.second = true;
+               //   cv.notify_one();
+               //}
+            }
+
+        }
+    }
 
     void newClient(int socket, std::vector<json> imei_list) {
 
-//        threadReady = true;
- //       con_var.notify_one();
 
-
-        // inserting into map need to be warap with std::make_pair
-      //  timeOutStatus.insert(std::make_pair(socket, std::make_pair(time, false)));
+        //   inserting into map need to be warap with std::make_pair
+        timeOutStatus.insert(std::make_pair(socket, std::make_pair(time, false)));
         
         if (std::find(thread_socket.begin(), thread_socket.end(), socket) == thread_socket.end()) {
             
@@ -99,6 +109,7 @@ namespace karlo {
 
         thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), socket), thread_socket.end());
         std::cout << "Terminating thread: "  << socket << std::endl;
+        timeOutStatus.erase(socket);
         std::cout << "Failed closing socket count: " << failed_count << "\n";
     }
     
@@ -145,8 +156,8 @@ namespace karlo {
       }
 
 
-      //std::thread timerThread(timer);
-      //timerThread.detach();
+      std::thread timerThread(timer);
+      timerThread.detach();
 
       // accept incoming connection
       address_len = sizeof(address);
@@ -193,11 +204,6 @@ start_listening:
  
             init_socket.push_back(new_socket);
           // inform server of socket number used in send and receive commands
-          //
-  //          std::unique_lock<std::mutex> lock(mtx);
-   //         con_var.wait(lock, [] {return threadReady;});
-
-    //        threadReady = false;
     
             std::cout << "INIT SOCKET : ";
             for (auto i : init_socket) { 
@@ -224,7 +230,6 @@ start_listening:
                             std::cout << "\033[1;34mclosing : \033[0m" << i << ' ' << std::endl;
                             init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
                             diff.erase(std::remove(diff.begin(), diff.end(), i), diff.end());
-                            //failed_count--;
                         }
                     } 
             }
