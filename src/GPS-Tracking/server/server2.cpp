@@ -136,7 +136,7 @@ namespace karlo {
       }
       std::string getAngle(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-//        std::cout << "Angle\t\t\t: " << result << std::endl;
+        std::cout << "Angle\t\t\t: " << result << std::endl;
         return result;
       }
       std::string getSatellites(int connfd, char* buff, int byteslen) {
@@ -324,7 +324,7 @@ namespace karlo {
 
         gps.getAltitude(connfd, buff, ALTITUDE_BYTES);
 
-        gps.getAngle(connfd, buff, ANGLE_BYTES);
+        data.bearing = std::stoi(gps.getAngle(connfd, buff, ANGLE_BYTES), 0, 16);
 
         gps.getSatellites(connfd, buff, SATELLITE_BYTES);
 
@@ -397,21 +397,22 @@ namespace karlo {
       gps.sendConfirmation(connfd, numOfData2);
 
       // send to database to be saved
-      
+      //
       std::unique_lock<std::mutex> lk(m);
-      //cv.wait(lk, []{return ready || timeOutStatus[connfd].second;});
-      cv.wait(lk, []{return ready;});
+      cv.wait(lk, [&connfd]{return ready || timeOutStatus[connfd].second;});
 
-      //if(timeOutStatus[connfd].second){
-        // std::cout << "timeout" << std::endl;
-         //return -3;  
-      //} else {
-      if(gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
-        database::createData(data);
+      if(timeOutStatus[connfd].second){
+            std::cout << std::endl;
+            std::cout << "\033[1;32mTIMEOUT .... !! \033[0m";
+            std::cout << std::endl;
+         return -3;  
       } else {
-        return -1;
+        if(gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
+            database::createData(data);
+        } else {
+            return -1;
+        }
       }
-      //}
       std::cout << "===================\n\n";
 
       return 0;

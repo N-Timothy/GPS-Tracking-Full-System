@@ -67,11 +67,8 @@ namespace karlo {
                //std::cout << "diff time : " << std::difftime(it->second.first, time) << std::endl;
 
                 if(std::difftime(time, it->second.first) > 0){
-                    std::cout << std::endl;
-                    std::cout << "TIMEOUT .... !!";
-                    std::cout << std::endl;
-                  //it->second.second = true;
-                  //cv.notify_one();
+                  it->second.second = true;
+                  con_var.notify_one();
                }
             }
             
