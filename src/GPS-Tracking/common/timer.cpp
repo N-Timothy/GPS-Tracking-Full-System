@@ -42,8 +42,7 @@ namespace karlo {
                     std::cout <<"id  : " << it->first << " | timeout time : " << std::put_time(std::localtime(&it->second.first), "%T") << " | time : " << std::put_time(std::localtime(&time), "%T") << " | diff : " << std::difftime(time, it->second.first) << std::endl;
 
 
-                    if(std::difftime(time, it->second.first) > 0){
-                        std::lock_guard<std::mutex> lk(m);
+                    if(std::difftime(time, it->second.first) >= 0){
                         it->second.second = true;
                         std::cout << "---------()---------" << std::endl;
                         std::cout << "ID : " << it->first << " | TIMEOUT : " << it->second.second << std::endl;
