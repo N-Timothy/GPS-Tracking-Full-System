@@ -2,7 +2,6 @@
 #include "GPS-Tracking/server/server2.hpp"
 #include "GPS-Tracking/server/read_imei_json.hpp"
 #include "GPS-Tracking/core/config.hpp"
-#include "GPS-Tracking/common/timer.hpp"
 
 #include <cstring>
 #include <stdlib.h>
@@ -46,43 +45,8 @@ namespace karlo {
         config = setTcpConfig;
     }
 
-    //void timer() {
-
-      //  for(;;){
-        //    std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-          //  std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-
-         //   time = std::chrono::system_clock::to_time_t(now);
-            
-            // checking timeout
-            
-         //   std::unique_lock<std::mutex> lk(mtx);
-         //   con_var.wait(lk, []{return checkTimeout;});
-
-          //  checkTimeout = false;
-            
-          //  for(std::map<int, std::pair<std::time_t, bool>>::iterator it = timeOutStatus.begin(); it != timeOutStatus.end(); ++it){
-            //    std::cout <<"socket  : " << it->first << " | timeout time : " << std::put_time(std::localtime(&it->second.first), "%T") << " | time : " << std::put_time(std::localtime(&time), "%T") << " | diff : " << std::difftime(time, it->second.first) << std::endl;
-
-              //  if(std::difftime(time, it->second.first) > 0){
-                //  std::cout << "-----------()------------ : "<< it->first << std::endl;;
-                  //it->second.second = true;
-                 // con_var.notify_all();
-              // }
-           // }
-            
-          //  checkTimeout = true;
-          //  con_var.notify_one();
-       // }
-   // }
-
     void newClient(int socket, std::vector<json> imei_list) {
 
-        //   inserting into map need to be warap with std::make_pair
-        //timeOutStatus.insert(std::make_pair(socket, std::make_pair(time + 5, false)));
-        common::add_timeout(socket);
-        
         if (std::find(thread_socket.begin(), thread_socket.end(), socket) == thread_socket.end()) {
             
             thread_socket.push_back(socket);
@@ -118,9 +82,6 @@ namespace karlo {
 
         thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), socket), thread_socket.end());
         std::cout << "Terminating thread: "  << socket << std::endl;
-
-        // preventing core dump because deleteing map while beeing check
-        common::delete_timeout(socket);
 
         std::cout << "Failed closing socket count: " << failed_count << "\n";
     }

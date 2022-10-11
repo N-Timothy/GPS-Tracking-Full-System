@@ -5,7 +5,6 @@
 #include "httplib.h"
 
 #include "GPS-Tracking/database/database.hpp"
-#include "GPS-Tracking/common/timer.hpp"
 
 #include <string>
 namespace karlo {

@@ -6,7 +6,6 @@ add_library(GPS-Tracking-server
 
 target_link_libraries(GPS-Tracking-server PRIVATE
                       GPS-Tracking-database
-                      GPS-Tracking-common
                       pthread)
 
 target_include_directories(GPS-Tracking-server PUBLIC

@@ -29,54 +29,39 @@ namespace karlo {
 
             std::string postUrl = config["api"];
 
-            common::add_timeout(-1);
-            
             auto now = std::chrono::system_clock::now();
 
             std::unique_lock<std::mutex> lk(m);
-            //cv.wait(lk, []{return ready || common::TIMEOUT[-1].second;});
-            if(cv.wait_until(lk, now + 100ms ,[]{return common::TIMEOUT[-1].second;})) {
-                
-            } else {
-            
+            if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return ready;})) {
                 std::cout << "HPPTS TIMEOUT" << std::endl;
-                common::delete_timeout(-1);
-            }
-
-            if (common::TIMEOUT[-1].second){
-                std::cout << "HPPTS TIMEOUT" << std::endl;
-                common::delete_timeout(-1);
-                lk.unlock();
                 return;
-            }
+            } else {
 
-            std::vector<json> postData = database::readData();
+                std::vector<json> postData = database::readData();
 
-            common::delete_timeout(-1);
+                for (json data : postData) {
 
-            for (json data : postData) {
+                    int tmp = ((float) data["latitude"] * 10000000);
+                    float latitude = (float) tmp / 10000000;
 
-              int tmp = ((float) data["latitude"] * 10000000);
-              float latitude = (float) tmp / 10000000;
+                    tmp = ((float) data["longitude"] * 10000000);
+                    float longitude = (float) tmp / 10000000;
 
-              tmp = ((float) data["longitude"] * 10000000);
-              float longitude = (float) tmp / 10000000;
-
-              httplib::Params params;
-                    params.emplace("latitude", std::to_string(latitude));
-                    params.emplace("longitude", std::to_string(longitude));
-                    params.emplace("altitude", to_string(data["altitude"]));
-                    params.emplace("speed", to_string(data["speed"]));
-                    params.emplace("bearing", "100");
-                    params.emplace("driver", imei);
+                    httplib::Params params;
+                        params.emplace("latitude", std::to_string(latitude));
+                        params.emplace("longitude", std::to_string(longitude));
+                        params.emplace("altitude", to_string(data["altitude"]));
+                        params.emplace("speed", to_string(data["speed"]));
+                        params.emplace("bearing", "100");
+                        params.emplace("driver", imei);
                     //params.emplace("driver", to_string(data["imei"]));
-                auto res = cli.Post(postUrl, params);
+                    auto res = cli.Post(postUrl, params);
 
-                if (res) {
-                    std::cout << res->body << std::endl;
+                    if (res) {
+                        std::cout << res->body << std::endl;
+                    }
                 }
             }
-
         }
 
     } // namespace httpRequest

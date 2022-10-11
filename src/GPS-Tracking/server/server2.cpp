@@ -3,7 +3,6 @@
 #include "GPS-Tracking/server/data.hpp"
 #include "GPS-Tracking/database/database.hpp"
 #include "GPS-Tracking/server/server2.hpp"
-#include "GPS-Tracking/common/timer.hpp"
 
 #include <stdio.h>
 #include <netdb.h>
@@ -27,6 +26,8 @@ namespace karlo {
 
     std::mutex m;
     std::condition_variable cv;
+
+    using namespace std::literals::chrono_literals;
 
     class GetData {
     private:
@@ -405,29 +406,22 @@ namespace karlo {
 
       // send to database to be saved
      
-      std::cout << "test : " <<  common::TIMEOUT[connfd].second << std::endl;
-      
       std::unique_lock<std::mutex> lk(m);
-      //cv.wait(lk, [&connfd]{return ready || common::TIMEOUT[connfd].second;});
-      cv.wait(lk, [&connfd]{return common::TIMEOUT[connfd].second;});
-
-      if(common::TIMEOUT[connfd].second){
+      if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, [&connfd]{return ready;})){
             std::cout << std::endl;
             std::cout << "\033[1;32mTIMEOUT .... !! \033[0m";
             std::cout << std::endl;
-            common::delete_timeout(connfd);
             return -3;  
       } else {
-        common::delete_timeout(connfd);
-        if(gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
-            database::createData(data);
-        } else {
-            return -1;
-        }
+            if(gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
+                database::createData(data);
+            } else {
+                return -1;
+            }
       }
-      std::cout << "===================\n\n";
+        std::cout << "===================\n\n";
 
-      return 0;
+        return 0;
     }
 
   } // namespace server

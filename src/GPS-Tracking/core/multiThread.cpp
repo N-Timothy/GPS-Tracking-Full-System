@@ -4,7 +4,6 @@
 #include "GPS-Tracking/server/tcp.hpp"
 #include "GPS-Tracking/httpsRequest/httpsRequest.hpp"
 #include "GPS-Tracking/mqtt/subscriber.hpp"
-#include "GPS-Tracking/common/timer.hpp"
 
 #include <thread>
 
@@ -15,15 +14,13 @@ namespace karlo {
 
             config::config();
 
-            std::thread timerThread(common::timer);
             std::thread httpsRequestThread(httpsRequest::connect);
-            //std::thread mqttSubscriberThread(mqtt::subscriber);
-            //std::thread tcpServerThread(server::tcpServer);
+            std::thread mqttSubscriberThread(mqtt::subscriber);
+            std::thread tcpServerThread(server::tcpServer);
 
-            timerThread.detach();
-            httpsRequestThread.join();
-           // mqttSubscriberThread.detach();
-            //tcpServerThread.join();
+            httpsRequestThread.detach();
+            mqttSubscriberThread.detach();
+            tcpServerThread.join();
 
         }
 
