@@ -11,6 +11,8 @@ namespace karlo {
 
         std::mutex m;
         std::condition_variable cv;
+        
+        using namespace std::literals::chrono_literals;
 
         using json = nlohmann::json;
 
@@ -28,10 +30,18 @@ namespace karlo {
             std::string postUrl = config["api"];
 
             common::add_timeout(-1);
+            
+            auto now = std::chrono::system_clock::now();
 
             std::unique_lock<std::mutex> lk(m);
             //cv.wait(lk, []{return ready || common::TIMEOUT[-1].second;});
-            cv.wait(lk, []{return common::TIMEOUT[-1].second;});
+            if(cv.wait_until(lk, now + 100ms ,[]{return common::TIMEOUT[-1].second;})) {
+                
+            } else {
+            
+                std::cout << "HPPTS TIMEOUT" << std::endl;
+                common::delete_timeout(-1);
+            }
 
             if (common::TIMEOUT[-1].second){
                 std::cout << "HPPTS TIMEOUT" << std::endl;
