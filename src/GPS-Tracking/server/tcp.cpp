@@ -200,16 +200,16 @@ start_listening:
                 }
 
             // adding hard reset socket;
-            if(new_socket >= 25){
-                for(int i = 4; i <= 25; i++){
-                    close(i);
-                }  
+            //if(new_socket >= 25){
+              //  for(int i = 4; i <= 25; i++){
+                //    close(i);
+                //}  
 
-                thread_socket.clear();
-                init_socket.clear();
+                //thread_socket.clear();
+                //init_socket.clear();
 
-                goto start_listening;
-            }
+                //goto start_listening;
+            //}
 
             // Adding socket vector comparison
             std::set_difference(init_socket.begin(), init_socket.end(), thread_socket.begin(), thread_socket.end(),
