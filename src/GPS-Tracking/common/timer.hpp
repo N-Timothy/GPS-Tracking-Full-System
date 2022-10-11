@@ -18,4 +18,4 @@ namespace karlo {
     } // namespace common
 } // namespace common
 
-#endif _GPS_TRACKING_COMMON_TIMER_HPP_
+#endif // _GPS_TRACKING_COMMON_TIMER_HPP_
