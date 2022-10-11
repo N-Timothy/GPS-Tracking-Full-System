@@ -40,8 +40,6 @@ namespace karlo {
 
     std::time_t time;
 
-    bool checkTimeout = true;
-
     //std::map<int, std::pair<std::time_t, bool>> timeOutStatus;
 
     void setTcpConfig(json setTcpConfig){
@@ -122,9 +120,6 @@ namespace karlo {
         std::cout << "Terminating thread: "  << socket << std::endl;
 
         // preventing core dump because deleteing map while beeing check
-        std::unique_lock<std::mutex> lk(mtx);
-        con_var.wait(lk, []{return checkTimeout;});
-
         common::delete_timeout(socket);
 
         std::cout << "Failed closing socket count: " << failed_count << "\n";
