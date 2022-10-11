@@ -60,6 +60,8 @@ namespace karlo {
 
             timeoutMapAccess = false;
 
+            std::cout << "delete" << std::endl;
+
             TIMEOUT.erase(id);
 
             timeoutMapAccess = true;
