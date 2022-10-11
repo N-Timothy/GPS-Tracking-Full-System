@@ -44,6 +44,8 @@ namespace karlo {
 
             common::delete_timeout(-2);
             if (data.is_null() || common::TIMEOUT[-2].second) {
+
+                common::delete_timeout(-2);
                 return -1;
             }
 

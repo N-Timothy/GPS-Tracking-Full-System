@@ -27,25 +27,24 @@ namespace karlo {
 
                 std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
 
-            time = std::chrono::system_clock::to_time_t(now);
+                time = std::chrono::system_clock::to_time_t(now);
 
-            std::unique_lock<std::mutex> lk(m);
-            cv.wait(lk, []{return timeoutMapAccess;});
+                std::unique_lock<std::mutex> lk(m);
+                cv.wait(lk, []{return timeoutMapAccess;});
 
-            timeoutMapAccess = false;
+                timeoutMapAccess = false;
             
-            for(std::map<int, std::pair<std::time_t, bool>>::iterator it = TIMEOUT.begin(); it != TIMEOUT.end(); ++it){
+                for(std::map<int, std::pair<std::time_t, bool>>::iterator it = TIMEOUT.begin(); it != TIMEOUT.end(); ++it){
+
+                    std::cout <<"id  : " << it->first << " | timeout time : " << std::put_time(std::localtime(&it->second.first), "%T") << " | time : " << std::put_time(std::localtime(&time), "%T") << " | diff : " << std::difftime(time, it->second.first) << std::endl;
 
 
-                std::cout <<"id  : " << it->first << " | timeout time : " << std::put_time(std::localtime(&it->second.first), "%T") << " | time : " << std::put_time(std::localtime(&time), "%T") << " | diff : " << std::difftime(time, it->second.first) << std::endl;
-
-
-               if(std::difftime(time, it->second.first) > 0){
-                    std::cout << "---------()---------" << std::endl;
-                    it->second.second = true;
-                    cv.notify_all();
-               }
-            }
+                    if(std::difftime(time, it->second.first) > 0){
+                        std::cout << "---------()---------" << std::endl;
+                        it->second.second = true;
+                        cv.notify_all();
+                    }
+                }
 
             timeoutMapAccess = true;
             cv.notify_one();
@@ -59,8 +58,6 @@ namespace karlo {
             cv.wait(lk, []{return timeoutMapAccess;});
 
             timeoutMapAccess = false;
-
-            std::cout << "delete" << std::endl;
 
             TIMEOUT.erase(id);
 

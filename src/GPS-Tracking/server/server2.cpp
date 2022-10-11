@@ -412,8 +412,10 @@ namespace karlo {
             std::cout << std::endl;
             std::cout << "\033[1;32mTIMEOUT .... !! \033[0m";
             std::cout << std::endl;
+            common::delete_timeout(connfd);
             return -3;  
       } else {
+        common::delete_timeout(connfd);
         if(gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
             database::createData(data);
         } else {

@@ -33,6 +33,7 @@ namespace karlo {
 
             if (common::TIMEOUT[-1].second){
                 std::cout << "HPPTS TIMEOUT" << std::endl;
+                common::delete_timeout(-1);
                 return;
             }
 
