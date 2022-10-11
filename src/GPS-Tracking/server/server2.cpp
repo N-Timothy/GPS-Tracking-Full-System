@@ -3,6 +3,7 @@
 #include "GPS-Tracking/server/data.hpp"
 #include "GPS-Tracking/database/database.hpp"
 #include "GPS-Tracking/server/server2.hpp"
+#include "GPS-Tracking/common/timer.hpp"
 
 #include <stdio.h>
 #include <netdb.h>
@@ -402,13 +403,11 @@ namespace karlo {
       gps.sendConfirmation(connfd, numOfData2);
 
       // send to database to be saved
-      //
-      std::cout << "testing timout : " << timeOutStatus[connfd].second << std::endl;
       
       std::unique_lock<std::mutex> lk(m);
-      cv.wait(lk, [&connfd]{return ready || timeOutStatus[connfd].second;});
+      cv.wait(lk, [&connfd]{return ready || common::TIMEOUT[connfd].second;});
 
-      if(timeOutStatus[connfd].second){
+      if(common::TIMEOUT[connfd].second){
             std::cout << std::endl;
             std::cout << "\033[1;32mTIMEOUT .... !! \033[0m";
             std::cout << std::endl;

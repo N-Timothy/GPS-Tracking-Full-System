@@ -1,4 +1,5 @@
 #include "GPS-Tracking/httpsRequest/post.hpp"
+#include "GPS-Tracking/common/timer.hpp"
 
 #include <nlohmann/json.hpp>
 #include <iostream>
@@ -25,10 +26,19 @@ namespace karlo {
 
             std::string postUrl = config["api"];
 
+            common::add_timeout(-1);
+
             std::unique_lock<std::mutex> lk(m);
-            cv.wait(lk, []{return ready;});
+            cv.wait(lk, []{return ready || common::TIMEOUT[-1].second;});
+
+            if (common::TIMEOUT[-1].second){
+                std::cout << "HPPTS TIMEOUT" << std::endl;
+                return;
+            }
 
             std::vector<json> postData = database::readData();
+
+            common::delete_timeout(-1);
 
             for (json data : postData) {
 

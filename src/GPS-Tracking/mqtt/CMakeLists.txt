@@ -6,6 +6,7 @@ add_library(GPS-Tracking-mqtt
 
 target_link_libraries(GPS-Tracking-mqtt PRIVATE
                       GPS-Tracking-database
+                      GPS-Tracking-common
                       mosquitto
                       pthread)
 

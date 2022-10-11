@@ -1,5 +1,6 @@
 #include "GPS-Tracking/mqtt/publisher.hpp"
 #include "GPS-Tracking/database/database.hpp"
+#include "GPS-Tracking/common/timer.hpp"
 
 #include <iostream>
 #include <string>
@@ -32,11 +33,16 @@ namespace karlo {
 	        }
 	        std::cout << "We are now connected to the broker! " << std::endl;
 
+            //  using -2 as mqtt id
+            common::add_timeout(-2);
+
             std::unique_lock<std::mutex> lk(m);
-            cv.wait(lk, []{return ready;});
+            cv.wait(lk, []{return ready || common::TIMEOUT[-2].second;});
 
             json data = database::readData(imei);
-            if (data.is_null()){
+
+            common::delete_timeout(-2);
+            if (data.is_null() || common::TIMEOUT[-2].second) {
                 return -1;
             }
 

@@ -7,6 +7,7 @@ target_link_libraries(GPS-Tracking-core PRIVATE
                       GPS-Tracking-server
                       GPS-Tracking-httpsRequest
                       GPS-Tracking-mqtt
+                      GPS-Tracking-common
                       pthread)
 
 target_include_directories(GPS-Tracking-core PUBLIC

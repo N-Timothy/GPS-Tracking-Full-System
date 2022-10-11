@@ -5,6 +5,7 @@ add_library(GPS-Tracking-httpsRequest
 
 target_link_libraries(GPS-Tracking-httpsRequest PRIVATE
                       GPS-Tracking-database
+                      GPS-Tracking-common
                       crypto
                       ssl)
 

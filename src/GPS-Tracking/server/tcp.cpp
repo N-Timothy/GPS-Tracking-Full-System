@@ -2,6 +2,7 @@
 #include "GPS-Tracking/server/server2.hpp"
 #include "GPS-Tracking/server/read_imei_json.hpp"
 #include "GPS-Tracking/core/config.hpp"
+#include "GPS-Tracking/common/timer.hpp"
 
 #include <cstring>
 #include <stdlib.h>
@@ -41,47 +42,48 @@ namespace karlo {
 
     bool checkTimeout = true;
 
-    std::map<int, std::pair<std::time_t, bool>> timeOutStatus;
+    //std::map<int, std::pair<std::time_t, bool>> timeOutStatus;
 
     void setTcpConfig(json setTcpConfig){
         config = setTcpConfig;
     }
 
-    void timer() {
+    //void timer() {
 
-        for(;;){
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+      //  for(;;){
+        //    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-            std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+          //  std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
 
-            time = std::chrono::system_clock::to_time_t(now);
+         //   time = std::chrono::system_clock::to_time_t(now);
             
             // checking timeout
             
-            std::unique_lock<std::mutex> lk(mtx);
-            con_var.wait(lk, []{return checkTimeout;});
+         //   std::unique_lock<std::mutex> lk(mtx);
+         //   con_var.wait(lk, []{return checkTimeout;});
 
-            checkTimeout = false;
+          //  checkTimeout = false;
             
-            for(std::map<int, std::pair<std::time_t, bool>>::iterator it = timeOutStatus.begin(); it != timeOutStatus.end(); ++it){
-                std::cout <<"socket  : " << it->first << " | timeout time : " << std::put_time(std::localtime(&it->second.first), "%T") << " | time : " << std::put_time(std::localtime(&time), "%T") << " | diff : " << std::difftime(time, it->second.first) << std::endl;
+          //  for(std::map<int, std::pair<std::time_t, bool>>::iterator it = timeOutStatus.begin(); it != timeOutStatus.end(); ++it){
+            //    std::cout <<"socket  : " << it->first << " | timeout time : " << std::put_time(std::localtime(&it->second.first), "%T") << " | time : " << std::put_time(std::localtime(&time), "%T") << " | diff : " << std::difftime(time, it->second.first) << std::endl;
 
-                if(std::difftime(time, it->second.first) > 0){
-                  std::cout << "-----------()------------ : "<< it->first << std::endl;;
-                  it->second.second = true;
-                  con_var.notify_all();
-               }
-            }
+              //  if(std::difftime(time, it->second.first) > 0){
+                //  std::cout << "-----------()------------ : "<< it->first << std::endl;;
+                  //it->second.second = true;
+                 // con_var.notify_all();
+              // }
+           // }
             
-            checkTimeout = true;
-            con_var.notify_one();
-        }
-    }
+          //  checkTimeout = true;
+          //  con_var.notify_one();
+       // }
+   // }
 
     void newClient(int socket, std::vector<json> imei_list) {
 
         //   inserting into map need to be warap with std::make_pair
-        timeOutStatus.insert(std::make_pair(socket, std::make_pair(time + 5, false)));
+        //timeOutStatus.insert(std::make_pair(socket, std::make_pair(time + 5, false)));
+        common::add_timeout(socket);
         
         if (std::find(thread_socket.begin(), thread_socket.end(), socket) == thread_socket.end()) {
             
@@ -123,11 +125,7 @@ namespace karlo {
         std::unique_lock<std::mutex> lk(mtx);
         con_var.wait(lk, []{return checkTimeout;});
 
-        checkTimeout = false;
-        timeOutStatus.erase(socket);
-        checkTimeout = true;
-        con_var.notify_one();
-
+        common::delete_timeout(socket);
 
         std::cout << "Failed closing socket count: " << failed_count << "\n";
     }
@@ -175,8 +173,8 @@ namespace karlo {
       }
 
 
-      std::thread timerThread(timer);
-      timerThread.detach();
+      //std::thread timerThread(timer);
+      //timerThread.detach();
 
       // accept incoming connection
       address_len = sizeof(address);
