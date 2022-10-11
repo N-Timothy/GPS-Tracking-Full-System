@@ -29,7 +29,8 @@ namespace karlo {
             common::add_timeout(-1);
 
             std::unique_lock<std::mutex> lk(m);
-            cv.wait(lk, []{return ready || common::TIMEOUT[-1].second;});
+            //cv.wait(lk, []{return ready || common::TIMEOUT[-1].second;});
+            cv.wait(lk, []{return common::TIMEOUT[-1].second;});
 
             if (common::TIMEOUT[-1].second){
                 std::cout << "HPPTS TIMEOUT" << std::endl;

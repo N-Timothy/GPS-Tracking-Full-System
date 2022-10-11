@@ -37,7 +37,8 @@ namespace karlo {
             common::add_timeout(-2);
 
             std::unique_lock<std::mutex> lk(m);
-            cv.wait(lk, []{return ready || common::TIMEOUT[-2].second;});
+            //cv.wait(lk, []{return ready || common::TIMEOUT[-2].second;});
+            cv.wait(lk, []{return common::TIMEOUT[-2].second;});
 
             json data = database::readData(imei);
 
