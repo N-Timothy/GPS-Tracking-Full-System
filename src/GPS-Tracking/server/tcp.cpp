@@ -1,6 +1,7 @@
 #include "GPS-Tracking/server/tcp.hpp"
 #include "GPS-Tracking/server/server2.hpp"
 #include "GPS-Tracking/server/read_imei_json.hpp"
+#include "GPS-Tracking/core/config.hpp"
 
 #include <cstring>
 #include <stdlib.h>
@@ -24,7 +25,7 @@ namespace karlo {
     std::condition_variable con_var;
 
     std::vector<json> imei_list;
-    std::string IMEI_JSON_LOCATION = "/home/" + getUsername() + "/" + IMEI_JSON_FILENAME;
+    std::string IMEI_JSON_LOCATION = "/home/" + core::config::getUsername() + "/" + IMEI_JSON_FILENAME;
 
     std::vector<int> init_socket;
     std::vector<int> thread_socket;
@@ -198,18 +199,6 @@ start_listening:
                     perror("Accept");
                     exit(EXIT_FAILURE);
                 }
-
-            // adding hard reset socket;
-            //if(new_socket >= 25){
-              //  for(int i = 4; i <= 25; i++){
-                //    close(i);
-                //}  
-
-                //thread_socket.clear();
-                //init_socket.clear();
-
-                //goto start_listening;
-            //}
 
             // Adding socket vector comparison
             std::set_difference(init_socket.begin(), init_socket.end(), thread_socket.begin(), thread_socket.end(),

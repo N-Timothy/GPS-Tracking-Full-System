@@ -15,7 +15,6 @@ namespace karlo {
 
     using json = nlohmann::json;
 
-    std::string getUsername();
     std::vector<json> readImeiJson(std::string jsonFilename);
   } // namespace server
 } // namespace karlo

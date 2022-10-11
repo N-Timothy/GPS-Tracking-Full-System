@@ -45,6 +45,8 @@ namespace karlo {
 
                 server::setTcpConfig(data["tcp"]);
 
+                ifs.close();
+
 
             }
 

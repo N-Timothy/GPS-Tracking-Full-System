@@ -11,6 +11,8 @@ namespace karlo {
 
             using json = nlohmann::json;
 
+            std::string getUsername();
+
             void config();
 
         } // namespace config
