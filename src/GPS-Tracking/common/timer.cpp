@@ -40,8 +40,9 @@ namespace karlo {
 
 
                     if(std::difftime(time, it->second.first) > 0){
-                        std::cout << "---------()---------" << std::endl;
                         it->second.second = true;
+                        std::cout << "---------()---------" << std::endl;
+                        std::cout << "ID : " << it->first << " | TIMEOUT : " << it->second.second << std::endl;
                         cv.notify_all();
                     }
                 }
