@@ -17,13 +17,13 @@ namespace karlo {
 
             std::thread timerThread(common::timer);
             std::thread httpsRequestThread(httpsRequest::connect);
-            std::thread mqttSubscriberThread(mqtt::subscriber);
-            std::thread tcpServerThread(server::tcpServer);
+            //std::thread mqttSubscriberThread(mqtt::subscriber);
+            //std::thread tcpServerThread(server::tcpServer);
 
             timerThread.detach();
-           // httpsRequestThread.detach();
+            httpsRequestThread.join();
            // mqttSubscriberThread.detach();
-            tcpServerThread.join();
+            //tcpServerThread.join();
 
         }
 
