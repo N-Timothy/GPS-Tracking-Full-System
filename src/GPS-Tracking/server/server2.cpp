@@ -404,7 +404,7 @@ namespace karlo {
 
       // send to database to be saved
       //
-      std::cout << "test : " <<  common::TIMEOUT[connfd].second; << std::endl;
+      std::cout << "test : " <<  common::TIMEOUT[connfd].second << std::endl;
       
       std::unique_lock<std::mutex> lk(m);
       //cv.wait(lk, [&connfd]{return ready || common::TIMEOUT[connfd].second;});
