@@ -8,15 +8,18 @@
 
 #include <iostream>
 
+#include <map>
+#include <ctime>
+
 namespace karlo {
     namespace common {
 
         std::mutex m;
         std::condition_variable cv;
 
-        std::map<int, std::pair<std::time_t, bool>> TIMEOUT;
-
         std::time_t time;
+
+        std::map<int, std::pair<std::time_t, bool>> TIMEOUT;
 
         bool timeoutMapAccess = true;
 
