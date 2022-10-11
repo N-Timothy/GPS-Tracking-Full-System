@@ -67,7 +67,7 @@ namespace karlo {
         }
 
         void add_timeout(int id){
-            TIMEOUT.insert(std::make_pair(id, std::make_pair(time + 5, false)));
+            TIMEOUT.insert(std::make_pair(id, std::make_pair(time + 2, false)));
         }
 
     } // namespace karlo
