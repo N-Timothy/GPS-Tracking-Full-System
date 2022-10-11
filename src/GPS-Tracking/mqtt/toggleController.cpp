@@ -62,7 +62,11 @@ namespace karlo {
                             } else {
                                 break;
                             }
+                        } else if (ret == -3) {
+                            std::cout << "MQTT TIMEOUT" << std::endl;
+                            break;
                         } else {
+
                             std::cout << "Succeed ... " << std::endl;
                             counter++;
                         }
