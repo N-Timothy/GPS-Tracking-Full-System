@@ -14,7 +14,7 @@
 #include <unistd.h>
 
 
-bool ready = true;
+bool ready = false;
 
 namespace karlo {
   namespace database {
