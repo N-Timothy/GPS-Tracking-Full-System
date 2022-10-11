@@ -43,6 +43,7 @@ namespace karlo {
 
 
                     if(std::difftime(time, it->second.first) > 0){
+                        std::lock_guard<std::mutex> lk(m);
                         it->second.second = true;
                         std::cout << "---------()---------" << std::endl;
                         std::cout << "ID : " << it->first << " | TIMEOUT : " << it->second.second << std::endl;

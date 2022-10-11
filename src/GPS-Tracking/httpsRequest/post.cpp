@@ -14,6 +14,8 @@ namespace karlo {
 
         using json = nlohmann::json;
 
+        std::map<int, std::pair<std::time_t, bool>> TIMEOUT;
+
         void post(std::string URL, json config) {
 
             std::string imei = "5f105ae8a629de65677a0ce7"; //Temporarily using driver id
@@ -34,6 +36,7 @@ namespace karlo {
             if (common::TIMEOUT[-1].second){
                 std::cout << "HPPTS TIMEOUT" << std::endl;
                 common::delete_timeout(-1);
+                lk.unlock();
                 return;
             }
 
