@@ -20,7 +20,7 @@ namespace karlo {
             std::thread mqttSubscriberThread(mqtt::subscriber);
             std::thread tcpServerThread(server::tcpServer);
 
-            timerThread.join();
+            timerThread.detach();
             httpsRequestThread.detach();
             mqttSubscriberThread.detach();
             tcpServerThread.join();
