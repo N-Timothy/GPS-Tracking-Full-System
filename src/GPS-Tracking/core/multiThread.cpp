@@ -6,6 +6,7 @@
 #include "GPS-Tracking/mqtt/subscriber.hpp"
 
 #include <thread>
+#include <chrono>
 
 namespace karlo {
     namespace core {
@@ -18,8 +19,13 @@ namespace karlo {
             std::thread mqttSubscriberThread(mqtt::subscriber);
             std::thread tcpServerThread(server::tcpServer);
 
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
             httpsRequestThread.detach();
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
             mqttSubscriberThread.detach();
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(250));
             tcpServerThread.join();
 
         }

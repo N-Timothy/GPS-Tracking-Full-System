@@ -12,7 +12,6 @@
 #include <thread>
 #include <algorithm>
 #include <chrono>
-#include <ctime>
 #include <iomanip>
 
 #include <mutex>
@@ -23,6 +22,9 @@ namespace karlo {
 
     std::mutex mtx;
     std::condition_variable con_var;
+
+    int noData = 0;
+    int timeout = 0;
 
     std::vector<json> imei_list;
     std::string IMEI_JSON_LOCATION = "/home/" + core::config::getUsername() + "/" + IMEI_JSON_FILENAME;
@@ -36,10 +38,6 @@ namespace karlo {
     using json = nlohmann::json;
 
     json config;
-
-    std::time_t time;
-
-    //std::map<int, std::pair<std::time_t, bool>> timeOutStatus;
 
     void setTcpConfig(json setTcpConfig){
         config = setTcpConfig;
@@ -58,9 +56,9 @@ namespace karlo {
             int comm;
 
             std::cout << "New thread: " << socket << " initialized " << std::endl;
-
         
             comm = communicate(socket, imei_list);
+
             if (comm == -1) {
                 std::cout << "\x1b[31mIMEI is not recognized!\x1b[0m\n";
             }
@@ -70,6 +68,8 @@ namespace karlo {
             else if (comm == -3) {
                 std::cout << "\x1b[31mThread terminated: Error in socket reading\x1b[0m\n";
             }
+        } else {
+            return;
         }
         
         if (close(socket) < 0) { 
@@ -98,7 +98,6 @@ namespace karlo {
       // Read IMEI JSON an
       imei_list = readImeiJson(IMEI_JSON_LOCATION);
     
-
       // create master socket
       if ((master_socket = socket (AF_INET, SOCK_STREAM, 0)) == 0) {
         perror("socket failed");
@@ -128,15 +127,9 @@ namespace karlo {
         exit(EXIT_FAILURE);
       }
 
-
-      //std::thread timerThread(timer);
-      //timerThread.detach();
-
       // accept incoming connection
       address_len = sizeof(address);
       puts("Waiting for connection ...");
-
-start_listening: 
 
       for (;;) {
         //clear the socket set
@@ -157,6 +150,8 @@ start_listening:
             // Adding socket vector comparison
             std::set_difference(init_socket.begin(), init_socket.end(), thread_socket.begin(), thread_socket.end(),
                 std::inserter(diff, diff.begin()));
+            std::set_difference(thread_socket.begin(), thread_socket.end(), init_socket.begin(), init_socket.end(),
+                std::inserter(diff, diff.begin()));
 
             if (std::find(init_socket.begin(), init_socket.end(), new_socket) == init_socket.end()) {
 
@@ -164,7 +159,7 @@ start_listening:
             init_socket.push_back(new_socket);
           // inform server of socket number used in send and receive commands
     
-            std::cout << "INIT SOCKET : ";
+            std::cout << "INIT SOCKET   : ";
             for (auto i : init_socket) { 
                 std::cout << i << ' ';
             }
@@ -188,11 +183,14 @@ start_listening:
                         } else {
                             std::cout << "\033[1;34mclosing : \033[0m" << i << ' ' << std::endl;
                             init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
+                            thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
                             diff.erase(std::remove(diff.begin(), diff.end(), i), diff.end());
                         }
                     } 
             }
             std::cout << std::endl;
+
+            std::cout << std::endl << "NODATA : " << noData << "   TIMEOUT : " << timeout << std::endl;
 
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
@@ -201,7 +199,6 @@ start_listening:
             std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list));
             newClientThread.detach();
         }
-
       }
      }
     }

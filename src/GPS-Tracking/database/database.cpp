@@ -59,7 +59,6 @@ namespace karlo {
 
     void createData(trackingData data) {
 
-
       ready = false;
 
       create(data, collection);

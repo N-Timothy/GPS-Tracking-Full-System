@@ -44,7 +44,7 @@ namespace karlo {
       std::string getBytes (int connfd, char* buff, int byteslen) {
         for (n = 0; n < byteslen; n++) {
           connectivity = recv(connfd, (char *) &number, 1, 0);
-          if (connectivity == 0) break;
+          if (connectivity <= 0) break;
           if (n == 0) sprintf(buff, "%02x", number);
           else sprintf(buff + strlen(buff), "%02x", number);
         }
@@ -202,6 +202,7 @@ namespace karlo {
       std::cout << std::endl;
       Time << std::put_time(std::localtime(&t_c), "%F \n");
       if(Time.str() == "1970-01-01" || Time.str() == ""){
+          noData++;
         return "";
       }
       std::cout << std::put_time(std::localtime(&t_c), "(%A, %F, %T [WIB])\n");
@@ -287,13 +288,20 @@ namespace karlo {
 
       // Get IMEI number for initialization
       imei_raw = gps.getImei(connfd, buff, IMEI_BYTES);
+      if (imei_raw == "") {
+          noData++;
+          return -3;
+      }
       confirm = gps.imeiConfirmation(connfd, gps.imeiRecognition(imei_raw, imei_list));
       if (confirm == -1) return -1;
       else if (confirm == -2) return -2;
       data.imei = gps.slice_imei(imei_raw);
       memset(buff, 0, sizeof(buff));
 
-      if (gps.getZeroBytes(connfd, buff, ZERO_BYTES) == "") return -3;
+      if (gps.getZeroBytes(connfd, buff, ZERO_BYTES) == "") {
+          noData++;
+          return -3;
+      }
 
       gps.getDataFieldLength(connfd, buff, DATA_FIELD_BYTES);
 
@@ -403,6 +411,7 @@ namespace karlo {
       gps.getCRC16(connfd, buff, 4);
 
       gps.sendConfirmation(connfd, numOfData2);
+      memset(buff, 0, sizeof(buff));
 
       // send to database to be saved
      
@@ -410,6 +419,7 @@ namespace karlo {
       if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, [&connfd]{return ready;})){
             std::cout << std::endl;
             std::cout << "\033[1;32mTIMEOUT .... !! \033[0m";
+            timeout++;
             std::cout << std::endl;
             return -3;  
       } else {
