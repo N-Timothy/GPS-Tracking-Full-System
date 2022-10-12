@@ -142,7 +142,6 @@ namespace karlo {
         // If something happened on the master socket, then it's an incoming connection
         if (FD_ISSET(master_socket, &readfds)) {
 
-
           // If failed to accept connection
             if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&address_len)) < 0) {
                     perror("Accept");
@@ -161,20 +160,20 @@ namespace karlo {
             init_socket.push_back(new_socket);
 
           // inform server of socket number used in send and receive commands
-            std::cout << "PREV SOCKET : " << prev_socket << std::endl;
-            if(prev_socket == init_socket.front()){
-                repeat_counter++;
-                std::cout << "REPEAT COUNTER : " << repeat_counter << std::endl;
-                if(repeat_counter >= 4){
-                    std::cout << "FROCE CLOSING : " << prev_socket << std::endl;
-                    close(prev_socket);
-                    init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), prev_socket), init_socket.end());
-                    thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), prev_socket), init_socket.end());
-                }
-            } else {
-                repeat_counter = 0;
-                prev_socket = init_socket.front();
-            }
+            //std::cout << "PREV SOCKET : " << prev_socket << std::endl;
+            //if(prev_socket == init_socket.front()){
+              //  repeat_counter++;
+                //std::cout << "REPEAT COUNTER : " << repeat_counter << std::endl;
+                //if(repeat_counter >= 4){
+                  //  std::cout << "FROCE CLOSING : " << prev_socket << std::endl;
+                    //close(prev_socket);
+                    //init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), prev_socket), init_socket.end());
+                    //thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), prev_socket), init_socket.end());
+               // }
+            //} else {
+              //  repeat_counter = 0;
+               // prev_socket = init_socket.front();
+           // }
     
             std::cout << "INIT SOCKET   : ";
             for (auto i : init_socket) { 
