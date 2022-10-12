@@ -166,6 +166,7 @@ namespace karlo {
                 repeat_counter++;
                 std::cout << "REPEAT COUNTER : " << repeat_counter << std::endl;
                 if(repeat_counter >= 4){
+                    std::cout << "FROCE CLOSING : " << prev_socket << std::endl;
                     close(prev_socket);
                     init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), prev_socket), init_socket.end());
                     thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), prev_socket), init_socket.end());
