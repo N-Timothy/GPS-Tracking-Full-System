@@ -142,10 +142,6 @@ namespace karlo {
         // If something happened on the master socket, then it's an incoming connection
         if (FD_ISSET(master_socket, &readfds)) {
 
-            if(init_socket.empty()){
-                repeat_counter = 0;
-                prev_socket = 0;
-            }
 
           // If failed to accept connection
             if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&address_len)) < 0) {
@@ -165,6 +161,7 @@ namespace karlo {
             init_socket.push_back(new_socket);
 
           // inform server of socket number used in send and receive commands
+            std::cout << "PREV SOCKET : " << prev_socket << std::endl;
             if(prev_socket == init_socket.front()){
                 repeat_counter++;
                 std::cout << "REPEAT COUNTER : " << repeat_counter << std::endl;
@@ -174,6 +171,7 @@ namespace karlo {
                     thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), prev_socket), init_socket.end());
                 }
             } else {
+                repeat_counter = 0;
                 prev_socket = init_socket.front();
             }
     
