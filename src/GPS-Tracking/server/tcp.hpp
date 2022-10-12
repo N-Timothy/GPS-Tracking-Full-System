@@ -21,8 +21,6 @@ namespace karlo {
     using json = nlohmann::json;
 
     extern std::map<int, std::pair<time_t, bool>> timeOutStatus;
-    extern int noData;
-    extern int timeout;
 
     void setTcpConfig(json setTcpConfig);
 

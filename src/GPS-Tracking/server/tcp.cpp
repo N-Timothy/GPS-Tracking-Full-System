@@ -23,9 +23,6 @@ namespace karlo {
     std::mutex mtx;
     std::condition_variable con_var;
 
-    int noData = 0;
-    int timeout = 0;
-
     std::vector<json> imei_list;
     std::string IMEI_JSON_LOCATION = "/home/" + core::config::getUsername() + "/" + IMEI_JSON_FILENAME;
 
@@ -90,6 +87,10 @@ namespace karlo {
 
       int opt = true;
       int master_socket, address_len, new_socket; 
+      
+      // idk adding another file descriptor prevention
+      int prev_socket = 0;
+      int repeat_counter = 0;
 
       struct sockaddr_in address;
 
@@ -141,6 +142,11 @@ namespace karlo {
         // If something happened on the master socket, then it's an incoming connection
         if (FD_ISSET(master_socket, &readfds)) {
 
+            if(init_socket.empty()){
+                repeat_counter = 0;
+                prev_socket = 0;
+            }
+
           // If failed to accept connection
             if ((new_socket = accept(master_socket, (struct sockaddr *)&address, (socklen_t*)&address_len)) < 0) {
                     perror("Accept");
@@ -157,7 +163,19 @@ namespace karlo {
 
  
             init_socket.push_back(new_socket);
+
           // inform server of socket number used in send and receive commands
+            if(prev_socket == init_socket.front()){
+                repeat_counter++;
+                std::cout << "REPEAT COUNTER : " << repeat_counter << std::endl;
+                if(repeat_counter >= 4){
+                    close(prev_socket);
+                    init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), prev_socket), init_socket.end());
+                    thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), prev_socket), init_socket.end());
+                }
+            } else {
+                prev_socket = init_socket.front();
+            }
     
             std::cout << "INIT SOCKET   : ";
             for (auto i : init_socket) { 
@@ -186,11 +204,9 @@ namespace karlo {
                             thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
                             diff.erase(std::remove(diff.begin(), diff.end(), i), diff.end());
                         }
-                    } 
+                    }
             }
             std::cout << std::endl;
-
-            std::cout << std::endl << "NODATA : " << noData << "   TIMEOUT : " << timeout << std::endl;
 
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;

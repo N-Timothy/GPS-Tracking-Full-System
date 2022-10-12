@@ -202,7 +202,6 @@ namespace karlo {
       std::cout << std::endl;
       Time << std::put_time(std::localtime(&t_c), "%F \n");
       if(Time.str() == "1970-01-01" || Time.str() == ""){
-          noData++;
         return "";
       }
       std::cout << std::put_time(std::localtime(&t_c), "(%A, %F, %T [WIB])\n");
@@ -289,7 +288,6 @@ namespace karlo {
       // Get IMEI number for initialization
       imei_raw = gps.getImei(connfd, buff, IMEI_BYTES);
       if (imei_raw == "") {
-          noData++;
           return -3;
       }
       confirm = gps.imeiConfirmation(connfd, gps.imeiRecognition(imei_raw, imei_list));
@@ -299,7 +297,6 @@ namespace karlo {
       memset(buff, 0, sizeof(buff));
 
       if (gps.getZeroBytes(connfd, buff, ZERO_BYTES) == "") {
-          noData++;
           return -3;
       }
 
@@ -416,10 +413,9 @@ namespace karlo {
       // send to database to be saved
      
       std::unique_lock<std::mutex> lk(m);
-      if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, [&connfd]{return ready;})){
+      if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return ready;})){
             std::cout << std::endl;
             std::cout << "\033[1;32mTIMEOUT .... !! \033[0m";
-            timeout++;
             std::cout << std::endl;
             return -3;  
       } else {
