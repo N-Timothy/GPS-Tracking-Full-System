@@ -53,7 +53,7 @@ namespace karlo {
 
       std::string getImei(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "IMEI\t\t\t: " << result << std::endl;
+//        std::cout << "IMEI\t\t\t: " << result << std::endl;
         return result;
       }
       std::string slice_imei(std::string imei_raw) {
@@ -76,12 +76,12 @@ namespace karlo {
       int imeiConfirmation(int connfd, int recognized) {
         if (recognized == 0) {
           send(connfd, (char *) &ACCEPT, sizeof(ACCEPT), 0);
-          printf("IMEI Recognized! [1]\n");
+ //         printf("IMEI Recognized! [1]\n");
           return 0;
         }
         else {
           send(connfd, (char *) &DECLINE, sizeof(DECLINE), 0);
-          printf("IMEI NOT Recognized! [0]\n");
+  //        printf("IMEI NOT Recognized! [0]\n");
           if (recognized == -1) return -1;
           else return -2;
         }
@@ -109,12 +109,12 @@ namespace karlo {
       }
       std::string getNumOfData(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Number of Data\t\t: " << result << std::endl;
+   //     std::cout << "Number of Data\t\t: " << result << std::endl;
         return result;
       }
       std::string getTimestamp(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Timestamp\t\t: " << result;
+   //     std::cout << "Timestamp\t\t: " << result;
         return result;
       }
       std::string getPriority(int connfd, char* buff, int byteslen) {
@@ -124,12 +124,12 @@ namespace karlo {
       }
       std::string getLongitude(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Longitude\t\t: " << result;
+   //     std::cout << "Longitude\t\t: " << result;
         return result;
       }
       std::string getLatitude(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Latitude\t\t: " << result;
+    //    std::cout << "Latitude\t\t: " << result;
         return result;
       }
       std::string getAltitude(int connfd, char* buff, int byteslen) {
@@ -139,7 +139,7 @@ namespace karlo {
       }
       std::string getAngle(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Angle\t\t\t: " << result << std::endl;
+    //    std::cout << "Angle\t\t\t: " << result << std::endl;
         return result;
       }
       std::string getSatellites(int connfd, char* buff, int byteslen) {
@@ -149,7 +149,7 @@ namespace karlo {
       }
       std::string getSpeed(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Speed\t\t\t: " << result;
+    //    std::cout << "Speed\t\t\t: " << result;
         return result;
       }
       std::string getEventIOID(int connfd, char* buff, int byteslen) {
@@ -184,7 +184,7 @@ namespace karlo {
       }
       void sendConfirmation(int connfd, int numOfData) {
         send(connfd, (char*) &numOfData, sizeof(numOfData), 0);
-        printf("Received confirmation: %d data\n\n", numOfData);
+   //     printf("Received confirmation: %d data\n\n", numOfData);
       }
     };
 
@@ -253,7 +253,6 @@ namespace karlo {
       try { 
           number += std::stoi(bin, 0, 2);
       } catch (const std::out_of_range& oor) {
-          std::cout << "catching out of range " << std::endl;
           return -3;
           
       }
@@ -307,7 +306,6 @@ namespace karlo {
       try { 
         numOfData1 = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES), 0, 16);
       } catch (const std::out_of_range& oor) {
-          std::cout << "catching out of range " << std::endl;
           return -3;
           
       }
@@ -335,7 +333,6 @@ namespace karlo {
       try { 
         data.bearing = std::stoi(gps.getAngle(connfd, buff, ANGLE_BYTES), 0, 16);
       } catch (const std::out_of_range& oor){
-          std::cout << "catching out of range " << std::endl;
           return -3;
       }
 
@@ -344,7 +341,6 @@ namespace karlo {
       try { 
         data.speed = std::stoi(gps.getSpeed(connfd, buff, SPEED_BYTES), 0, 16);
       } catch (const std::out_of_range& oor) {
-          std::cout << "catching out of range " << std::endl;
           return -3;
           
       }
@@ -356,7 +352,6 @@ namespace karlo {
       try { 
         numOfOneByteID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
       } catch (const std::out_of_range& oor) {
-          std::cout << "catching out of range " << std::endl;
           return -3;
           
       }
@@ -367,7 +362,6 @@ namespace karlo {
       try { 
         numOfTwoBytesID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
       } catch (const std::out_of_range& oor) {
-          std::cout << "catching out of range " << std::endl;
           return -3;
           
       }
@@ -378,7 +372,6 @@ namespace karlo {
       try { 
         numOfFourBytesID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
       } catch (const std::out_of_range& oor) {
-          std::cout << "catching out of range " << std::endl;
           return -3;
           
       }
@@ -389,7 +382,6 @@ namespace karlo {
       try { 
         numOfEightBytesID = std::stoi(gps.getNumOfID(connfd, buff, 1), 0, 16);
       } catch (const std::out_of_range& oor) {
-          std::cout << "catching out of range " << std::endl;
           return -3;
           
       }
@@ -401,7 +393,6 @@ namespace karlo {
       try { 
         numOfData2 = std::stoi(gps.getNumOfData(connfd, buff, NUM_OF_DATA_BYTES), 0, 16);
       } catch (const std::out_of_range& oor) {
-          std::cout << "catching out of range " << std::endl;
           return -3;
       }
 
@@ -414,9 +405,9 @@ namespace karlo {
      
       std::unique_lock<std::mutex> lk(m);
       if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return ready;})){
-            std::cout << std::endl;
-            std::cout << "\033[1;32mTIMEOUT .... !! \033[0m";
-            std::cout << std::endl;
+            //std::cout << std::endl;
+            //std::cout << "\033[1;32mTIMEOUT .... !! \033[0m";
+            //std::cout << std::endl;
             return -3;  
       } else {
             if(gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
@@ -425,7 +416,7 @@ namespace karlo {
                 return -1;
             }
       }
-        std::cout << "===================\n\n";
+        //std::cout << "===================\n\n";
 
         return 0;
     }

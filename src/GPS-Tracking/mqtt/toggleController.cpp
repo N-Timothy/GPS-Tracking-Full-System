@@ -51,35 +51,35 @@ namespace karlo {
                 for(auto it = realTimeReq.cbegin(); it != realTimeReq.cend(); ++it) {
                     if(!it->second.empty()){
 
-                        std::cout << "Publishing Data ... " << std::endl;
+                   //     std::cout << "Publishing Data ... " << std::endl;
                         int ret = publisher(it->first);
                         // check if data is null
                         if (ret == -1) {
                             realTimeReq.erase(it->first);
-                            std::cout << "No GPS FOUND ... : " << realTimeReq.size() << std::endl;
+               //             std::cout << "No GPS FOUND ... : " << realTimeReq.size() << std::endl;
                             if(realTimeReq.size() > 1 || counter > 0){
                                 continue;
                             } else {
                                 break;
                             }
                         } else if (ret == -3) {
-                            std::cout << "MQTT TIMEOUT" << std::endl;
+                 //           std::cout << "MQTT TIMEOUT" << std::endl;
                             continue;
                         } else {
 
-                            std::cout << "Succeed ... " << std::endl;
+                   //         std::cout << "Succeed ... " << std::endl;
                             counter++;
                         }
                     }
                 }
 
                 if (counter < 1){
-                    std::cout << "Toggle switched off !" << std::endl;
+             //       std::cout << "Toggle switched off !" << std::endl;
                     threadActive = false;
                     break;
                 }
 
-                std::cout << " 10 sec timer " << std::endl;
+           //     std::cout << " 10 sec timer " << std::endl;
                 std::cout << std::endl;
                 std::this_thread::sleep_for (std::chrono::seconds(config["interval"]));
             }
@@ -99,9 +99,9 @@ namespace karlo {
             std::string driverId = messageSeparator(subscribeMessage["toggle"], 0);
             std::string toggle = messageSeparator(subscribeMessage["toggle"], 1);
 
-            std::cout << "Imei Requested : " << imei << std::endl;
-            std::cout << "Driver id : " << driverId << std::endl;
-            std::cout << "toggle : " << toggle << std::endl;
+          //  std::cout << "Imei Requested : " << imei << std::endl;
+          //  std::cout << "Driver id : " << driverId << std::endl;
+          //  std::cout << "toggle : " << toggle << std::endl;
 
             std::vector<std::string> emptyVec;
 
@@ -125,7 +125,7 @@ namespace karlo {
                 if(std::find(idVector.begin(), idVector.end(), driverId) != idVector.end()) {
                     idVector = removeVectorElement(idVector, driverId);
                 }
-                std::cout << "Last Location Update ! for imei : " << imei << std::endl;
+                //std::cout << "Last Location Update ! for imei : " << imei << std::endl;
                 int res = publisher(imei);
                 std::cout << std::endl;
 
@@ -140,7 +140,7 @@ namespace karlo {
 
                 for(auto it = realTimeReq.cbegin(); it != realTimeReq.cend(); ++it) {
                      if(!threadActive && !it->second.empty()) {
-                        std::cout << "new thread" << std::endl;
+                       // std::cout << "new thread" << std::endl;
                         std::thread realTimeMessageThread (realTimeMessage, imei);
                         realTimeMessageThread.detach();
                         threadActive = true;
@@ -157,13 +157,13 @@ namespace karlo {
                 }
 
             // temporary printing MAP value
-            for(auto it = realTimeReq.cbegin(); it != realTimeReq.cend(); ++it) {
-                std::cout << "imei : " << it->first << " id : ";
-                for(auto cur : it->second){
-                    std::cout << cur << " | ";
-                }
-                std::cout << std::endl;
-            }
+            //for(auto it = realTimeReq.cbegin(); it != realTimeReq.cend(); ++it) {
+                //std::cout << "imei : " << it->first << " id : ";
+              //  for(auto cur : it->second){
+                //    std::cout << cur << " | ";
+               // }
+               // std::cout << std::endl;
+            //}
         }
 
     } // namespace mqtt

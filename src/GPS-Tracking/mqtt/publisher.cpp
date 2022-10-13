@@ -58,7 +58,7 @@ namespace karlo {
                 publishMessage["bearing"] = to_string(data["bearing"]);
                 publishMessage["driverid"] = data["imei"];
 
-                std::cout << "msg : " << publishMessage << std::endl;
+//                std::cout << "msg : " << publishMessage << std::endl;
 
                 std::string pub_topic = config["pub_topic"];
 

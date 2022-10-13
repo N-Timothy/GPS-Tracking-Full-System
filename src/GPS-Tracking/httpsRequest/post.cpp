@@ -33,7 +33,7 @@ namespace karlo {
 
             std::unique_lock<std::mutex> lk(m);
             if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return ready;})) {
-                std::cout << "HPPTS TIMEOUT" << std::endl;
+                //std::cout << "HPPTS TIMEOUT" << std::endl;
                 return;
             } else {
 

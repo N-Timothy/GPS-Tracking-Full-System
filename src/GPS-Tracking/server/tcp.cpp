@@ -30,7 +30,7 @@ namespace karlo {
     std::vector<int> thread_socket;
     std::vector<int> diff;
 
-    int failed_count = 0;
+    //int failed_count = 0;
 
     using json = nlohmann::json;
 
@@ -57,30 +57,30 @@ namespace karlo {
             comm = communicate(socket, imei_list);
 
             if (comm == -1) {
-                std::cout << "\x1b[31mIMEI is not recognized!\x1b[0m\n";
+       //         std::cout << "\x1b[31mIMEI is not recognized!\x1b[0m\n";
             }
             else if (comm == -2) {
                 imei_list = readImeiJson(IMEI_JSON_LOCATION);
             }
             else if (comm == -3) {
-                std::cout << "\x1b[31mThread terminated: Error in socket reading\x1b[0m\n";
+         //       std::cout << "\x1b[31mThread terminated: Error in socket reading\x1b[0m\n";
             }
         } else {
             return;
         }
         
         if (close(socket) < 0) { 
-            std::cout << "failed"<< std::endl;
-            failed_count++;
+      //      std::cout << "failed"<< std::endl;
+            // failed_count++;
         } else {
-            std::cout << "success" << std::endl;
+        //    std::cout << "success" << std::endl;
             init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), socket), init_socket.end());
         }
 
         thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), socket), thread_socket.end());
         std::cout << "Terminating thread: "  << socket << std::endl;
 
-        std::cout << "Failed closing socket count: " << failed_count << "\n";
+        //std::cout << "Failed closing socket count: " << failed_count << "\n";
     }
     
     void tcpServer () {
@@ -89,8 +89,8 @@ namespace karlo {
       int master_socket, address_len, new_socket; 
       
       // idk adding another file descriptor prevention
-      int prev_socket = 0;
-      int repeat_counter = 0;
+   //   int prev_socket = 0;
+   //   int repeat_counter = 0;
 
       struct sockaddr_in address;
 
@@ -159,45 +159,29 @@ namespace karlo {
  
             init_socket.push_back(new_socket);
 
-          // inform server of socket number used in send and receive commands
-            //std::cout << "PREV SOCKET : " << prev_socket << std::endl;
-            //if(prev_socket == init_socket.front()){
-              //  repeat_counter++;
-                //std::cout << "REPEAT COUNTER : " << repeat_counter << std::endl;
-                //if(repeat_counter >= 4){
-                  //  std::cout << "FROCE CLOSING : " << prev_socket << std::endl;
-                    //close(prev_socket);
-                    //init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), prev_socket), init_socket.end());
-                    //thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), prev_socket), init_socket.end());
-               // }
-            //} else {
-              //  repeat_counter = 0;
-               // prev_socket = init_socket.front();
-           // }
-    
-            std::cout << "INIT SOCKET   : ";
-            for (auto i : init_socket) { 
-                std::cout << i << ' ';
-            }
-            std::cout << std::endl;
+//            std::cout << "INIT SOCKET   : ";
+//            for (auto i : init_socket) { 
+ //               std::cout << i << ' ';
+  //          }
+   //         std::cout << std::endl;
 
             std::cout << "THREAD SOCKET : ";
             for (auto i : thread_socket) {
                 std::cout << i << ' ';
             }
-            std::cout << std::endl;
+    //        std::cout << std::endl;
             
-            std::cout << "diff : ";
+    //        std::cout << "diff : ";
                 if(!diff.empty()){
-                    std::cout << std::endl;
-                    std::cout << "TRY TO CLOSE UNCLOSED SOCKET" << std::endl;
-                    std::cout << std::endl;
+        //            std::cout << std::endl;
+      //              std::cout << "TRY TO CLOSE UNCLOSED SOCKET" << std::endl;
+        //            std::cout << std::endl;
 
                     for (auto i : diff) {
                         if(close(i) < 0) {
-                            std::cout << "Failed to close socket try again next time" << std::endl;
+          //                  std::cout << "Failed to close socket try again next time" << std::endl;
                         } else {
-                            std::cout << "\033[1;34mclosing : \033[0m" << i << ' ' << std::endl;
+            //                std::cout << "\033[1;34mclosing : \033[0m" << i << ' ' << std::endl;
                             init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
                             thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
                             diff.erase(std::remove(diff.begin(), diff.end(), i), diff.end());
@@ -206,8 +190,8 @@ namespace karlo {
             }
             std::cout << std::endl;
 
-            std::cout << "New connection established! socket : " << new_socket << ", IP : "
-                      << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
+            //std::cout << "New connection established! socket : " << new_socket << ", IP : "
+              //        << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
             
           // Adding thread on each new connection
             std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list));
