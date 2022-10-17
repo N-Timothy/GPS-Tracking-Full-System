@@ -53,7 +53,7 @@ namespace karlo {
 
       std::string getImei(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-//        std::cout << "IMEI\t\t\t: " << result << std::endl;
+        std::cout << "IMEI\t\t\t: " << result << std::endl;
         return result;
       }
       std::string slice_imei(std::string imei_raw) {
@@ -124,12 +124,12 @@ namespace karlo {
       }
       std::string getLongitude(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-   //     std::cout << "Longitude\t\t: " << result;
+        std::cout << "Longitude\t\t: " << result;
         return result;
       }
       std::string getLatitude(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-    //    std::cout << "Latitude\t\t: " << result;
+        std::cout << "Latitude\t\t: " << result;
         return result;
       }
       std::string getAltitude(int connfd, char* buff, int byteslen) {
@@ -139,7 +139,7 @@ namespace karlo {
       }
       std::string getAngle(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-    //    std::cout << "Angle\t\t\t: " << result << std::endl;
+        std::cout << "Angle\t\t\t: " << result << std::endl;
         return result;
       }
       std::string getSatellites(int connfd, char* buff, int byteslen) {

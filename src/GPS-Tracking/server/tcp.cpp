@@ -89,8 +89,6 @@ namespace karlo {
       int master_socket, address_len, new_socket; 
       
       // idk adding another file descriptor prevention
-   //   int prev_socket = 0;
-   //   int repeat_counter = 0;
 
       struct sockaddr_in address;
 
@@ -148,6 +146,11 @@ namespace karlo {
                     exit(EXIT_FAILURE);
                 }
 
+
+            //------------------------- adding thread stuck counter ----------------------
+            
+            //------------------------- end ----------------------
+
             // Adding socket vector comparison
             std::set_difference(init_socket.begin(), init_socket.end(), thread_socket.begin(), thread_socket.end(),
                 std::inserter(diff, diff.begin()));
@@ -190,8 +193,8 @@ namespace karlo {
             }
             std::cout << std::endl;
 
-            //std::cout << "New connection established! socket : " << new_socket << ", IP : "
-              //        << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
+            std::cout << "New connection established! socket : " << new_socket << ", IP : "
+                      << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
             
           // Adding thread on each new connection
             std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list));
