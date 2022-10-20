@@ -53,7 +53,7 @@ namespace karlo {
 
       std::string getImei(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "IMEI\t\t\t: " << result << std::endl;
+        //std::cout << "IMEI\t\t\t: " << result << std::endl;
         return result;
       }
       std::string slice_imei(std::string imei_raw) {

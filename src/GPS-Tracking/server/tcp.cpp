@@ -168,35 +168,36 @@ namespace karlo {
             for (auto i : thread_socket) {
                 std::cout << i << ' ';
             }
-    //        std::cout << std::endl;
+
+            if(!thread_socket.empty()){
+                std::cout << "Socket Number : " << PrevSocket << std::endl;
+                if(thread_socket.front() == PrevSocket){
+                    socketCounter++;
+                    std::cout << "Counter : " << socketCounter << "  Socket Number : " << PrevSocket << std::endl;
+                } else {
+                    socketCounter = 0;
+                    PrevSocket = thread_socket.front();
+                }
+
+                // assuming after 10 loops the thread still dosent closed
+                if(socketCounter >= 10){
+                    if(close(PrevSocket) < 0) {
+                    } else {
+                        init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
+                        thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
+                    }
+                }
+            } else {
+                PrevSocket = 0;
+                socketCounter = 0;
+            }
             
-    //        std::cout << "diff : ";
+
                 if(!diff.empty()){
         //            std::cout << std::endl;
       //              std::cout << "TRY TO CLOSE UNCLOSED SOCKET" << std::endl;
         //            std::cout << std::endl;
         //
-        //            CHECK What Number is the first Thread
-                std::cout << "  Socket Number : " << PrevSocket << std::endl;
-                if(diff.front() == PrevSocket){
-                    socketCounter++;
-                    std::cout << "Counter : " << socketCounter << "  Socket Number : " << PrevSocket << std::endl;
-                } else {
-                    socketCounter = 0;
-                    PrevSocket = diff.front();
-                }
-
-                // assuming after 10 loops the thread still dosent closed
-                if(socketCounter >= 10){
-                        if(close(PrevSocket) < 0) {
-          //                  std::cout << "Failed to close socket try again next time" << std::endl;
-                        } else {
-            //                std::cout << "\033[1;34mclosing : \033[0m" << i << ' ' << std::endl;
-                            init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
-                            thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
-                        }
-                }
-
                     for (auto i : diff) {
                         if(close(i) < 0) {
           //                  std::cout << "Failed to close socket try again next time" << std::endl;
@@ -207,11 +208,7 @@ namespace karlo {
                             diff.erase(std::remove(diff.begin(), diff.end(), i), diff.end());
                         }
                     }
-            } else {
-                PrevSocket = 0;
-                socketCounter = 0;
-            }
-            std::cout << std::endl;
+            }             std::cout << std::endl;
 
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
