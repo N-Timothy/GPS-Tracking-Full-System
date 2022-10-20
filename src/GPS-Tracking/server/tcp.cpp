@@ -87,6 +87,7 @@ namespace karlo {
 
       int opt = true;
       int master_socket, address_len, new_socket; 
+      int PrevSocket = 0, socketCounter = 0;
       
       // idk adding another file descriptor prevention
 
@@ -146,11 +147,6 @@ namespace karlo {
                     exit(EXIT_FAILURE);
                 }
 
-
-            //------------------------- adding thread stuck counter ----------------------
-            
-            //------------------------- end ----------------------
-
             // Adding socket vector comparison
             std::set_difference(init_socket.begin(), init_socket.end(), thread_socket.begin(), thread_socket.end(),
                 std::inserter(diff, diff.begin()));
@@ -179,6 +175,26 @@ namespace karlo {
         //            std::cout << std::endl;
       //              std::cout << "TRY TO CLOSE UNCLOSED SOCKET" << std::endl;
         //            std::cout << std::endl;
+        //
+        //            CHECK What Number is the first Thread
+                if(diff.front() == PrevSocket){
+                    socketCounter++;
+                    std::cout << "Counter : " << socketCounter << "  Socket Number : " << PrevSocket << std::endl;
+                } else {
+                    socketCounter = 0;
+                    PrevSocket = diff.front();
+                }
+
+                // assuming after 10 loops the thread still dosent closed
+                if(socketCounter >= 10){
+                        if(close(PrevSocket) < 0) {
+          //                  std::cout << "Failed to close socket try again next time" << std::endl;
+                        } else {
+            //                std::cout << "\033[1;34mclosing : \033[0m" << i << ' ' << std::endl;
+                            init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
+                            thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
+                        }
+                }
 
                     for (auto i : diff) {
                         if(close(i) < 0) {
@@ -190,6 +206,9 @@ namespace karlo {
                             diff.erase(std::remove(diff.begin(), diff.end(), i), diff.end());
                         }
                     }
+            } else {
+                PrevSocket = 0;
+                socketCounter = 0;
             }
             std::cout << std::endl;
 
