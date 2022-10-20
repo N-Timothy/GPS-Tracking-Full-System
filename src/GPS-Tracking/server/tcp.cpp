@@ -177,6 +177,7 @@ namespace karlo {
         //            std::cout << std::endl;
         //
         //            CHECK What Number is the first Thread
+                std::cout << "  Socket Number : " << PrevSocket << std::endl;
                 if(diff.front() == PrevSocket){
                     socketCounter++;
                     std::cout << "Counter : " << socketCounter << "  Socket Number : " << PrevSocket << std::endl;

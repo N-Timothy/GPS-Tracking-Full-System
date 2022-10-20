@@ -124,12 +124,12 @@ namespace karlo {
       }
       std::string getLongitude(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Longitude\t\t: " << result;
+        //std::cout << "Longitude\t\t: " << result;
         return result;
       }
       std::string getLatitude(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Latitude\t\t: " << result;
+        //std::cout << "Latitude\t\t: " << result;
         return result;
       }
       std::string getAltitude(int connfd, char* buff, int byteslen) {
@@ -139,7 +139,7 @@ namespace karlo {
       }
       std::string getAngle(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        std::cout << "Angle\t\t\t: " << result << std::endl;
+        // std::cout << "Angle\t\t\t: " << result << std::endl;
         return result;
       }
       std::string getSatellites(int connfd, char* buff, int byteslen) {
@@ -199,12 +199,12 @@ namespace karlo {
       std::stringstream dateAndTime;
       std::stringstream Time;
       dateAndTime << std::put_time(std::localtime(&t_c), "%A, %F, %T [WIB])\n");
-      std::cout << std::endl;
+      //std::cout << std::endl;
       Time << std::put_time(std::localtime(&t_c), "%F \n");
       if(Time.str() == "1970-01-01" || Time.str() == ""){
         return "";
       }
-      std::cout << std::put_time(std::localtime(&t_c), "(%A, %F, %T [WIB])\n");
+      //std::cout << std::put_time(std::localtime(&t_c), "(%A, %F, %T [WIB])\n");
       return dateAndTime.str();
     }
 
@@ -321,11 +321,11 @@ namespace karlo {
         gps.getPriority(connfd, buff, PRIORITY_BYTES);
 
         hex = gps.getLongitude(connfd, buff, LONGITUDE_BYTES);
-        std::cout << std::fixed << std::setprecision(7) << " (" << hexToLongitudeLatitude(hex) << ")" << std::endl;
+        //std::cout << std::fixed << std::setprecision(7) << " (" << hexToLongitudeLatitude(hex) << ")" << std::endl;
         data.longitude = hexToLongitudeLatitude(hex);
 
         hex = gps.getLatitude(connfd, buff, LATITUDE_BYTES);
-        std::cout << std::fixed << std::setprecision(7) << " (" << hexToLongitudeLatitude(hex) << ")" << std::endl;
+        //std::cout << std::fixed << std::setprecision(7) << " (" << hexToLongitudeLatitude(hex) << ")" << std::endl;
         data.latitude = hexToLongitudeLatitude(hex);
 
         gps.getAltitude(connfd, buff, ALTITUDE_BYTES);
@@ -344,7 +344,7 @@ namespace karlo {
           return -3;
           
       }
-        std::cout << " (" << data.speed << ")" << std::endl;
+        //std::cout << " (" << data.speed << ")" << std::endl;
 
         gps.getEventIOID(connfd, buff, 1);
         gps.getNumOfTotalID(connfd, buff, 1);
