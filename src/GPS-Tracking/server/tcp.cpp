@@ -188,6 +188,8 @@ namespace karlo {
       //                  std::cout << "sucess to remove socket" << std::endl;
                         init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
                         thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
+                        PrevSocket = 0;
+                        socketCounter = 0;
                     //}
                 }
             } else {
