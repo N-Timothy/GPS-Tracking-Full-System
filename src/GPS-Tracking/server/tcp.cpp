@@ -169,7 +169,7 @@ namespace karlo {
                 std::cout << i << ' ';
             }
 
-            if(!thread_socket.size() > 2){
+            if(thread_socket.empty() > 2){
                 std::cout << std::endl;
                 if(thread_socket.front() == PrevSocket){
                     socketCounter++;
