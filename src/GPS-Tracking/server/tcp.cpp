@@ -169,7 +169,7 @@ namespace karlo {
                 std::cout << i << ' ';
             }
 
-            if(thread_socket.size() > 2){
+            if(thread_socket.size() > 1){
                 std::cout << std::endl;
                 if(thread_socket.front() == PrevSocket){
                     socketCounter++;
@@ -186,7 +186,7 @@ namespace karlo {
     //                } else {
       //                  std::cout << "sucess to remove socket" << std::endl;
                         init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
-                        thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
+                        thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), PrevSocket), thread_socket.end());
                         PrevSocket = 0;
                         socketCounter = 0;
                     //}
@@ -208,7 +208,7 @@ namespace karlo {
                         } else {
             //                std::cout << "\033[1;34mclosing : \033[0m" << i << ' ' << std::endl;
                             init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
-                            thread_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
+                            thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), i), thread_socket.end());
                             diff.erase(std::remove(diff.begin(), diff.end(), i), diff.end());
                         }
                     }
