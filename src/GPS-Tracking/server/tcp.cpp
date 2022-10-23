@@ -181,15 +181,15 @@ namespace karlo {
 
                 // assuming after 10 loops the thread still dosent closed
                 if(socketCounter >= 10){
-//                    if(close(PrevSocket) < 0) {
-  //                      std::cout << "failed to remove socket" << std::endl;
-    //                } else {
-      //                  std::cout << "sucess to remove socket" << std::endl;
+                    if(close(PrevSocket) < 0) {
+                        std::cout << "failed to remove socket" << std::endl;
+                    } else {
+                        std::cout << "sucess to remove socket" << std::endl;
                         init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
                         thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), PrevSocket), thread_socket.end());
                         PrevSocket = 0;
                         socketCounter = 0;
-                    //}
+                    }
                 }
             } else {
                 PrevSocket = 0;
