@@ -50,9 +50,9 @@ namespace karlo {
                         params.emplace("longitude", std::to_string(longitude));
                         params.emplace("altitude", to_string(data["altitude"]));
                         params.emplace("speed", to_string(data["speed"]));
-                        params.emplace("bearing",to_string(data["bearing"]));
-                        params.emplace("imeiTracker", imei);
-                        //params.emplace("imeiTracker", to_string(data["imei"]));
+                        params.emplace("bearing", to_string(data["bearing"]));
+                        std::cout << to_string(data["imei"]) << std::endl;
+                        params.emplace("imeiTracker", to_string(data["imei"]));
                     auto res = cli.Post(postUrl, params);
 
                     if (res) {
