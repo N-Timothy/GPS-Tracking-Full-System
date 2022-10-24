@@ -52,7 +52,7 @@ namespace karlo {
                         params.emplace("speed", to_string(data["speed"]));
                         params.emplace("bearing", to_string(data["bearing"]));
                         std::cout << to_string(data["imei"]) << std::endl;
-                        params.emplace("imeiTracker", to_string(data["imei"]));
+                        params.emplace("imeiTracker", data["imei"]);
                     auto res = cli.Post(postUrl, params);
 
                     if (res) {
