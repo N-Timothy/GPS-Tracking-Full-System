@@ -29,6 +29,7 @@ namespace karlo {
     std::vector<int> init_socket;
     std::vector<int> thread_socket;
     std::vector<int> diff;
+    int PrevSocket = 0, socketCounter = 0;
 
     //int failed_count = 0;
 
@@ -40,6 +41,37 @@ namespace karlo {
         config = setTcpConfig;
     }
 
+    // Closing stuck thread
+    void checkStuckThread (){
+
+        if(thread_socket.size() > 1){
+            std::cout << std::endl;
+            if(thread_socket.front() == PrevSocket){
+                socketCounter++;
+            //    std::cout << "Counter : " << socketCounter << "  Socket Number : " << PrevSocket << std::endl;
+            } else {
+                socketCounter = 0;
+                PrevSocket = thread_socket.front();
+            }
+                // assuming after 10 loops the thread still dosent closed
+            if(socketCounter >= 10){
+                if(close(PrevSocket) < 0) {
+              //      std::cout << "failed to remove socket" << std::endl;
+                } else {
+                //    std::cout << "sucess to remove socket" << std::endl;
+                    init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
+                    thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), PrevSocket), thread_socket.end());
+                    PrevSocket = 0;
+                    socketCounter = 0;
+                }
+            }
+        } else {
+            PrevSocket = 0;
+            socketCounter = 0;
+        }
+    }
+
+    // new Thread for each connection
     void newClient(int socket, std::vector<json> imei_list) {
 
         if (std::find(thread_socket.begin(), thread_socket.end(), socket) == thread_socket.end()) {
@@ -87,7 +119,6 @@ namespace karlo {
 
       int opt = true;
       int master_socket, address_len, new_socket; 
-      int PrevSocket = 0, socketCounter = 0;
       
       // idk adding another file descriptor prevention
 
@@ -164,37 +195,13 @@ namespace karlo {
   //          }
    //         std::cout << std::endl;
 
-            std::cout << "THREAD SOCKET : ";
-            for (auto i : thread_socket) {
-                std::cout << i << ' ';
-            }
+            //std::cout << "THREAD SOCKET : ";
+            //for (auto i : thread_socket) {
+            //    std::cout << i << ' ';
+           // }
+           //
+           checkStuckThread();
 
-            if(thread_socket.size() > 1){
-                std::cout << std::endl;
-                if(thread_socket.front() == PrevSocket){
-                    socketCounter++;
-                    std::cout << "Counter : " << socketCounter << "  Socket Number : " << PrevSocket << std::endl;
-                } else {
-                    socketCounter = 0;
-                    PrevSocket = thread_socket.front();
-                }
-
-                // assuming after 10 loops the thread still dosent closed
-                if(socketCounter >= 10){
-                    if(close(PrevSocket) < 0) {
-                        std::cout << "failed to remove socket" << std::endl;
-                    } else {
-                        std::cout << "sucess to remove socket" << std::endl;
-                        init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
-                        thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), PrevSocket), thread_socket.end());
-                        PrevSocket = 0;
-                        socketCounter = 0;
-                    }
-                }
-            } else {
-                PrevSocket = 0;
-                socketCounter = 0;
-            }
             
 
                 if(!diff.empty()){

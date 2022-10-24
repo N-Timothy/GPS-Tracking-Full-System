@@ -20,7 +20,7 @@ namespace karlo {
 
         void post(std::string URL, json config) {
 
-            std::string imei = "5f105ae8a629de65677a0ce7"; //Temporarily using driver id
+            std::string imei = "12145123125599AF"; //Temporarily using driver id
             std::string staticToken = config["token"];
 
             httplib::Client cli(URL);
@@ -53,8 +53,8 @@ namespace karlo {
                         params.emplace("altitude", to_string(data["altitude"]));
                         params.emplace("speed", to_string(data["speed"]));
                         params.emplace("bearing", "100");
-                        params.emplace("driver", imei);
-                    //params.emplace("driver", to_string(data["imei"]));
+                        params.emplace("imeiTracker", imei);
+                        //params.emplace("imeiTracker", to_string(data["imei"]));
                     auto res = cli.Post(postUrl, params);
 
                     if (res) {
