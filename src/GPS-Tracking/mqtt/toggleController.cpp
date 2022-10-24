@@ -116,6 +116,7 @@ namespace karlo {
             if(toggle == "true") {
                 if(idVector.empty()) {
                     idVector.push_back(driverId);
+                std::cout << "Toggle True by : " << driverId << std::endl;
                 } else {
                     if(std::find(idVector.begin(), idVector.end(), driverId) == idVector.end()) {
                         idVector.push_back(driverId);
@@ -125,7 +126,7 @@ namespace karlo {
                 if(std::find(idVector.begin(), idVector.end(), driverId) != idVector.end()) {
                     idVector = removeVectorElement(idVector, driverId);
                 }
-                //std::cout << "Last Location Update ! for imei : " << imei << std::endl;
+                std::cout << "Toggle False by : " << driverId << std::endl;
                 int res = publisher(imei);
                 std::cout << std::endl;
 
