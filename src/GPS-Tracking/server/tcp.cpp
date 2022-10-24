@@ -78,9 +78,9 @@ namespace karlo {
             
             thread_socket.push_back(socket);
 
-            for(auto thread : init_socket){
-                std::cout << " | " << thread;
-            } std::cout<< std::endl;
+            //for(auto thread : init_socket){
+             //   std::cout << " | " << thread;
+            //} std::cout<< std::endl;
       
             int comm;
 
@@ -219,7 +219,7 @@ namespace karlo {
                             diff.erase(std::remove(diff.begin(), diff.end(), i), diff.end());
                         }
                     }
-            }             std::cout << std::endl;
+            }
 
             std::cout << "New connection established! socket : " << new_socket << ", IP : "
                       << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;

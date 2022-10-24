@@ -29,8 +29,6 @@ namespace karlo {
 
             std::string postUrl = config["api"];
 
-            auto now = std::chrono::system_clock::now();
-
             std::unique_lock<std::mutex> lk(m);
             if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return ready;})) {
                 //std::cout << "HPPTS TIMEOUT" << std::endl;
