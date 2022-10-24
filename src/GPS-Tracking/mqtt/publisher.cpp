@@ -32,10 +32,12 @@ namespace karlo {
 		        mosquitto_destroy(mosq);
 		        return -2;
 	        }
-	        std::cout << "We are now connected to the broker! " << std::endl;
+
+	        //std::cout << "We are now connected to the broker! " << std::endl;
 
             std::unique_lock<std::mutex> lk(m);
             if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return ready;})){
+                std::cout << "timeout" << std::endl;
                 return -3;
             } else {
 
@@ -56,9 +58,9 @@ namespace karlo {
                 publishMessage["altitude"] = to_string(data["altitude"]);
                 publishMessage["speed"] = to_string(data["speed"]);
                 publishMessage["bearing"] = to_string(data["bearing"]);
-                publishMessage["driverid"] = data["imei"];
+                publishMessage["imeiTracker"] = data["imei"];
 
-//                std::cout << "msg : " << publishMessage << std::endl;
+                std::cout << "msg : " << publishMessage << std::endl;
 
                 std::string pub_topic = config["pub_topic"];
 
