@@ -13,13 +13,14 @@
 
 #include <map>
 #include <string>
+#include <ctime>
 
 namespace karlo {
   namespace server {
 
     using json = nlohmann::json;
 
-    //extern std::map<int, std::pair<int, bool>> timeOutStatus;
+    extern std::map<int, std::pair<time_t, bool>> timeOutStatus;
 
     void setTcpConfig(json setTcpConfig);
 
