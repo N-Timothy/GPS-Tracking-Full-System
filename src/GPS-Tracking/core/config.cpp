@@ -30,7 +30,7 @@ namespace karlo {
             
                 std::string config = "/home/" + getUsername() + "/" + CONFIG_DIR;
                 
-                std::cout << "CONFIG: " << config << std::endl;
+//                std::cout << "CONFIG: " << config << std::endl;
 
                 std::ifstream ifs(config);
                 if(ifs){
@@ -44,6 +44,8 @@ namespace karlo {
                 mqtt::setMqttConfig(data["mqtt"]);
 
                 server::setTcpConfig(data["tcp"]);
+
+                ifs.close();
 
 
             }
