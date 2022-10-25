@@ -20,7 +20,6 @@ namespace karlo {
 
         void post(std::string URL, json config) {
 
-            std::string imei = "350424069591756"; //Temporarily using driver id
             std::string staticToken = config["token"];
 
             httplib::Client cli(URL);

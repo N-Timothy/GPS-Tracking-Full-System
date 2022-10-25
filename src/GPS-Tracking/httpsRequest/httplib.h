@@ -4,6 +4,7 @@
 //  Copyright (c) 2022 Yuji Hirose. All rights reserved.
 //  MIT License
 //
+//  Forked by Nathanael Timothy
 
 #ifndef CPPHTTPLIB_HTTPLIB_H
 #define CPPHTTPLIB_HTTPLIB_H
@@ -222,6 +223,9 @@ using socket_t = int;
 #include <sys/stat.h>
 #include <thread>
 
+// For application/json content type
+#include <nlohmann/json.hpp>
+
 #ifdef CPPHTTPLIB_OPENSSL_SUPPORT
 #ifdef _WIN32
 #include <wincrypt.h>
@@ -315,6 +319,8 @@ struct ci {
 using Headers = std::multimap<std::string, std::string, detail::ci>;
 
 using Params = std::multimap<std::string, std::string>;
+//using Params2 = std::multimap<std::string, long>;
+
 using Match = std::smatch;
 
 using Progress = std::function<bool(uint64_t current, uint64_t total)>;
@@ -1754,6 +1760,7 @@ const char *get_header_value(const Headers &headers, const std::string &key,
                              size_t id = 0, const char *def = nullptr);
 
 std::string params_to_query_str(const Params &params);
+std::string params_to_query_json(const Params &params);
 
 void parse_query_text(const std::string &s, Params &params);
 
@@ -3756,6 +3763,21 @@ inline std::string params_to_query_str(const Params &params) {
     query += "=";
     query += encode_query_param(it->second);
   }
+  return query;
+}
+
+inline std::string params_to_query_json(const Params &params) {
+  std::string query = "{";
+
+  for (auto it = params.begin(); it != params.end(); ++it) {
+    if (it != params.begin()) { query += ","; }
+    query += "\"";
+    query += it->first;
+    query += "\"";
+    query += ":";
+    query += encode_query_param(it->second);
+  }
+  query += "}";
   return query;
 }
 
@@ -6791,8 +6813,10 @@ inline Result ClientImpl::Post(const std::string &path, const Headers &headers,
 
 inline Result ClientImpl::Post(const std::string &path, const Headers &headers,
                                const Params &params) {
-  auto query = detail::params_to_query_str(params);
-  return Post(path, headers, query, "application/x-www-form-urlencoded");
+  //auto query = detail::params_to_query_str(params);
+  auto query = detail::params_to_query_json(params);
+  //return Post(path, headers, query, "application/x-www-form-urlencoded");
+  return Post(path, headers, query, "application/json");
 }
 
 inline Result ClientImpl::Post(const std::string &path,
