@@ -1,0 +1,10 @@
+{ 
+    "name" : "GPS-Tracking-Server",
+    "version-string" : "0.1",
+    "descriptiion": "GPS Tracking",
+    "dependecies" : [
+    "nlohmann-json",
+    "libmosquitto-dev",
+    "mongosh"
+    ]
+}
