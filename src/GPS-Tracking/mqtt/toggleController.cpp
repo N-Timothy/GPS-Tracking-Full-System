@@ -99,6 +99,7 @@ namespace karlo {
             std::string driverId = messageSeparator(subscribeMessage["toggle"], 0);
             std::string toggle = messageSeparator(subscribeMessage["toggle"], 1);
 
+
           //  std::cout << "Imei Requested : " << imei << std::endl;
           //  std::cout << "Driver id : " << driverId << std::endl;
           //  std::cout << "toggle : " << toggle << std::endl;
@@ -122,7 +123,7 @@ namespace karlo {
                         idVector.push_back(driverId);
                     }
                 }
-            } else {
+            } else if (toggle == "false") {
                 if(std::find(idVector.begin(), idVector.end(), driverId) != idVector.end()) {
                     idVector = removeVectorElement(idVector, driverId);
                 }
