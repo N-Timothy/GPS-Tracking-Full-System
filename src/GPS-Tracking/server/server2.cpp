@@ -139,7 +139,7 @@ namespace karlo {
       }
       std::string getAngle(int connfd, char* buff, int byteslen) {
         result = getBytes(connfd, buff, byteslen);
-        // std::cout << "Angle\t\t\t: " << result << std::endl;
+        std::cout << "Angle\t\t\t: " << result << std::endl;
         return result;
       }
       std::string getSatellites(int connfd, char* buff, int byteslen) {
