@@ -48,7 +48,12 @@ namespace karlo {
             printf("     topic: %s\n", topicName);
             printf("   message: ");
             payloadptr = (char*) message->payload;
-            Message = json::parse((char*) message->payload);
+            try{
+                Message = json::parse((char*) message->payload);
+            } catch (nlohmann::detail::type_error e){
+                Message["id:"] = "";
+                Message["toggle"] = " ,false";
+            }
 
             MQTTClient_freeMessage(&message);
             MQTTClient_free(topicName);
