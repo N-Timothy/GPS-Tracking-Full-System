@@ -194,9 +194,10 @@ int messageArrived(void* context, char* topicName, int topicLen, MQTTAsync_messa
             }
             
             while (!finishedPub){
-                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100000));
             } 
  
+            std::cout << "destroying client" << std::endl;
             MQTTAsync_destroy(&client);
 
             return 0;
