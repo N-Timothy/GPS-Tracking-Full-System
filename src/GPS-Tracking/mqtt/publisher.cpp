@@ -172,6 +172,7 @@ int messageArrived(void* context, char* topicName, int topicLen, MQTTAsync_messa
             std::string port = to_string(config["port"]);
             std::string endpoint = host + ":" + port;
             std::cout << "endpoint : " << endpoint.c_str() << std::endl;
+            std::cout << "imei : " << imei << std::endl;
             
             if ((rc = MQTTAsync_create(&client, host.c_str(), CLIENTID, 
                             MQTTCLIENT_PERSISTENCE_NONE, NULL)) != MQTTASYNC_SUCCESS)
