@@ -3,6 +3,7 @@
 
 #include <mosquitto.h>
 #include <nlohmann/json.hpp>
+#include <MQTTClient.h>
 
 namespace karlo {
     namespace mqtt {
