@@ -72,7 +72,7 @@ namespace karlo {
     int ch;
 
     std::string host = config["host"];
-    std::string port = config["port"];
+    std::string port = to_string(config["port"]);
     std::string endpoint = host + ":" + port;
     std::cout << "endpoint : " << endpoint.c_str() << std::endl;
     std::string sub_topic = config["sub_topic"];
