@@ -191,7 +191,6 @@ int messageArrived(void* context, char* topicName, int topicLen, MQTTAsync_messa
             if ((rc = MQTTAsync_connect(client, &conn_opts)) != MQTTASYNC_SUCCESS)
             {
                 printf("Failed to start connect, return code %d\n", rc);
-                exit(EXIT_FAILURE);
             }
             
             while (!finishedPub){
