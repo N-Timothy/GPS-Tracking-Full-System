@@ -47,14 +47,13 @@ namespace karlo {
             printf("   message: ");
             payloadptr = (char*) message->payload;
             json Message = json::parse((char*) message->payload);
-            toggleController(Message);
-            //for(i=0; i<message->payloadlen; i++)
-           // {
-           //     putchar(*payloadptr++);
-           // }
-           // putchar('\n');
+
             MQTTClient_freeMessage(&message);
             MQTTClient_free(topicName);
+
+            std::cout << "message : " << Message << std::endl;
+
+            toggleController(Message);
             return 1;
         }
         
@@ -69,7 +68,6 @@ namespace karlo {
     MQTTClient client;
     MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
     int rc;
-    int ch;
 
     std::string host = config["host"];
     std::string port = to_string(config["port"]);
