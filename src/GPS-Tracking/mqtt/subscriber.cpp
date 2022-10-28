@@ -13,23 +13,6 @@ namespace karlo {
 
         json Message;
 
-        //void on_connect(struct mosquitto *mosq, void *obj, int rc) {
-          //  std::cout << "ID: " << * (int *) obj << std::endl;
-	      //  if(rc) {
-          //      std::cout << "Error with result code: " << rc << std::endl;
-		  //      exit(-1);
-	      //  }
-
-            //std::string sub_topic = config["sub_topic"];
-
-	        //mosquitto_subscribe(mosq, NULL, sub_topic.c_str(), 0);
-       // }
-
-       // void on_message(struct mosquitto *mosq, void *obj, const struct mosquitto_message *msg) {
-       //     json Message = json::parse((char *) msg->payload);
-
-        //    toggleController(Message);
-        // }
         int disc_finished = 0;
         int subscribed = 0;
         int finished = 0;
@@ -126,8 +109,6 @@ namespace karlo {
             MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
             int rc;
             printf("Successful connection\n");
-            printf("Subscribing to topic %s\nfor client %s using QoS%d\n\n"
-                    "Press Q<Enter> to quit\n\n", sub_topic.c_str(), CLIENTID, QOS);
             opts.onSuccess = onSubscribe;
             opts.onFailure = onSubscribeFailure;
             opts.context = client;
