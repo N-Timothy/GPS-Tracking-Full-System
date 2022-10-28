@@ -11,6 +11,8 @@ namespace karlo {
 
         using json = nlohmann::json;
 
+        json Message;
+
         //void on_connect(struct mosquitto *mosq, void *obj, int rc) {
           //  std::cout << "ID: " << * (int *) obj << std::endl;
 	      //  if(rc) {
@@ -46,14 +48,11 @@ namespace karlo {
             printf("     topic: %s\n", topicName);
             printf("   message: ");
             payloadptr = (char*) message->payload;
-            json Message = json::parse((char*) message->payload);
+            Message = json::parse((char*) message->payload);
 
             MQTTClient_freeMessage(&message);
             MQTTClient_free(topicName);
 
-            std::cout << "message : " << Message << std::endl;
-
-            //toggleController(Message);
             return 1;
         }
         
@@ -89,6 +88,10 @@ namespace karlo {
     }
 
     MQTTClient_subscribe(client, sub_topic.c_str(), QOS);
+    std::cout << "message : " << Message << std::endl;
+
+    toggleController(Message);
+
     for(;;){}
     MQTTClient_disconnect(client, 10000);
     MQTTClient_destroy(&client);
