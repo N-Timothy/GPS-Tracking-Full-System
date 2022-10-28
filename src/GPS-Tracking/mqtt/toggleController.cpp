@@ -95,8 +95,7 @@ namespace karlo {
 
         void toggleController (json subscribeMessage) {
             
-            if(subscribeMessage != NULL) {
-
+            if(subscribeMessage != "null") {
 
             std::string imei = subscribeMessage["id"];
             std::string driverId = messageSeparator(subscribeMessage["toggle"], 0);
