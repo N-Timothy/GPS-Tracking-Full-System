@@ -145,7 +145,7 @@ namespace karlo {
 
                 std::this_thread::sleep_for(std::chrono::seconds(1));
 
-                int res = -1;
+                int res = 0;
                 std::cout << std::endl;
 
                 if (res == -1) {
