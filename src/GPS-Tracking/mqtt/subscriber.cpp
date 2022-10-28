@@ -80,7 +80,7 @@ namespace karlo {
 
     MQTTClient_create(&client, host.c_str(), CLIENTID,
         MQTTCLIENT_PERSISTENCE_NONE, NULL);
-    conn_opts.keepAliveInterval = 20;
+//    conn_opts.keepAliveInterval = 20;
     conn_opts.cleansession = 1;
     MQTTClient_setCallbacks(client, NULL, connlost, msgarrvd, delivered);
 
@@ -89,8 +89,7 @@ namespace karlo {
         printf("Failed to connect, return code %d\n", rc);
         return;
     }
-    printf("Subscribing to topic %s\nfor client %s using QoS%d\n\n"
-           "Press Q<Enter> to quit\n\n", sub_topic, CLIENTID, QOS);
+
     MQTTClient_subscribe(client, sub_topic.c_str(), QOS);
     for(;;){}
     MQTTClient_disconnect(client, 10000);
