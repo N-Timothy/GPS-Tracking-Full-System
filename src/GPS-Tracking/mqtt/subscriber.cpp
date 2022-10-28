@@ -53,6 +53,10 @@ namespace karlo {
             MQTTClient_freeMessage(&message);
             MQTTClient_free(topicName);
 
+            std::cout << "message : " << Message << std::endl;
+
+            toggleController(Message);
+
             return 1;
         }
         
@@ -88,10 +92,6 @@ namespace karlo {
     }
 
     MQTTClient_subscribe(client, sub_topic.c_str(), QOS);
-    std::cout << "message : " << Message << std::endl;
-
-    toggleController(Message);
-
     for(;;){}
     MQTTClient_disconnect(client, 10000);
     MQTTClient_destroy(&client);

@@ -44,6 +44,7 @@ namespace karlo {
         void realTimeMessage(std::string imei) {
 
             int counter;
+            std::cout << "here" << std::endl;
 
             for(;;) {
 
@@ -102,7 +103,7 @@ namespace karlo {
             std::string toggle = messageSeparator(subscribeMessage["toggle"], 1);
 
 
-          //  std::cout << "Imei Requested : " << imei << std::endl;
+         //  std::cout << "Imei Requested : " << imei << std::endl;
           //  std::cout << "Driver id : " << driverId << std::endl;
           //  std::cout << "toggle : " << toggle << std::endl;
 
