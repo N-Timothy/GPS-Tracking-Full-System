@@ -106,13 +106,16 @@ namespace karlo {
             if(!subscribeMessage.is_null()) {
 
             std::string imei = subscribeMessage["id"];
+
+            std::cout << "Imei Requested : " << imei << std::endl;
+
             std::string driverId = messageSeparator(subscribeMessage["toggle"], 0);
+
+            std::cout << "Driver id : " << driverId << std::endl;
+          
             std::string toggle = messageSeparator(subscribeMessage["toggle"], 1);
 
-
-         //  std::cout << "Imei Requested : " << imei << std::endl;
-          //  std::cout << "Driver id : " << driverId << std::endl;
-          //  std::cout << "toggle : " << toggle << std::endl;
+            std::cout << "toggle : " << toggle << std::endl;
 
             std::vector<std::string> emptyVec;
 
