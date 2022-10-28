@@ -60,7 +60,7 @@ namespace karlo {
                    //     std::cout << "Publishing Data ... " << std::endl;
                         //int ret = publisher(it->first);
                         publisher_thread(it->first);
-                        int ret = -1;
+                        int ret = 0;
                         // check if data is null
                         if (ret == -1) {
                             realTimeReq.erase(it->first);
