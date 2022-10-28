@@ -131,7 +131,11 @@ namespace karlo {
                     idVector = removeVectorElement(idVector, driverId);
                 }
                 std::cout << "Toggle False by : " << driverId << std::endl;
-                //int res = publisher(imei);
+                std::thread publish_thread (publisher, imei);
+                publish_thread.detach();
+
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+
                 int res = -1;
                 std::cout << std::endl;
 
