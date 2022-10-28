@@ -94,6 +94,9 @@ namespace karlo {
         }
 
         void toggleController (json subscribeMessage) {
+            
+            if(subscribeMessage != NULL) {
+
 
             std::string imei = subscribeMessage["id"];
             std::string driverId = messageSeparator(subscribeMessage["toggle"], 0);
@@ -166,6 +169,7 @@ namespace karlo {
                // }
                // std::cout << std::endl;
             //}
+            }
         }
 
     } // namespace mqtt
