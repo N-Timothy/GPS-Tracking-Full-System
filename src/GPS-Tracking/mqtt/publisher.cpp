@@ -140,7 +140,7 @@ int messageArrived(void* context, char* topicName, int topicLen, MQTTAsync_messa
             PAYLOAD["bearing"] = to_string(data["bearing"]);
             PAYLOAD["imeiTracker"] = data["imei"];
 
-            std::cout << "msg : " << PAYLOAD << std::endl;
+            std::cout << "msg : " << (void*) PAYLOAD.dump().c_str() << std::endl;
 
  
             opts.onSuccess = onSend;
@@ -183,7 +183,6 @@ int messageArrived(void* context, char* topicName, int topicLen, MQTTAsync_messa
                 printf("Failed to set callback, return code %d\n", rc);
                 return -2;
             }
-
             conn_opts.cleansession = 1;
             conn_opts.onSuccess = onConnectPub;
             conn_opts.onFailure = onConnectFailurePub;
