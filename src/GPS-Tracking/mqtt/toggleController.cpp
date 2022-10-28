@@ -41,6 +41,11 @@ namespace karlo {
                 
         }
 
+        void publisher_thread(std::string imei) {
+            std::thread pub_thread(publisher, imei);
+            pub_thread.detach();
+        }
+
         void realTimeMessage(std::string imei) {
 
             int counter;
@@ -53,7 +58,9 @@ namespace karlo {
                     if(!it->second.empty()){
 
                    //     std::cout << "Publishing Data ... " << std::endl;
-                        int ret = publisher(it->first);
+                        //int ret = publisher(it->first);
+                        publisher_thread(it->first);
+                        int ret = -1;
                         // check if data is null
                         if (ret == -1) {
                             realTimeReq.erase(it->first);
@@ -131,8 +138,7 @@ namespace karlo {
                     idVector = removeVectorElement(idVector, driverId);
                 }
                 std::cout << "Toggle False by : " << driverId << std::endl;
-                std::thread publish_thread (publisher, imei);
-                publish_thread.detach();
+                publisher_thread(imei);
 
                 std::this_thread::sleep_for(std::chrono::seconds(1));
 
