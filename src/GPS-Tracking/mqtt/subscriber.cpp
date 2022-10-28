@@ -51,7 +51,8 @@ namespace karlo {
             printf("Message arrived\n");
             printf("     topic: %s\n", topicName);
             printf("   message: %.*s\n", message->payloadlen, (char*)message->payload);
-            json Message = json::parse((char*) message->payload);
+            std::string msg = (char *) message->payload;
+            json Message = json::parse(msg);
     
             MQTTAsync_freeMessage(&message);
             MQTTAsync_free(topicName);
