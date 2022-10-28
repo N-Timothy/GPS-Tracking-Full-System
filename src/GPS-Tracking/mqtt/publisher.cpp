@@ -139,15 +139,16 @@ int messageArrived(void* context, char* topicName, int topicLen, MQTTAsync_messa
             PAYLOAD["speed"] = to_string(data["speed"]);
             PAYLOAD["bearing"] = to_string(data["bearing"]);
             PAYLOAD["imeiTracker"] = data["imei"];
+            auto data_msg = PAYLOAD.dump().c_str();
 
-            std::cout << "msg : " << (void*) *PAYLOAD.dump().c_str() << std::endl;
+            std::cout << "msg : " << (void*) data_msg << std::endl;
 
  
             opts.onSuccess = onSend;
             opts.onFailure = onSendFailure;
             opts.context = client;
-            pubmsg.payload = (void*) PAYLOAD.dump().c_str();
-            pubmsg.payloadlen = strlen(PAYLOAD.dump().c_str());
+            pubmsg.payload = (void*) data_msg;
+            pubmsg.payloadlen = strlen(data_msg);
             pubmsg.qos = config["QOS"];
             pubmsg.retained = 0;
             if ((rc = MQTTAsync_sendMessage(client, pub_topic.c_str(), &pubmsg, &opts)) != MQTTASYNC_SUCCESS)
@@ -159,6 +160,8 @@ int messageArrived(void* context, char* topicName, int topicLen, MQTTAsync_messa
     }
 
         int publisher(std::string _imei) {
+
+            finishedPub = 0;
 
             MQTTAsync client;
             MQTTAsync_connectOptions conn_opts = MQTTAsync_connectOptions_initializer;
