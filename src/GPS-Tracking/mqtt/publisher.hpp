@@ -7,7 +7,10 @@
 namespace karlo {
     namespace mqtt {
 
-        int publisher(std::string _imei);
+        extern bool pub_ready;
+        extern std::string null_imei;
+
+        void publisher(std::string _imei);
 
     } // namespace mqtt
 } // namespace karlo

@@ -52,11 +52,16 @@ namespace karlo {
             printf("     topic: %s\n", topicName);
             printf("   message: %.*s\n", message->payloadlen, (char*)message->payload);
             std::string msg = (char *) message->payload;
-            json Message = json::parse(msg);
+            json msgJson;
+            try {
+            msgJson = json::parse(msg);
+            } catch (json::parse_error& e){
+                std::cout << "wrong format" << std::endl;
+            }
     
             MQTTAsync_freeMessage(&message);
             MQTTAsync_free(topicName);
-            toggleController(Message);
+            toggleController(msgJson);
             return 1;
 
         }
@@ -139,14 +144,12 @@ void subscriber() {
     if ((rc = MQTTAsync_create(&client, host.c_str(), CLIENTID, 
                     MQTTCLIENT_PERSISTENCE_NONE, NULL)) != MQTTASYNC_SUCCESS) {
             printf("Failed to create client, return code %d\n", rc);
-            rc = EXIT_FAILURE;
             goto exit;
         }
  
     if ((rc = MQTTAsync_setCallbacks(client, client, connlost, 
                     msgarrvd, NULL)) != MQTTASYNC_SUCCESS) {
             printf("Failed to set callbacks, return code %d\n", rc);
-            rc = EXIT_FAILURE;
             goto destroy_exit;
         }
 
@@ -158,7 +161,6 @@ void subscriber() {
     if ((rc = MQTTAsync_connect(client, &conn_opts)) != MQTTASYNC_SUCCESS)
         {
             printf("Failed to start connect, return code %d\n", rc);
-            rc = EXIT_FAILURE;
             goto destroy_exit;
         }
 

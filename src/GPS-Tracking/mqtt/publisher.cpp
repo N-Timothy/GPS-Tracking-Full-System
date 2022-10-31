@@ -16,6 +16,9 @@ namespace karlo {
 
         std::mutex m;
         std::condition_variable cv;
+        bool pub_ready = true;
+        std::string null_imei = "";
+        std::string msg;
 
         using namespace std::literals::chrono_literals;
 
@@ -115,15 +118,85 @@ namespace karlo {
 
 	        std::cout << "We are now connected to the broker! " << std::endl;
 
+                const char* data_msg = msg.c_str();
+
+                std::cout << "msg : " << data_msg << std::endl;
+ 
+                opts.onSuccess = onSend;
+                opts.onFailure = onSendFailure;
+                opts.context = client;
+                pubmsg.payload = (void*) data_msg;
+                pubmsg.payloadlen = strlen(data_msg);
+                pubmsg.qos = config["QOS"];
+                pubmsg.retained = 0;
+                if ((rc = MQTTAsync_sendMessage(client, pub_topic.c_str(), &pubmsg, &opts)) != MQTTASYNC_SUCCESS)
+                {
+                    printf("Failed to start sendMessage, return code %d\n", rc);
+                    pub_ready = true;
+                    cv.notify_one();
+                    MQTTAsync_destroy(&client);
+                    return;
+                }
+        
+        }
+
+        void publisher(std::string _imei) {
+
+            finishedPub = 0;
+            pub_ready = false;
+
+            MQTTAsync client;
+            MQTTAsync_connectOptions conn_opts = MQTTAsync_connectOptions_initializer;
+            //MQTTAsync client = (MQTTAsync)context;
+            MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
+            MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
+            int rc;
+            imei = _imei;
+
+            std::string host = config["host"];
+            std::string port = to_string(config["port"]);
+            std::string endpoint = host + ":" + port;
+            std::cout << "endpoint : " << endpoint.c_str() << std::endl;
+            std::cout << "imei : " << imei << std::endl;
+            
+            if ((rc = MQTTAsync_create(&client, host.c_str(), CLIENTID, 
+                            MQTTCLIENT_PERSISTENCE_NONE, NULL)) != MQTTASYNC_SUCCESS)
+            {
+                printf("Failed to create client object, return code %d\n", rc);
+
+                MQTTAsync_destroy(&client);
+                return;
+            }
+
+            if ((rc = MQTTAsync_setCallbacks(client, NULL, connlostPub, 
+                            messageArrived, NULL)) != MQTTASYNC_SUCCESS)
+            {
+                printf("Failed to set callback, return code %d\n", rc);
+
+                MQTTAsync_destroy(&client);
+                return;
+            }
+            conn_opts.cleansession = 1;
+            conn_opts.onSuccess = onConnectPub;
+            conn_opts.onFailure = onConnectFailurePub;
+            conn_opts.context = client;
+            if ((rc = MQTTAsync_connect(client, &conn_opts)) != MQTTASYNC_SUCCESS)
+            {
+                printf("Failed to start connect, return code %d\n", rc);
+            }
+
+            std::string pub_topic = config["pub_topic"];
+
             std::unique_lock<std::mutex> lk(m);
             if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return ready;})){
                 std::cout << "timeout" << std::endl;
-                return;
+                goto Exit;
             } else {
 
                 json data = database::readData(imei);
                 if (data.is_null()){
-                    return;
+                    null_imei = imei;
+                    goto Exit;
                 }
 
                 int tmp = ((float) data["latitude"] * 10000000);
@@ -139,72 +212,20 @@ namespace karlo {
                 PAYLOAD["speed"] = to_string(data["speed"]);
                 PAYLOAD["bearing"] = to_string(data["bearing"]);
                 PAYLOAD["imeiTracker"] = data["imei"];
-                std::string msg =  PAYLOAD.dump().c_str();
-                const char* data_msg = msg.c_str();
-
-                std::cout << "msg : " << data_msg << std::endl;
-
- 
-                opts.onSuccess = onSend;
-                opts.onFailure = onSendFailure;
-                opts.context = client;
-                pubmsg.payload = (void*) PAYLOAD.dump().c_str();
-                pubmsg.payloadlen = strlen(data_msg);
-                pubmsg.qos = config["QOS"];
-                pubmsg.retained = 0;
-                if ((rc = MQTTAsync_sendMessage(client, pub_topic.c_str(), &pubmsg, &opts)) != MQTTASYNC_SUCCESS)
-                {
-                    printf("Failed to start sendMessage, return code %d\n", rc);
-                    return;
-                }
-            }
-        }
-
-        int publisher(std::string _imei) {
-
-            finishedPub = 0;
-
-            MQTTAsync client;
-            MQTTAsync_connectOptions conn_opts = MQTTAsync_connectOptions_initializer;
-            int rc;
-            imei = _imei;
-
-            std::string host = config["host"];
-            std::string port = to_string(config["port"]);
-            std::string endpoint = host + ":" + port;
-            std::cout << "endpoint : " << endpoint.c_str() << std::endl;
-            std::cout << "imei : " << imei << std::endl;
-            
-            if ((rc = MQTTAsync_create(&client, host.c_str(), CLIENTID, 
-                            MQTTCLIENT_PERSISTENCE_NONE, NULL)) != MQTTASYNC_SUCCESS)
-            {
-                printf("Failed to create client object, return code %d\n", rc);
-                return -1;
-            }
- 
-            if ((rc = MQTTAsync_setCallbacks(client, NULL, connlostPub, 
-                            messageArrived, NULL)) != MQTTASYNC_SUCCESS)
-            {
-                printf("Failed to set callback, return code %d\n", rc);
-                return -1;
-            }
-            conn_opts.cleansession = 1;
-            conn_opts.onSuccess = onConnectPub;
-            conn_opts.onFailure = onConnectFailurePub;
-            conn_opts.context = client;
-            if ((rc = MQTTAsync_connect(client, &conn_opts)) != MQTTASYNC_SUCCESS)
-            {
-                printf("Failed to start connect, return code %d\n", rc);
+                msg =  PAYLOAD.dump().c_str();
             }
             
             while (!finishedPub){
-                std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+                std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             } 
  
             std::cout << "destroying client : " << rc << std::endl;
-            MQTTAsync_destroy(&client);
 
-            return 0;
+    Exit:
+            MQTTAsync_destroy(&client);
+            pub_ready = true;
+            cv.notify_one();
+            return;
         }
 
     } // namespace mqtt
