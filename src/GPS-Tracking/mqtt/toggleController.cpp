@@ -41,9 +41,10 @@ namespace karlo {
                 
         }
 
-        void publisher_thread(std::string imei) {
+        int publisher_thread(std::string imei) {
             std::thread pub_thread(publisher, imei);
-            pub_thread.detach();
+            pub_thread.join();
+            return 0;
         }
 
         void realTimeMessage(std::string imei) {
@@ -59,8 +60,7 @@ namespace karlo {
 
                    //     std::cout << "Publishing Data ... " << std::endl;
                         //int ret = publisher(it->first);
-                        publisher_thread(it->first);
-                        int ret = 0;
+                        int ret = publisher_thread(it->first);
                         // check if data is null
                         if (ret == -1) {
                             realTimeReq.erase(it->first);
@@ -141,11 +141,10 @@ namespace karlo {
                     idVector = removeVectorElement(idVector, driverId);
                 }
                 std::cout << "Toggle False by : " << driverId << std::endl;
-                publisher_thread(imei);
+                int res = publisher_thread(imei);
 
                 std::this_thread::sleep_for(std::chrono::seconds(1));
 
-                int res = 0;
                 std::cout << std::endl;
 
                 if (res == -1) {
@@ -175,14 +174,6 @@ namespace karlo {
                     threadActive = false;
                 }
 
-            // temporary printing MAP value
-            //for(auto it = realTimeReq.cbegin(); it != realTimeReq.cend(); ++it) {
-                //std::cout << "imei : " << it->first << " id : ";
-              //  for(auto cur : it->second){
-                //    std::cout << cur << " | ";
-               // }
-               // std::cout << std::endl;
-            //}
             }
         }
 
