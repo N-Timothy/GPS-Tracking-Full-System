@@ -147,7 +147,6 @@ namespace karlo {
 
             MQTTAsync client;
             MQTTAsync_connectOptions conn_opts = MQTTAsync_connectOptions_initializer;
-            //MQTTAsync client = (MQTTAsync)context;
             MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
             MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
             int rc;
