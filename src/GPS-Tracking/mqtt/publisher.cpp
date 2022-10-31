@@ -139,7 +139,7 @@ int messageArrived(void* context, char* topicName, int topicLen, MQTTAsync_messa
             PAYLOAD["speed"] = to_string(data["speed"]);
             PAYLOAD["bearing"] = to_string(data["bearing"]);
             PAYLOAD["imeiTracker"] = data["imei"];
-            auto data_msg = PAYLOAD.dump().c_str();
+            const char* data_msg = PAYLOAD.dump().c_str();
 
             std::cout << "msg : " << (void*) data_msg << std::endl;
 
@@ -178,14 +178,14 @@ int messageArrived(void* context, char* topicName, int topicLen, MQTTAsync_messa
                             MQTTCLIENT_PERSISTENCE_NONE, NULL)) != MQTTASYNC_SUCCESS)
             {
                 printf("Failed to create client object, return code %d\n", rc);
-                return -2;
+                return -1;
             }
  
             if ((rc = MQTTAsync_setCallbacks(client, NULL, connlostPub, 
                             messageArrived, NULL)) != MQTTASYNC_SUCCESS)
             {
                 printf("Failed to set callback, return code %d\n", rc);
-                return -2;
+                return -1;
             }
             conn_opts.cleansession = 1;
             conn_opts.onSuccess = onConnectPub;
