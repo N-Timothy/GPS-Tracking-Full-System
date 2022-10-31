@@ -139,7 +139,8 @@ int messageArrived(void* context, char* topicName, int topicLen, MQTTAsync_messa
             PAYLOAD["speed"] = to_string(data["speed"]);
             PAYLOAD["bearing"] = to_string(data["bearing"]);
             PAYLOAD["imeiTracker"] = data["imei"];
-            const char* data_msg = PAYLOAD.dump().c_str();
+            std::string msg =  PAYLOAD.dump().c_str();
+            const char* data_msg = msg.c_str();
 
             std::cout << "msg : " << data_msg << std::endl;
 
