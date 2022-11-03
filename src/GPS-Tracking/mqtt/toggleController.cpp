@@ -10,9 +10,16 @@
 #include <vector>
 #include <algorithm>
 #include <map>
+#include <condition_variable>
+#include <mutex>
 
 namespace karlo {
     namespace mqtt {
+
+            std::mutex mtx;
+            std::condition_variable con_var;
+
+            using namespace std::literals::chrono_literals;
 
             using json = nlohmann::json;
 
@@ -41,20 +48,40 @@ namespace karlo {
                 
         }
 
+        int publisher_thread(std::string imei) {
+
+            std::unique_lock<std::mutex> lk(mtx);
+            if(!con_var.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return pub_ready;})){
+                std::cout << "publish is beeing used" << std::endl;
+                return -1;
+            } else {
+                std::thread pub_thread(publisher, imei);
+                pub_thread.detach();
+                // wait for this operation to end
+                return 0;
+            }
+        }
+
         void realTimeMessage(std::string imei) {
 
             int counter;
 
             for(;;) {
 
+                if (null_imei != ""){
+                    realTimeReq.erase(null_imei);
+                }
+
                 counter = 0;
                 for(auto it = realTimeReq.cbegin(); it != realTimeReq.cend(); ++it) {
+
                     if(!it->second.empty()){
 
-                   //     std::cout << "Publishing Data ... " << std::endl;
-                        int ret = publisher(it->first);
+
+                        int res = publisher_thread(it->first);
+
                         // check if data is null
-                        if (ret == -1) {
+                        if (res == -1) {
                             realTimeReq.erase(it->first);
                //             std::cout << "No GPS FOUND ... : " << realTimeReq.size() << std::endl;
                             if(realTimeReq.size() > 1 || counter > 0){
@@ -62,9 +89,9 @@ namespace karlo {
                             } else {
                                 break;
                             }
-                        } else if (ret == -3) {
+                        //} else if (res == -3) {
                  //           std::cout << "MQTT TIMEOUT" << std::endl;
-                            continue;
+                         //   continue;
                         } else {
 
                    //         std::cout << "Succeed ... " << std::endl;
@@ -94,15 +121,20 @@ namespace karlo {
         }
 
         void toggleController (json subscribeMessage) {
+            
+            if(!subscribeMessage.is_null()) {
 
             std::string imei = subscribeMessage["id"];
+
+            std::cout << "Imei Requested : " << imei << std::endl;
+
             std::string driverId = messageSeparator(subscribeMessage["toggle"], 0);
+
+            std::cout << "Driver id : " << driverId << std::endl;
+          
             std::string toggle = messageSeparator(subscribeMessage["toggle"], 1);
 
-
-          //  std::cout << "Imei Requested : " << imei << std::endl;
-          //  std::cout << "Driver id : " << driverId << std::endl;
-          //  std::cout << "toggle : " << toggle << std::endl;
+            std::cout << "toggle : " << toggle << std::endl;
 
             std::vector<std::string> emptyVec;
 
@@ -114,10 +146,11 @@ namespace karlo {
             std::vector<std::string> idVector = data->second;
 
 
+
             if(toggle == "true") {
                 if(idVector.empty()) {
                     idVector.push_back(driverId);
-                std::cout << "Toggle True by : " << driverId << std::endl;
+ //               std::cout << "Toggle True by : " << driverId << std::endl;
                 } else {
                     if(std::find(idVector.begin(), idVector.end(), driverId) == idVector.end()) {
                         idVector.push_back(driverId);
@@ -127,12 +160,21 @@ namespace karlo {
                 if(std::find(idVector.begin(), idVector.end(), driverId) != idVector.end()) {
                     idVector = removeVectorElement(idVector, driverId);
                 }
-                std::cout << "Toggle False by : " << driverId << std::endl;
-                int res = publisher(imei);
+   //             std::cout << "Toggle False by : " << driverId << std::endl;
+        Publish:
+                int res = publisher_thread(imei);
+
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+
                 std::cout << std::endl;
 
                 if (res == -1) {
-                    realTimeReq.erase(imei);
+                    std::this_thread::sleep_for(std::chrono::seconds(3));
+                    goto Publish;
+                }
+
+                if (null_imei != ""){
+                    realTimeReq.erase(null_imei);
                 }
             }
 
@@ -158,14 +200,9 @@ namespace karlo {
                     threadActive = false;
                 }
 
-            // temporary printing MAP value
-            //for(auto it = realTimeReq.cbegin(); it != realTimeReq.cend(); ++it) {
-                //std::cout << "imei : " << it->first << " id : ";
-              //  for(auto cur : it->second){
-                //    std::cout << cur << " | ";
-               // }
-               // std::cout << std::endl;
-            //}
+            } else {
+                std::cout << "null" << std::endl;
+            }
         }
 
     } // namespace mqtt

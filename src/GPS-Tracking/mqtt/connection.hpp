@@ -1,8 +1,8 @@
 #ifndef _GPS_TRACKING_MQTT_CONNECTION_HPP_
 #define _GPS_TRACKING_MQTT_CONNECTION_HPP_
 
-#include <mosquitto.h>
 #include <nlohmann/json.hpp>
+#include <MQTTAsync.h>
 
 namespace karlo {
     namespace mqtt {
