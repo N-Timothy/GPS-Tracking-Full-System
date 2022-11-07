@@ -36,22 +36,22 @@ namespace karlo {
 
                 std::vector<json> postData = database::readData();
 
-                // ------- Status ---------
-                std::string status;
-
-                //if(data["gpsOn"]){
-                //    if (data["Moving"]){
-                //        status = "Moving";
-                //    } else {
-                //        status = "Idle";
-                //    }
-                //} else {
-                //    status = "Stop";
-                //}
-
-                // ------- Status ---------
 
                 for (json data : postData) {
+
+                    // ------- Status ---------
+                    std::string status;
+    
+                    if(data["ignition"]){
+                        if (data["speed"] != 0){
+                            status = "moving";
+                        } else {
+                            status = "idle";
+                        }
+                    } else {
+                        status = "stop";
+                    }
+                    // ------- Status ---------
 
                     int tmp = ((float) data["latitude"] * 10000000);
                     float latitude = (float) tmp / 10000000;
@@ -66,7 +66,8 @@ namespace karlo {
                         params.emplace("speed", to_string(data["speed"]));
                         params.emplace("bearing", to_string(data["bearing"]));
                         params.emplace("imeiTracker", data["imei"]);
-                    //  params.emplace("status", status);
+                        params.emplace("battery", to_string(data["batteryLevel"]));
+                        params.emplace("status", status);
                     auto res = cli.Post(postUrl, params);
 
                     if (res) {

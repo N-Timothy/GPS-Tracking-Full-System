@@ -136,7 +136,6 @@ namespace karlo {
                                  0x01,
                                  0x00, 0x00, 0x53, 0x42};
 
-
         if (realTimeFlag) send(connfd, (char *) &realtime_command, sizeof(realtime_command), 0);
         else send(connfd, (char *) &normal_command, sizeof(normal_command), 0);
         std::cout << "COMMAND SEND SUCCESS\n";
@@ -297,6 +296,7 @@ namespace karlo {
           std::cout << std::endl;
           std::cout << "Changed to realtime\n";
         }
+
         if (std::find(imeiNormalVec.begin(), imeiNormalVec.end(), data.imei) != imeiNormalVec.end()) {
           std::cout << "Changing to normal..\n";
           gps.sendGPRSCommand(connfd, false);
@@ -412,7 +412,6 @@ namespace karlo {
             std::cout << "\n\n";
           }
 
-
           // Save necessary AVL data to database
           std::unique_lock<std::mutex> lk(m);
           if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return ready;})){
@@ -421,6 +420,7 @@ namespace karlo {
             //std::cout << std::endl;
             return -3;
           }
+
           else {
             if(gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
               database::createData(data);
@@ -430,6 +430,16 @@ namespace karlo {
           }
 
         } // if FD_SET()
+
+        //--------- Thread Sleep ---------------
+
+        // while(!std::find(imeiRealTimeVec.begin(), imeiRealTimeVec.end(), data.imei) != imeiRealTimeVec.end()){
+        //  std::this_thread::sleep_for(std::chrono::seconds(5));
+        // }
+
+        //--------- Thread Sleep ---------------
+
+
       } // for(;;)
 
       return 0;
