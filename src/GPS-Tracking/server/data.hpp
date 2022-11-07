@@ -10,8 +10,8 @@ namespace karlo {
     std::string imei = "";
     bool gpsOn = true;
     int batteryLevel = 0;
-    float latitude = 0;
-    float longitude = 0;
+    double latitude = 0;
+    double longitude = 0;
     float altitude = 0;
     int speed = 0;
     int bearing = 0;
