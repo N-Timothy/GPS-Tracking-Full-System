@@ -1,5 +1,6 @@
 #include "GPS-Tracking/mqtt/toggleController.hpp"
 #include "GPS-Tracking/mqtt/publisher.hpp"
+#include "GPS-Tracking/server/server.hpp"
 
 #include <string>
 #include <iostream>
@@ -126,15 +127,15 @@ namespace karlo {
 
         std::string imei = subscribeMessage["id"];
 
-        std::cout << "Imei Requested : " << imei << std::endl;
+        //std::cout << "Imei Requested : " << imei << std::endl;
 
         std::string driverId = messageSeparator(subscribeMessage["toggle"], 0);
 
-        std::cout << "Driver id : " << driverId << std::endl;
+        //std::cout << "Driver id : " << driverId << std::endl;
 
         std::string toggle = messageSeparator(subscribeMessage["toggle"], 1);
 
-        std::cout << "toggle : " << toggle << std::endl;
+        //std::cout << "toggle : " << toggle << std::endl;
 
         std::vector<std::string> emptyVec;
 
@@ -144,8 +145,6 @@ namespace karlo {
         auto data = realTimeReq.find(imei);
         std::string imeiData = data->first;
         std::vector<std::string> idVector = data->second;
-
-
 
         if(toggle == "true") {
           if(idVector.empty()) {

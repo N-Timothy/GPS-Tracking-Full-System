@@ -26,17 +26,15 @@ namespace karlo {
     std::vector<std::string> imeiRealTimeVec;
     std::vector<std::string> imeiNormalVec;
 
-//    std::mutex m;
-//    std::condition_variable cv;
-//
-//    using namespace std::literals::chrono_literals;
+    std::mutex m;
+    std::condition_variable cv;
+
+    using namespace std::literals::chrono_literals;
 
     class GetData {
     private:
       int n = 0;
       int number = 0;
-//      int ACCEPT = 0x01;
-//      int DECLINE = 0x00;
       int connectivity;
       std::string result;
 
@@ -415,21 +413,21 @@ namespace karlo {
           }
 
 
-//          // Save necessary AVL data to database
-//          std::unique_lock<std::mutex> lk(m);
-//          if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return ready;})){
-//            //std::cout << std::endl;
-//            //std::cout << "\033[1;32mTIMEOUT .... !! \033[0m";
-//            //std::cout << std::endl;
-//            return -3;
-//          }
-//          else {
-//            if(gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
-//              database::createData(data);
-//            } else {
-//              return -1;
-//            }
-//          }
+          // Save necessary AVL data to database
+          std::unique_lock<std::mutex> lk(m);
+          if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return ready;})){
+            //std::cout << std::endl;
+            //std::cout << "\033[1;32mTIMEOUT .... !! \033[0m";
+            //std::cout << std::endl;
+            return -3;
+          }
+          else {
+            if(gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
+              database::createData(data);
+            } else {
+              return -1;
+            }
+          }
 
         } // if FD_SET()
       } // for(;;)
