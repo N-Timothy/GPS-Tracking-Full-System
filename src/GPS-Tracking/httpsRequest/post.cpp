@@ -35,8 +35,7 @@ namespace karlo {
             } else {
 
                 std::vector<json> postData = database::readData();
-
-
+                
                 for (json data : postData) {
 
                     // ------- Status ---------
@@ -66,7 +65,7 @@ namespace karlo {
                         params.emplace("speed", to_string(data["speed"]));
                         params.emplace("bearing", to_string(data["bearing"]));
                         params.emplace("imeiTracker", data["imei"]);
-                        params.emplace("battery", to_string(data["batteryLevel"]));
+                        params.emplace("battery", to_string(data["exBatteryLevel"]));
                         params.emplace("status", status);
                     auto res = cli.Post(postUrl, params);
 
