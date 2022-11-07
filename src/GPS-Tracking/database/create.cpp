@@ -13,7 +13,7 @@ namespace karlo {
       bsoncxx::document::value trackingDocValue = builder
         << "$set" << open_document
         << "driver" << data.driver
-        << "gpsOn" << data.gpsOn
+        << "ignition" << data.ignition
         << "imei" << data.imei
         << "betteryLevel" << data.batteryLevel
         << "latitude" << data.latitude

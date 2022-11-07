@@ -382,7 +382,7 @@ namespace karlo {
 
               // Ignition ID = 239
               if (id == "ef") {
-                data.gpsOn = std::stoi(hex_stream.substr(AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
+                data.ignition= std::stoi(hex_stream.substr(AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
                 break;
               }
             }

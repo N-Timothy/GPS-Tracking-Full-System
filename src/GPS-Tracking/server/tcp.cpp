@@ -170,32 +170,32 @@ namespace karlo {
               std::cout << i << ' ';
             }
 
-            if(thread_socket.size() > 1){
-              std::cout << std::endl;
-              if(thread_socket.front() == PrevSocket){
-                socketCounter++;
-                std::cout << "Counter : " << socketCounter << "  Socket Number : " << PrevSocket << std::endl;
-              } else {
-                socketCounter = 0;
-                PrevSocket = thread_socket.front();
-              }
+            //if(thread_socket.size() > 1){
+            //  std::cout << std::endl;
+            //  if(thread_socket.front() == PrevSocket){
+            //    socketCounter++;
+            //    std::cout << "Counter : " << socketCounter << "  Socket Number : " << PrevSocket << std::endl;
+            //  } else {
+            //    socketCounter = 0;
+            //    PrevSocket = thread_socket.front();
+            //  }
 
-              // assuming after 10 loops the thread still dosent closed
-              if(socketCounter >= 10){
-                if(close(PrevSocket) < 0) {
-                  std::cout << "failed to remove socket" << std::endl;
-                } else {
-                  std::cout << "sucess to remove socket" << std::endl;
-                  init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
-                  thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), PrevSocket), thread_socket.end());
-                  PrevSocket = 0;
-                  socketCounter = 0;
-                }
-              }
-            } else {
-              PrevSocket = 0;
-              socketCounter = 0;
-            }
+            //  // assuming after 10 loops the thread still dosent closed
+            //  if(socketCounter >= 10){
+            //    if(close(PrevSocket) < 0) {
+            //      std::cout << "failed to remove socket" << std::endl;
+            //    } else {
+            //      std::cout << "sucess to remove socket" << std::endl;
+            //      init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
+            //      thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), PrevSocket), thread_socket.end());
+            //      PrevSocket = 0;
+            //      socketCounter = 0;
+            //    }
+            //  }
+            //} else {
+            //  PrevSocket = 0;
+            //  socketCounter = 0;
+            //}
 
 
             if(!diff.empty()){
