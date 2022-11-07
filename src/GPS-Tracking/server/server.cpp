@@ -28,10 +28,10 @@ namespace karlo {
     std::vector<std::string> imeiNormalVec;
     std::map<std::string, int> imeiSocketMap;
 
-//    std::mutex m;
-//    std::condition_variable cv;
-//
-//    using namespace std::literals::chrono_literals;
+    std::mutex m;
+    std::condition_variable cv;
+
+    using namespace std::literals::chrono_literals;
 
     class GetData {
     private:

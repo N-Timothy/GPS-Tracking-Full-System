@@ -41,7 +41,7 @@ namespace karlo {
                     // ------- Status ---------
                     std::string status;
     
-                    if(data["ignition"]){
+                    if(data["ignitionOn"]){
                         if (data["speed"] != 0){
                             status = "moving";
                         } else {
@@ -50,13 +50,14 @@ namespace karlo {
                     } else {
                         status = "stop";
                     }
+                    std::cout << "Status : " << status << std::endl;
                     // ------- Status ---------
 
-                    int tmp = ((float) data["latitude"] * 10000000);
-                    float latitude = (float) tmp / 10000000;
+                    int tmp = ((double) data["latitude"] * 10000000);
+                    double latitude = (double) tmp / 10000000;
 
-                    tmp = ((float) data["longitude"] * 10000000);
-                    float longitude = (float) tmp / 10000000;
+                    tmp = ((double) data["longitude"] * 10000000);
+                    double longitude = (double) tmp / 10000000;
 
                     httplib::Params params;
                         params.emplace("latitude", std::to_string(latitude));
@@ -65,7 +66,7 @@ namespace karlo {
                         params.emplace("speed", to_string(data["speed"]));
                         params.emplace("bearing", to_string(data["bearing"]));
                         params.emplace("imeiTracker", data["imei"]);
-                        params.emplace("battery", to_string(data["exBatteryLevel"]));
+                        params.emplace("battery", to_string(data["exBattVoltage"]));
                         params.emplace("status", status);
                     auto res = cli.Post(postUrl, params);
 
