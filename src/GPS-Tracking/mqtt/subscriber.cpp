@@ -63,7 +63,9 @@ namespace karlo {
             MQTTAsync_free(topicName);
             toggleController(msgJson);
             return 1;
+
         }
+ 
 
         void onDisconnectFailure(void* context, MQTTAsync_failureData* response)
 

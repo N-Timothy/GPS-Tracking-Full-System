@@ -13,6 +13,7 @@
 #include <string> // std::string
 #include <algorithm> // find
 #include <vector>
+#include <map>
 #include <thread>
 
 #include <sstream>
@@ -25,11 +26,12 @@ namespace karlo {
 
     std::vector<std::string> imeiRealTimeVec;
     std::vector<std::string> imeiNormalVec;
+    std::map<std::string, int> imeiSocketMap;
 
-    std::mutex m;
-    std::condition_variable cv;
-
-    using namespace std::literals::chrono_literals;
+//    std::mutex m;
+//    std::condition_variable cv;
+//
+//    using namespace std::literals::chrono_literals;
 
     class GetData {
     private:
@@ -278,6 +280,16 @@ namespace karlo {
       data.imei = gps.slice_imei(imei_raw);
       std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
 
+      // Register imei and socket file descriptor into map
+      if (imeiSocketMap.find(data.imei) == imeiSocketMap.end()) {
+        imeiSocketMap.emplace(data.imei, connfd);
+      } else {
+        imeiSocketMap.find(data.imei)->second = connfd;
+      }
+      for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
+        std::cout << it->first << ": " << it->second << std::endl;
+      }
+
       // Continuously reading AVL Data as long as connection is linked
       for(;;) {
         // Check for GPRS command
@@ -376,13 +388,26 @@ namespace karlo {
 
             numOfOneByteID = std::stoi(hex_stream.substr(AVL_POS + NUM_OF_1B_IO_POS, NUM_OF_IO_NOB*2), 0, 16);
             for (i = 0; i < numOfOneByteID; i++) {
-              ID_POS = ONE_BYTE_ID_POS + 2*i * (ID_NOB + VALUE1_NOB);
+              ID_POS = NUM_OF_1B_IO_POS + NUM_OF_IO_NOB*2 + 2*i * (ID_NOB + VALUE1_NOB);
               VALUE_POS = ID_POS + 2 * ID_NOB;
               id = hex_stream.substr(AVL_POS + ID_POS, ID_NOB*2);
 
               // Ignition ID = 239
               if (id == "ef") {
-                data.ignition= std::stoi(hex_stream.substr(AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
+                data.ignitionOn = std::stoi(hex_stream.substr(AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
+                break;
+              }
+            }
+
+            numOfTwoBytesID = std::stoi(hex_stream.substr(AVL_POS + NUM_OF_2B_IO_POS, NUM_OF_IO_NOB*2), 0, 16);
+            for (i = 0; i < numOfTwoBytesID; i++) {
+              ID_POS = NUM_OF_2B_IO_POS + NUM_OF_IO_NOB*2 + 2*i * (ID_NOB + VALUE2_NOB);
+              VALUE_POS = ID_POS + ID_NOB*2;
+              id = hex_stream.substr(AVL_POS + ID_POS, ID_NOB*2);
+
+              // Battery ID = 66
+              if (id == "42") {
+                data.exBattVoltage = std::stoi(hex_stream.substr(AVL_POS + VALUE_POS, VALUE2_NOB*2), 0, 16);
                 break;
               }
             }
@@ -412,22 +437,25 @@ namespace karlo {
             std::cout << "\n\n";
           }
 
+          // Close connection if imei-socket pair is not found
+          if (imeiSocketMap.find(data.imei)->second != connfd) return -5;
 
-          // Save necessary AVL data to database
-          std::unique_lock<std::mutex> lk(m);
-          if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return ready;})){
-            //std::cout << std::endl;
-            //std::cout << "\033[1;32mTIMEOUT .... !! \033[0m";
-            //std::cout << std::endl;
-            return -3;
-          }
-          else {
-            if(gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
-              database::createData(data);
-            } else {
-              return -1;
-            }
-          }
+
+//          // Save necessary AVL data to database
+//          std::unique_lock<std::mutex> lk(m);
+//          if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return ready;})){
+//            //std::cout << std::endl;
+//            //std::cout << "\033[1;32mTIMEOUT .... !! \033[0m";
+//            //std::cout << std::endl;
+//            return -3;
+//          }
+//          else {
+//            if(gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
+//              database::createData(data);
+//            } else {
+//              return -1;
+//            }
+//          }
 
         } // if FD_SET()
       } // for(;;)
