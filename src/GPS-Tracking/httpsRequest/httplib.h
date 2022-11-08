@@ -6817,7 +6817,7 @@ inline Result ClientImpl::Post(const std::string &path, const Headers &headers,
   auto query = detail::params_to_query_json(params);
   //return Post(path, headers, query, "application/x-www-form-urlencoded");
   //return Post(path, headers, query, "application/json");
-  return Post(path, headers, query, "text/plain");
+  return Post(path, headers, query, "text/csv");
 }
 
 inline Result ClientImpl::Post(const std::string &path,
