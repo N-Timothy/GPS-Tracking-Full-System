@@ -61,14 +61,14 @@ namespace karlo {
                     std::cout << "status : " << status << std::endl;
 
                     httplib::Params params;
-                        params.emplace("latitude", std::to_string(latitude));
-                        params.emplace("longitude", std::to_string(longitude));
-                        params.emplace("altitude", to_string(data["altitude"]));
-                        params.emplace("speed", to_string(data["speed"]));
-                        params.emplace("bearing", to_string(data["bearing"]));
-                        params.emplace("imeiTracker", data["imei"]);
-                        params.emplace("battery", batt);
-                        params.emplace("status", status);
+                        params.emplace("\"latitude\"", std::to_string(latitude));
+                        params.emplace("\"longitude\"", std::to_string(longitude));
+                        params.emplace("\"altitude\"", to_string(data["altitude"]));
+                        params.emplace("\"speed\"", to_string(data["speed"]));
+                        params.emplace("\"bearing\"", to_string(data["bearing"]));
+                        params.emplace("\"imeiTracker\"", data["imei"]);
+                        params.emplace("\"battery\"", batt);
+                        params.emplace("\"status\"", status);
 
 for (auto it = params.begin(); it != params.end(); ++it)
 {
