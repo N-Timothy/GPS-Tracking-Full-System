@@ -26,7 +26,7 @@ namespace karlo {
 
     std::vector<std::string> imeiRealTimeVec;
     std::vector<std::string> imeiNormalVec;
-    std::map<int, std::string> socketImeiMap;
+    std::map<std::string, int> imeiSocketMap;
 
     std::mutex m;
     std::condition_variable cv;
@@ -82,11 +82,9 @@ namespace karlo {
         unsigned char DECLINE[] = {0x00};
         if (recognized == 0) {
           send(connfd, (char *) &ACCEPT, sizeof(ACCEPT), 0);
-          printf("IMEI Recognized! [1]\n");
           return 0;
         }
         else {
-          printf("IMEI NOT Recognized! [0]\n");
           if (recognized == -1) {
             send(connfd, (char *) &DECLINE, sizeof(DECLINE), 0);
             return -1;
@@ -159,9 +157,8 @@ namespace karlo {
     }
 
     void removeSocket(int socket) {
-      auto it = socketImeiMap.find(socket);
-      if (it != socketImeiMap.end()) {
-        socketImeiMap.erase(it);
+      for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
+        if (it->second == socket) imeiSocketMap.erase(it);
       }
     }
 
@@ -298,12 +295,12 @@ namespace karlo {
       std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
 
       // Register imei and socket file descriptor into map
-      if (socketImeiMap.find(connfd) == socketImeiMap.end()) {
-        socketImeiMap.emplace(connfd, data.imei);
+      if (imeiSocketMap.find(data.imei) == imeiSocketMap.end()) {
+        imeiSocketMap.emplace( data.imei, connfd);
       } else {
-        socketImeiMap.find(connfd)->second = data.imei;
+        imeiSocketMap.find(data.imei)->second = connfd;
       }
-      for (auto it = socketImeiMap.begin(); it != socketImeiMap.end(); it++) {
+      for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
         std::cout << it->first << ": " << it->second << std::endl;
       }
 
@@ -475,7 +472,7 @@ namespace karlo {
           }
 
           // Close connection if imei-socket pair is not found
-          if (socketImeiMap.find(connfd)->second != data.imei) return -5;
+          if (imeiSocketMap.find(data.imei)->second != connfd) return -5;
 
 
 
