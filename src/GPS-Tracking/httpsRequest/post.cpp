@@ -55,7 +55,7 @@ namespace karlo {
                             stat = json::parse("[\"status\",\"moving\"]");
                         }
                     } else {
-                        stat = json::parse("[\"status\":\"stop\"]");
+                        stat = json::parse("[\"status\",\"stop\"]");
                     }
 
                     std::cout << "status : " << stat["status"] << std::endl;
