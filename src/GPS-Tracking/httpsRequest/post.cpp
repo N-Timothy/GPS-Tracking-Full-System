@@ -51,14 +51,14 @@ namespace karlo {
                     std::string s;
                     if(data["ignitionOn"]) {
                         if(to_string(data["speed"]) == "0"){
-                            s = "[\"status\",\"idle\"]";
+                            s = "\"status\",\"idle\"";
                             stat = json::parse(s);
                         } else {
-                            s = "[\"status\",\"moving\"]";
+                            s = "\"status\",\"moving\"";
                             stat = json::parse(s);
                         }
                     } else {
-                        s = "[\"status\",\"stop\"]";
+                        s = "\"status\",\"stop\"";
                         stat = json::parse(s);
                     }
 
