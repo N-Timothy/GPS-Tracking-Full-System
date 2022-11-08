@@ -60,22 +60,20 @@ namespace karlo {
 
                     std::cout << "status : " << status << std::endl;
 
-                    httplib::Params params;
-                        params.emplace("latitude", std::to_string(latitude));
-                        params.emplace("longitude", std::to_string(longitude));
-                        params.emplace("altitude", to_string(data["altitude"]));
-                        params.emplace("speed", to_string(data["speed"]));
-                        params.emplace("bearing", to_string(data["bearing"]));
-                        params.emplace("imeiTracker", data["imei"]);
-                        params.emplace("battery", batt);
-                        params.emplace("status", status);
+//                    httplib::Params params;
+//                        params.emplace("latitude", std::to_string(latitude));
+//                        params.emplace("longitude", std::to_string(longitude));
+//                        params.emplace("altitude", to_string(data["altitude"]));
+//                        params.emplace("speed", to_string(data["speed"]));
+//                        params.emplace("bearing", to_string(data["bearing"]));
+//                        params.emplace("imeiTracker", data["imei"]);
+//                        params.emplace("battery", batt);
+//                        params.emplace("status", status);
+                    std::string Msg = "{\"latitiude\"" + std::to_string(latitude) + "\"longitude\"" + std::to_string(longitude) +"\"altitude\"" + to_string(data["altitude"])  +"\"speed\"" + to_string(data["speed"]) + "\"bearing\"" + to_string(data["bearing"]) +  "\"imeiTracker\"" + to_string(data["imei"]) + "\"battery\"" + batt + "\"status\"" + status + "}";
+                    
+                    std::cout << "MSG : " << Msg << std::endl;
 
-for (auto it = params.begin(); it != params.end(); ++it)
-{
-    std::cout << it->first << " : " << it->second << std::endl ;
-}
-
-                    auto res = cli.Post(postUrl, "{ \"latitude\": -6.937390,\"longitude\": 107.482683,\"altitude\": 100,\"speed\": 100,\"bearing\": 100,\"imeiTracker\": 350424069591756,\"battery\": 12 ,\"status\": \"test\"}" , "application/json");
+                    auto res = cli.Post(postUrl, Msg , "application/json");
 
                     if (res) {
                         std::cout << res->body << std::endl;
