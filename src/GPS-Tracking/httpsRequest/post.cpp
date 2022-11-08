@@ -24,7 +24,7 @@ namespace karlo {
 
             httplib::Client cli(URL);
             
-            cli.set_default_headers({ { "Authorization", staticToken } });
+            cli.set_default_headers({ { "Authorization", staticToken }, {"Content-Type","application/json"} });
 
             std::string postUrl = config["api"];
 
@@ -44,6 +44,22 @@ namespace karlo {
                     tmp = ((float) data["longitude"] * 10000000);
                     float longitude = (float) tmp / 10000000;
 
+                    std::string batt;
+                    data["exBattVoltage"].empty() ? batt = std::to_string(0) : batt = to_string(data["exBattVoltage"]);
+
+                    std::string status;
+                    if(data["ignitionOn"]) {
+                        if(to_string(data["speed"]) == "0"){
+                            status = "\"idle\"";
+                        } else {
+                            status = "\"moving\"";
+                        }
+                    } else {
+                        status = "\"stop\"";
+                    }
+
+                    std::cout << "status : " << status << std::endl;
+
                     httplib::Params params;
                         params.emplace("latitude", std::to_string(latitude));
                         params.emplace("longitude", std::to_string(longitude));
@@ -51,7 +67,15 @@ namespace karlo {
                         params.emplace("speed", to_string(data["speed"]));
                         params.emplace("bearing", to_string(data["bearing"]));
                         params.emplace("imeiTracker", data["imei"]);
-                    auto res = cli.Post(postUrl, params);
+                        params.emplace("battery", batt);
+                        params.emplace("status", status);
+
+for (auto it = params.begin(); it != params.end(); ++it)
+{
+    std::cout << it->first << " : " << it->second << std::endl ;
+}
+
+                    auto res = cli.Post(postUrl, "{ \"latitude\": -6.937390,\"longitude\": 107.482683,\"altitude\": 100,\"speed\": 100,\"bearing\": 100,\"imeiTracker\": 350424069591756,\"battery\": 12 ,\"status\": \"test\"}" , "application/json");
 
                     if (res) {
                         std::cout << res->body << std::endl;
