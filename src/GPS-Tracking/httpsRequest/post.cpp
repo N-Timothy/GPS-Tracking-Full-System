@@ -66,6 +66,7 @@ namespace karlo {
                     for(auto d : data){
                         std::cout << d << "   |   " << std::endl;
                     }
+                    std::cout << status << std::endl;
 
                     httplib::Params params;
                         params.emplace("latitude", std::to_string(latitude));
