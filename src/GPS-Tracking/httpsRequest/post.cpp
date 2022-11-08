@@ -45,8 +45,8 @@ namespace karlo {
                     float longitude = (float) tmp / 10000000;
 
                     int batt;
-                    data["exBattVoltage"] ? batt = 0 : batt = data["exBattVoltage"];
-                    std::cout << "batt : " << batt  << typeid(batt).name() << std::endl;
+                    //data["exBattVoltage"] ? batt = 0 : batt = data["exBattVoltage"];
+                    std::cout << "batt : " << data["exBattVoltage"] << typeid(data["exBattVoltage"]).name() << std::endl;
 
                     httplib::Params params;
                         params.emplace("latitude", std::to_string(latitude));
