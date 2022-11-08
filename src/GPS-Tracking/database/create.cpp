@@ -12,10 +12,9 @@ namespace karlo {
       auto builder = bsoncxx::builder::stream::document{};
       bsoncxx::document::value trackingDocValue = builder
         << "$set" << open_document
-        << "driver" << data.driver
-        << "ignitionOn" << data.ignitionOn
         << "imei" << data.imei
-        << "exBattVoltage" << data.exBattVoltage
+        << "_v" <<  data.version
+        << "driver" << data.driver
         << "latitude" << data.latitude
         << "longitude" << data.longitude
         << "altitude" << data.altitude
@@ -26,7 +25,8 @@ namespace karlo {
         << "city" << data.city
         << "createdAt" << data.createdAt
         << "updatedAt" << data.updatedAt
-        << "_v" <<  data.version
+        << "exBattVoltage" << data.exBattVoltage
+        << "ignitionOn" << data.ignitionOn
         << close_document
         << bsoncxx::builder::stream::finalize;
       return trackingDocValue;

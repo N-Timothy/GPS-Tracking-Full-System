@@ -63,9 +63,8 @@ namespace karlo {
 
                     data["exBattVoltage"].empty() ? batt = 0 : batt = data["exBattVoltage"];
 
-                    for(auto d : data){
-                        std::cout << d << "   |   " << std::endl;
-                    }
+                    std::cout << "latitude longitude : " << latitude << "  |  " << longitude << std::endl;
+
 
                     httplib::Params params;
                         params.emplace("latitude", std::to_string(latitude));
