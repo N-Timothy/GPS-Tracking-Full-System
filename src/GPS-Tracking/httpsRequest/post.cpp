@@ -62,13 +62,22 @@ namespace karlo {
                     int batt;
 
                     httplib::Params params;
-                        params.emplace("latitude", std::to_string(latitude));
-                        params.emplace("longitude", std::to_string(longitude));
-                        params.emplace("altitude", std::to_string((int)data["altitude"]));
-                        params.emplace("speed", std::to_string((int)data["speed"]));
-                        params.emplace("bearing", std::to_string((int)data["bearing"]));
-                        params.emplace("imeiTracker", to_string(data["imei"]));
-                        params.emplace("battery", std::to_string(batt));
+                        //params.emplace("latitude", std::to_string(latitude));
+                        //params.emplace("longitude", std::to_string(longitude));
+                        //params.emplace("altitude", std::to_string((int)data["altitude"]));
+                        //params.emplace("speed", std::to_string((int)data["speed"]));
+                        //params.emplace("bearing", std::to_string((int)data["bearing"]));
+                        //params.emplace("imeiTracker", to_string(data["imei"]));
+                        //params.emplace("battery", std::to_string(batt));
+                        //params.emplace("status", status);
+
+                        params.emplace("latitude", "1");
+                        params.emplace("longitude", "2");
+                        params.emplace("altitude", std::to_string("3");
+                        params.emplace("speed", std::to_string("4");
+                        params.emplace("bearing", std::to_string("5");
+                        params.emplace("imeiTracker", to_string("6");
+                        params.emplace("battery", std::to_string("7"));
                         params.emplace("status", status);
                     auto res = cli.Post(postUrl, params);
 
