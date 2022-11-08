@@ -70,7 +70,7 @@ namespace karlo {
                         params.emplace("speed", to_string(data["speed"]));
                         params.emplace("bearing", to_string(data["bearing"]));
                         params.emplace("imeiTracker", data["imei"]);
-                        params.emplace("battery", std::to_string(batt));
+                        //params.emplace("battery", std::to_string(batt));
                         params.emplace("status", status);
                     auto res = cli.Post(postUrl, params);
 
