@@ -58,12 +58,8 @@ namespace karlo {
                         status = "\"stop\"";
                     }
 
-                    std::cout << "status : " << status << std::endl;
-
                     std::string Msg = "{\"latitude\":" + std::to_string(latitude) + "," + "\"longitude\":" + std::to_string(longitude) + "," + "\"altitude\":" + to_string(data["altitude"]) + "," + "\"speed\":" + to_string(data["speed"]) + "," + "\"bearing\":" + to_string(data["bearing"]) + "," + "\"imeiTracker\":" + to_string(data["imei"]) + "," + "\"battery\":" + batt + "," + "\"status\":" + status + "}";
                     
-                    std::cout << "MSG : " << Msg << std::endl;
-
                     auto res = cli.Post(postUrl, Msg , "application/json");
 
                     if (res) {

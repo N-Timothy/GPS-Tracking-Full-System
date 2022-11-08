@@ -383,8 +383,6 @@ namespace karlo {
           hex_stream = gps.getBytes(connfd, data_NOB + CRC16_NOB);
           if (hex_stream == "") return -3;
 
-          std::cout << "Hex Stream\t\t: " << hex_stream << std::endl; 
-
           //codec = stringSubstr(hex_stream ,CODEC_ID_POS, CODEC_ID_NOB*2);
           codec = stringSubstr(hex_stream, CODEC_ID_POS, CODEC_ID_NOB*2);
 
@@ -431,6 +429,7 @@ namespace karlo {
 
             if (numOfData1 != numOfData2) return -3;
 
+            std::cout << "Imei\t\t: " << data.imei << "\n";
             std::cout << "Codec ID\t\t: " << codec << "\n";
             std::cout << "Number of Data\t\t: " << numOfData1 << "\n";
             std::cout << "Timestamp\t\t: " << stringSubstr(hex_stream ,AVL_POS, TIMESTAMP_NOB*2) << "(" << data.createdAt << ")\n";
