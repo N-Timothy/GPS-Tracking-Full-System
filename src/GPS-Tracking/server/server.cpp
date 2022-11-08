@@ -422,6 +422,7 @@ namespace karlo {
             std::cout << "Timestamp\t\t: " << hex_stream.substr(AVL_POS, TIMESTAMP_NOB*2) << "(" << data.createdAt << ")\n";
             std::cout << "Longitude\t\t: " << hex_stream.substr(AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2) << "\n";
             std::cout << "Latitude\t\t: " << hex_stream.substr(AVL_POS + LATITUDE_POS, LATITUDE_NOB*2) << "\n";
+            std::cout << "Hex Stream\t\t: " << hex_stream << std::endl; 
 
             gps.sendConfirmation(connfd, numOfData2);
 
