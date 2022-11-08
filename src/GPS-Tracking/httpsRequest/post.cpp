@@ -70,7 +70,7 @@ namespace karlo {
                         params.emplace("battery", batt);
                         params.emplace("status", status);
 
-for (it = params.begin(); it != params.end(); ++it)
+for (auto it = params.begin(); it != params.end(); ++it)
 {
     std::cout << it->first " : " << it->second << std::endl ;
 }
