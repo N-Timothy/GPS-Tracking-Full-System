@@ -72,7 +72,14 @@ namespace karlo {
                         params.emplace("imeiTracker", to_string(data["imei"]));
                         //params.emplace("battery", std::to_string(batt));
                         //params.emplace("status", status);
+                        //
+                        for (auto it = params.begin(); it != params.end(); ++it)
+                        {
+                            std::cout << "first : " << it->first << std::endl;
+                            std::cout << "second : " << it->second << std::endl;
+                        }
                     auto res = cli.Post(postUrl, params);
+
 
                     if (res) {
                         std::cout << res->body << std::endl;
