@@ -236,6 +236,17 @@ namespace karlo {
       }
     }
 
+    std::string stringSubstr(std::string hex, int start, int off) {
+
+        std::string res;
+        try {
+            res = hex.substr(start, off);
+        } catch (const std::out_of_range& e) {
+            res = "0";
+        }
+        return res;
+      }
+
 
 // Function designed for chat between client and server.
     int communicate(int connfd, std::vector<json> imei_list) {
@@ -374,56 +385,57 @@ namespace karlo {
 
           std::cout << "Hex Stream\t\t: " << hex_stream << std::endl; 
 
-          codec = hex_stream.substr(CODEC_ID_POS, CODEC_ID_NOB*2);
+          //codec = stringSubstr(hex_stream ,CODEC_ID_POS, CODEC_ID_NOB*2);
+          codec = stringSubstr(hex_stream, CODEC_ID_POS, CODEC_ID_NOB*2);
 
           if (codec == "08") {
-            numOfData1 = std::stoi(hex_stream.substr(NUM_OF_DATA1_POS, NUM_OF_DATA_NOB*2), 0, 16);
+            numOfData1 = std::stoi(stringSubstr(hex_stream ,NUM_OF_DATA1_POS, NUM_OF_DATA_NOB*2), 0, 16);
 
             AVL_NOB = data_NOB - CODEC_ID_NOB - 2 * NUM_OF_DATA_NOB;
             AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2 * NUM_OF_DATA_NOB + 2 * (AVL_NOB/numOfData1) * (numOfData1-1);
 
-            data.createdAt = timestampToDate(hex_stream.substr(AVL_POS, TIMESTAMP_NOB*2));
-            data.longitude = hexToLongitudeLatitude(hex_stream.substr(AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2));
-            data.latitude = hexToLongitudeLatitude(hex_stream.substr(AVL_POS + LATITUDE_POS, LATITUDE_NOB*2));
-            data.bearing = std::stoi(hex_stream.substr(AVL_POS + ANGLE_POS, ANGLE_NOB*2), 0, 16);
-            data.speed = std::stoi(hex_stream.substr(AVL_POS + SPEED_POS, SPEED_NOB*2), 0, 16);
+            data.createdAt = timestampToDate(stringSubstr(hex_stream ,AVL_POS, TIMESTAMP_NOB*2));
+            data.longitude = hexToLongitudeLatitude(stringSubstr(hex_stream ,AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2));
+            data.latitude = hexToLongitudeLatitude(stringSubstr(hex_stream ,AVL_POS + LATITUDE_POS, LATITUDE_NOB*2));
+            data.bearing = std::stoi(stringSubstr(hex_stream ,AVL_POS + ANGLE_POS, ANGLE_NOB*2), 0, 16);
+            data.speed = std::stoi(stringSubstr(hex_stream ,AVL_POS + SPEED_POS, SPEED_NOB*2), 0, 16);
 
-            numOfOneByteID = std::stoi(hex_stream.substr(AVL_POS + NUM_OF_1B_IO_POS, NUM_OF_IO_NOB*2), 0, 16);
+            numOfOneByteID = std::stoi(stringSubstr(hex_stream ,AVL_POS + NUM_OF_1B_IO_POS, NUM_OF_IO_NOB*2), 0, 16);
             for (i = 0; i < numOfOneByteID; i++) {
               ID_POS = NUM_OF_1B_IO_POS + NUM_OF_IO_NOB*2 + 2*i * (ID_NOB + VALUE1_NOB);
               VALUE_POS = ID_POS + 2 * ID_NOB;
-              id = hex_stream.substr(AVL_POS + ID_POS, ID_NOB*2);
+              id = stringSubstr(hex_stream ,AVL_POS + ID_POS, ID_NOB*2);
 
               // Ignition ID = 239
               if (id == "ef") {
-                data.ignitionOn = std::stoi(hex_stream.substr(AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
+                data.ignitionOn = std::stoi(stringSubstr(hex_stream ,AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
                 break;
               }
             }
 
-            numOfTwoBytesID = std::stoi(hex_stream.substr(AVL_POS + NUM_OF_2B_IO_POS, NUM_OF_IO_NOB*2), 0, 16);
+            numOfTwoBytesID = std::stoi(stringSubstr(hex_stream ,AVL_POS + NUM_OF_2B_IO_POS, NUM_OF_IO_NOB*2), 0, 16);
             for (i = 0; i < numOfTwoBytesID; i++) {
               ID_POS = NUM_OF_2B_IO_POS + NUM_OF_IO_NOB*2 + 2*i * (ID_NOB + VALUE2_NOB);
               VALUE_POS = ID_POS + ID_NOB*2;
-              id = hex_stream.substr(AVL_POS + ID_POS, ID_NOB*2);
+              id = stringSubstr(hex_stream ,AVL_POS + ID_POS, ID_NOB*2);
 
               // Battery ID = 66
               if (id == "42") {
-                data.exBattVoltage = std::stoi(hex_stream.substr(AVL_POS + VALUE_POS, VALUE2_NOB*2), 0, 16);
+                data.exBattVoltage = std::stoi(stringSubstr(hex_stream ,AVL_POS + VALUE_POS, VALUE2_NOB*2), 0, 16);
                 break;
               }
             }
 
             NUM_OF_DATA2_POS = 2 * (data_NOB - NUM_OF_DATA_NOB);
-            numOfData2 = std::stoi(hex_stream.substr(NUM_OF_DATA2_POS, NUM_OF_DATA_NOB*2), 0, 16);
+            numOfData2 = std::stoi(stringSubstr(hex_stream ,NUM_OF_DATA2_POS, NUM_OF_DATA_NOB*2), 0, 16);
 
             if (numOfData1 != numOfData2) return -3;
 
             std::cout << "Codec ID\t\t: " << codec << "\n";
             std::cout << "Number of Data\t\t: " << numOfData1 << "\n";
-            std::cout << "Timestamp\t\t: " << hex_stream.substr(AVL_POS, TIMESTAMP_NOB*2) << "(" << data.createdAt << ")\n";
-            std::cout << "Longitude\t\t: " << hex_stream.substr(AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2) << "\n";
-            std::cout << "Latitude\t\t: " << hex_stream.substr(AVL_POS + LATITUDE_POS, LATITUDE_NOB*2) << "\n";
+            std::cout << "Timestamp\t\t: " << stringSubstr(hex_stream ,AVL_POS, TIMESTAMP_NOB*2) << "(" << data.createdAt << ")\n";
+            std::cout << "Longitude\t\t: " << stringSubstr(hex_stream ,AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2) << "\n";
+            std::cout << "Latitude\t\t: " << stringSubstr(hex_stream ,AVL_POS + LATITUDE_POS, LATITUDE_NOB*2) << "\n";
 
             gps.sendConfirmation(connfd, numOfData2);
 
