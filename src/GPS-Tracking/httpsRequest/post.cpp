@@ -72,7 +72,7 @@ namespace karlo {
 
 for (it = params.begin(); it != params.end(); ++it)
 {
-    cout << it->first " : " << it->second << endl ;
+    std::cout << it->first " : " << it->second << std::endl ;
 }
 
                     auto res = cli.Post(postUrl, params);
