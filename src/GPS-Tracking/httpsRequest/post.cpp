@@ -35,23 +35,8 @@ namespace karlo {
             } else {
 
                 std::vector<json> postData = database::readData();
-                
-                for (json data : postData) {
 
-                    // ------- Status ---------
-//                    std::string status;
-//    
-//                    if(data["ignitionOn"]){
-//                        if (data["speed"] != 0){
-//                            status = "moving";
-//                        } else {
-//                            status = "idle";
-//                        }
-//                    } else {
-//                        status = "stop";
-//                    }
-//                    std::cout << "Status : " << status << std::endl;
-                    // ------- Status ---------
+                for (json data : postData) {
 
                     int tmp = ((float) data["latitude"] * 10000000);
                     float latitude = (float) tmp / 10000000;
@@ -59,27 +44,14 @@ namespace karlo {
                     tmp = ((float) data["longitude"] * 10000000);
                     float longitude = (float) tmp / 10000000;
 
-                    int batt;
-
-                    data["exBattVoltage"].empty() ? batt = 0 : batt = data["exBattVoltage"];
-
                     httplib::Params params;
                         params.emplace("latitude", std::to_string(latitude));
                         params.emplace("longitude", std::to_string(longitude));
                         params.emplace("altitude", to_string(data["altitude"]));
                         params.emplace("speed", to_string(data["speed"]));
                         params.emplace("bearing", to_string(data["bearing"]));
-                        params.emplace("imeiTracker", to_string(data["imei"]));
-                        params.emplace("battery", std::to_string(batt));
-//                        params.emplace("status", status);
-                        //
-                        for (auto it = params.begin(); it != params.end(); ++it)
-                        {
-                            std::cout << "first : " << it->first << std::endl;
-                            std::cout << "second : " << it->second << std::endl;
-                        }
+                        params.emplace("imeiTracker", data["imei"]);
                     auto res = cli.Post(postUrl, params);
-
 
                     if (res) {
                         std::cout << res->body << std::endl;
