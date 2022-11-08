@@ -60,16 +60,7 @@ namespace karlo {
 
                     std::cout << "status : " << status << std::endl;
 
-//                    httplib::Params params;
-//                        params.emplace("latitude", std::to_string(latitude));
-//                        params.emplace("longitude", std::to_string(longitude));
-//                        params.emplace("altitude", to_string(data["altitude"]));
-//                        params.emplace("speed", to_string(data["speed"]));
-//                        params.emplace("bearing", to_string(data["bearing"]));
-//                        params.emplace("imeiTracker", data["imei"]);
-//                        params.emplace("battery", batt);
-//                        params.emplace("status", status);
-                    std::string Msg = "{\"latitiude\":" + std::to_string(latitude) + "," + "\"longitude\":" + std::to_string(longitude) + "," + "\"altitude\":" + to_string(data["altitude"]) + "," + "\"speed\":" + to_string(data["speed"]) + "," + "\"bearing\":" + to_string(data["bearing"]) + "," + "\"imeiTracker\":" + to_string(data["imei"]) + "," + "\"battery\":" + batt + "," + "\"status\":" + status + "}";
+                    std::string Msg = "{\"latitude\":" + std::to_string(latitude) + "," + "\"longitude\":" + std::to_string(longitude) + "," + "\"altitude\":" + to_string(data["altitude"]) + "," + "\"speed\":" + to_string(data["speed"]) + "," + "\"bearing\":" + to_string(data["bearing"]) + "," + "\"imeiTracker\":" + to_string(data["imei"]) + "," + "\"battery\":" + batt + "," + "\"status\":" + status + "}";
                     
                     std::cout << "MSG : " << Msg << std::endl;
 
