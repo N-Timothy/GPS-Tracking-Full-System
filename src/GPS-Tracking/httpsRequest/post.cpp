@@ -64,7 +64,7 @@ namespace karlo {
                     data["exBattVoltage"].empty() ? batt = 0 : batt = data["exBattVoltage"];
 
                     for(auto d : data){
-                        std::cout << d << "   |   " << std::endl;
+                        std::cout << to_string(d) << "   |   " << std::endl;
                     }
                     std::cout << status << std::endl;
 
