@@ -46,7 +46,19 @@ namespace karlo {
 
                     std::string batt;
                     data["exBattVoltage"].empty() ? batt = std::to_string(0) : batt = to_string(data["exBattVoltage"]);
-                    std::cout << "batt : " << batt << typeid(batt).name() << std::endl;
+
+                    std::string status;
+                    if(data["ignitionOn"]) {
+                        if(to_string(data["speed"]) == "0"){
+                            status = "idle";
+                        } else {
+                            status = "moving";
+                        }
+                    } else {
+                        status = "stop";
+                    }
+
+                    std::cout << "status : " << status << std::endl;
 
                     httplib::Params params;
                         params.emplace("latitude", std::to_string(latitude));
@@ -56,7 +68,7 @@ namespace karlo {
                         params.emplace("bearing", to_string(data["bearing"]));
                         params.emplace("imeiTracker", data["imei"]);
                         params.emplace("battery", batt);
-                        //params.emplace("status", "idle");
+                        params.emplace("status",status);
                     auto res = cli.Post(postUrl, params);
 
                     if (res) {
