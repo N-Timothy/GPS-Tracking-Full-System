@@ -67,6 +67,9 @@ namespace karlo {
         else if (comm == -5) {
           std::cout << "\x1b[31mThread terminated: Socket is not used\x1b[0m\n";
         }
+
+        removeSocket(socket);
+
       } else {
         return;
       }
