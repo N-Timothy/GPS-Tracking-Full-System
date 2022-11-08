@@ -429,7 +429,7 @@ namespace karlo {
 
             if (numOfData1 != numOfData2) return -3;
 
-            std::cout << "Imei\t\t: " << data.imei << "\n";
+            std::cout << "Imei\t\t\t: " << data.imei << "\n";
             std::cout << "Codec ID\t\t: " << codec << "\n";
             std::cout << "Number of Data\t\t: " << numOfData1 << "\n";
             std::cout << "Timestamp\t\t: " << stringSubstr(hex_stream ,AVL_POS, TIMESTAMP_NOB*2) << "(" << data.createdAt << ")\n";
