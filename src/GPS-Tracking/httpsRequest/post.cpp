@@ -75,7 +75,7 @@ for (auto it = params.begin(); it != params.end(); ++it)
     std::cout << it->first << " : " << it->second << std::endl ;
 }
 
-                    auto res = cli.Post(postUrl, params);
+                    auto res = cli.Post(postUrl, "\"latitude\": -6.937390, \"longitude\": 107.482683, \"altitude\": 100, \"speed\": 100, \"bearing\": 100, \"imeiTracker\": 350424069591756, \"battery\": 12 , \"status\": \"test\"", "text/plain");
 
 
                     if (res) {
