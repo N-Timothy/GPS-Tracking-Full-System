@@ -53,11 +53,11 @@ namespace karlo {
                     std::cout << "Status : " << status << std::endl;
                     // ------- Status ---------
 
-                    int tmp = ((double) data["latitude"] * 10000000);
-                    double latitude = (double) tmp / 10000000;
+                    int tmp = ((float) data["latitude"] * 10000000);
+                    float latitude = (float) tmp / 10000000;
 
-                    tmp = ((double) data["longitude"] * 10000000);
-                    double longitude = (double) tmp / 10000000;
+                    tmp = ((float) data["longitude"] * 10000000);
+                    float longitude = (float) tmp / 10000000;
 
                     httplib::Params params;
                         params.emplace("latitude", std::to_string(latitude));
@@ -66,8 +66,8 @@ namespace karlo {
                         params.emplace("speed", to_string(data["speed"]));
                         params.emplace("bearing", to_string(data["bearing"]));
                         params.emplace("imeiTracker", data["imei"]);
-                        params.emplace("battery", "");
-                        params.emplace("status", "");
+                        params.emplace("battery", to_string(data["exBattVoltage"]));
+                        params.emplace("status", status);
                     auto res = cli.Post(postUrl, params);
 
                     if (res) {
