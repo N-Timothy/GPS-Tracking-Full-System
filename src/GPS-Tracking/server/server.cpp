@@ -360,7 +360,6 @@ namespace karlo {
 
           hex = gps.getBytes(connfd, DATA_FIELD_NOB);
           std::cout << "Data Field Length\t: " << hex << std::endl;
-          std::cout << "Hex Stream\t\t: " << hex_stream << std::endl; 
           if (hex == "") return -3;
 
           try {
@@ -372,6 +371,8 @@ namespace karlo {
           // Reading all remaining hexadecimal stream that comes after data field length
           hex_stream = gps.getBytes(connfd, data_NOB + CRC16_NOB);
           if (hex_stream == "") return -3;
+
+          std::cout << "Hex Stream\t\t: " << hex_stream << std::endl; 
 
           codec = hex_stream.substr(CODEC_ID_POS, CODEC_ID_NOB*2);
 
