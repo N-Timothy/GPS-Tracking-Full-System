@@ -42,10 +42,6 @@ namespace karlo {
 
         thread_socket.push_back(socket);
 
-        for(auto thread : init_socket){
-          std::cout << " | " << thread;
-        } std::cout<< std::endl;
-
         int comm;
 
         std::cout << "New thread: " << socket << " initialized " << std::endl;
