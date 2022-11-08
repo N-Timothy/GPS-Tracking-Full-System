@@ -68,7 +68,7 @@ namespace karlo {
                         params.emplace("bearing", to_string(data["bearing"]));
                         params.emplace("imeiTracker", data["imei"]);
                         params.emplace("battery", batt);
-                        params.emplace("status", stat["status"]);
+                        params.emplace("status", to_string(stat["status"]));
                     auto res = cli.Post(postUrl, params);
 
                     if (res) {
