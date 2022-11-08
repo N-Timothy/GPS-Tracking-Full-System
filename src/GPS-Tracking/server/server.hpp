@@ -66,6 +66,8 @@ namespace karlo {
 
     void toRealTime(std::string imei, bool toggle);
 
+    void removeSocket(int socket);
+
   } // namespace server
 } // namespace karlo
 

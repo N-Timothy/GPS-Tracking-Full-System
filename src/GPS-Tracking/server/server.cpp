@@ -26,7 +26,7 @@ namespace karlo {
 
     std::vector<std::string> imeiRealTimeVec;
     std::vector<std::string> imeiNormalVec;
-    std::map<std::string, int> imeiSocketMap;
+    std::map<int, std::string> socketImeiMap;
 
     std::mutex m;
     std::condition_variable cv;
@@ -150,12 +150,19 @@ namespace karlo {
       else imeiNormalVec.push_back(imei);
     }
 
-    std::vector<std::string> removeImei(std::vector<std::string> vector, std::string value) {
-      auto it = std::find(vector.begin(), vector.end(), value);
+    std::vector<std::string> removeImei(std::vector<std::string> vector, std::string imei) {
+      auto it = std::find(vector.begin(), vector.end(), imei);
       if (it != vector.end()) {
         vector.erase(it);
       }
       return vector;
+    }
+
+    void removeSocket(int socket) {
+      auto it = socketImeiMap.find(socket);
+      if (it != socketImeiMap.end()) {
+        socketImeiMap.erase(it);
+      }
     }
 
     std::string timestampToDate (std::string hex) {
@@ -291,12 +298,12 @@ namespace karlo {
       std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
 
       // Register imei and socket file descriptor into map
-      if (imeiSocketMap.find(data.imei) == imeiSocketMap.end()) {
-        imeiSocketMap.emplace(data.imei, connfd);
+      if (socketImeiMap.find(connfd) == socketImeiMap.end()) {
+        socketImeiMap.emplace(connfd, data.imei);
       } else {
-        imeiSocketMap.find(data.imei)->second = connfd;
+        socketImeiMap.find(connfd)->second = data.imei;
       }
-      for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
+      for (auto it = socketImeiMap.begin(); it != socketImeiMap.end(); it++) {
         std::cout << it->first << ": " << it->second << std::endl;
       }
 
@@ -468,7 +475,7 @@ namespace karlo {
           }
 
           // Close connection if imei-socket pair is not found
-          if (imeiSocketMap.find(data.imei)->second != connfd) return -5;
+          if (socketImeiMap.find(connfd)->second != data.imei) return -5;
 
 
 
