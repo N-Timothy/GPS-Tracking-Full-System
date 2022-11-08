@@ -5,6 +5,8 @@
 
 #include <string>
 #include <unistd.h>
+#include <thread>
+#include <chrono>
 
 namespace karlo {
     namespace mqtt {
@@ -167,7 +169,8 @@ void subscriber() {
     if (finished){
             goto exit; }
     
-    for(;;){}
+    for(;;){
+        std::this_thread::sleep_for(std::chrono::seconds(5));}
 
     disc_opts.onSuccess = onDisconnect;
     disc_opts.onFailure = onDisconnectFailure;
