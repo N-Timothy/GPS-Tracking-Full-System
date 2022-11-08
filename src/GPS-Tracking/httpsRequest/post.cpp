@@ -48,14 +48,18 @@ namespace karlo {
                     data["exBattVoltage"].empty() ? batt = std::to_string(0) : batt = to_string(data["exBattVoltage"]);
 
                     json stat;
+                    std::string s;
                     if(data["ignitionOn"]) {
                         if(to_string(data["speed"]) == "0"){
-                            stat = json::parse("[\"status\",\"idle\"]");
+                            s = "[\"status\",\"idle\"]";
+                            stat = json::parse(s);
                         } else {
-                            stat = json::parse("[\"status\",\"moving\"]");
+                            s = "[\"status\",\"moving\"]";
+                            stat = json::parse(s);
                         }
                     } else {
-                        stat = json::parse("[\"status\",\"stop\"]");
+                        s = "[\"status\",\"stop\"]";
+                        stat = json::parse(s);
                     }
 
                     std::cout << "status : " << stat["status"] << std::endl;
