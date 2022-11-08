@@ -69,7 +69,7 @@ namespace karlo {
                         params.emplace("imeiTracker", data["imei"]);
                         params.emplace("battery", batt);
                         //params.emplace("status", to_string("test");
-                    auto res = cli.Post(postUrl, params;
+                    auto res = cli.Post(postUrl, params);
 
                     if (res) {
                         std::cout << res->body << std::endl;
