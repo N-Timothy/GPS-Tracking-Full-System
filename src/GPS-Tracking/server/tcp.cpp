@@ -87,8 +87,6 @@ namespace karlo {
 
     void tcpServer () {
 
-      core::config::config(); // HAPUS KALAU UDAH MULTITHREAD
-
       int opt = true;
       int master_socket, address_len, new_socket;
       int PrevSocket = 0, socketCounter = 0;
