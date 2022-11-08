@@ -61,23 +61,20 @@ namespace karlo {
 
                     int batt;
 
-                    httplib::Params params;
-                        //params.emplace("latitude", std::to_string(latitude));
-                        //params.emplace("longitude", std::to_string(longitude));
-                        //params.emplace("altitude", std::to_string((int)data["altitude"]));
-                        //params.emplace("speed", std::to_string((int)data["speed"]));
-                        //params.emplace("bearing", std::to_string((int)data["bearing"]));
-                        //params.emplace("imeiTracker", to_string(data["imei"]));
-                        //params.emplace("battery", std::to_string(batt));
-                        //params.emplace("status", status);
+                    data["exBattVoltage"].empty() ? batt = 0 : batt = data["exBattVoltage"];
 
-                        params.emplace("latitude", "1");
-                        params.emplace("longitude", "2");
-                        params.emplace("altitude", std::to_string("3");
-                        params.emplace("speed", std::to_string("4");
-                        params.emplace("bearing", std::to_string("5");
-                        params.emplace("imeiTracker", to_string("6");
-                        params.emplace("battery", std::to_string("7"));
+                    for(auto d : data){
+                        std::cout << d << "   |   " << std::endl;
+                    }
+
+                    httplib::Params params;
+                        params.emplace("latitude", std::to_string(latitude));
+                        params.emplace("longitude", std::to_string(longitude));
+                        params.emplace("altitude", to_string(data["altitude"]));
+                        params.emplace("speed", to_string(data["speed"]));
+                        params.emplace("bearing", to_string(data["bearing"]));
+                        params.emplace("imeiTracker", to_string(data["imei"]));
+                        params.emplace("battery", std::to_string(batt));
                         params.emplace("status", status);
                     auto res = cli.Post(postUrl, params);
 
