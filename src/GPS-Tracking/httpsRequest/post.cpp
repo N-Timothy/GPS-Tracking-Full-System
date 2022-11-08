@@ -39,18 +39,18 @@ namespace karlo {
                 for (json data : postData) {
 
                     // ------- Status ---------
-                    std::string status;
-    
-                    if(data["ignitionOn"]){
-                        if (data["speed"] != 0){
-                            status = "moving";
-                        } else {
-                            status = "idle";
-                        }
-                    } else {
-                        status = "stop";
-                    }
-                    std::cout << "Status : " << status << std::endl;
+//                    std::string status;
+//    
+//                    if(data["ignitionOn"]){
+//                        if (data["speed"] != 0){
+//                            status = "moving";
+//                        } else {
+//                            status = "idle";
+//                        }
+//                    } else {
+//                        status = "stop";
+//                    }
+//                    std::cout << "Status : " << status << std::endl;
                     // ------- Status ---------
 
                     int tmp = ((float) data["latitude"] * 10000000);
@@ -71,7 +71,7 @@ namespace karlo {
                         params.emplace("bearing", to_string(data["bearing"]));
                         params.emplace("imeiTracker", to_string(data["imei"]));
                         params.emplace("battery", std::to_string(batt));
-                        params.emplace("status", status);
+//                        params.emplace("status", status);
                         //
                         for (auto it = params.begin(); it != params.end(); ++it)
                         {

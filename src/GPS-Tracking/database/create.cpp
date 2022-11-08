@@ -13,20 +13,20 @@ namespace karlo {
       bsoncxx::document::value trackingDocValue = builder
         << "$set" << open_document
         << "imei" << data.imei
-        << "_v" <<  data.version
         << "driver" << data.driver
+        << "ignitionOn" << data.ignitionOn
         << "latitude" << data.latitude
         << "longitude" << data.longitude
         << "altitude" << data.altitude
         << "speed" << data.speed
         << "bearing" << data.bearing
+        << "exBattVoltage" << data.exBattVoltage
         << "description" << data.description
         << "truck" << data.truck
         << "city" << data.city
         << "createdAt" << data.createdAt
         << "updatedAt" << data.updatedAt
-        << "exBattVoltage" << data.exBattVoltage
-        << "ignitionOn" << data.ignitionOn
+        << "_v" <<  data.version
         << close_document
         << bsoncxx::builder::stream::finalize;
       return trackingDocValue;
