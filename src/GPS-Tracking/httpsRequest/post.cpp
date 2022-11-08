@@ -50,12 +50,12 @@ namespace karlo {
                     std::string status;
                     if(data["ignitionOn"]) {
                         if(to_string(data["speed"]) == "0"){
-                            status = "idle";
+                            status = "\"idle\"";
                         } else {
-                            status = "moving";
+                            status = "\"moving\"";
                         }
                     } else {
-                        status = "stop";
+                        status = "\"stop\"";
                     }
 
                     std::cout << "status : " << status << std::endl;
@@ -68,7 +68,7 @@ namespace karlo {
                         params.emplace("bearing", to_string(data["bearing"]));
                         params.emplace("imeiTracker", data["imei"]);
                         params.emplace("battery", batt);
-                        params.emplace("status",status);
+                        params.emplace("status", status);
                     auto res = cli.Post(postUrl, params);
 
                     if (res) {
