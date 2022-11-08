@@ -24,18 +24,18 @@ namespace karlo {
             int timeInterval = config["interval"];
 //            post(URL);
 
-            auto start = std::chrono::system_clock::now();
-            auto now = std::chrono::system_clock::now();
-            auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now - start).count();
+           // auto start = std::chrono::system_clock::now();
+           // auto now = std::chrono::system_clock::now();
+           // auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now - start).count();
 
             while (true) {
-                // std::this_thread::sleep_for(std::chrono::seconds(timeInterval));
-                now = std::chrono::system_clock::now();
-                seconds = std::chrono::duration_cast<std::chrono::seconds>(now - start).count();
-                if (seconds > timeInterval) {
+                std::this_thread::sleep_for(std::chrono::seconds(timeInterval));
+                //now = std::chrono::system_clock::now();
+                //seconds = std::chrono::duration_cast<std::chrono::seconds>(now - start).count();
+                //if (seconds > timeInterval) {
                     post(URL, config);
-                    start = std::chrono::system_clock::now();
-                }
+                  //  start = std::chrono::system_clock::now();
+                //}
             }
         }
 
