@@ -61,17 +61,12 @@ namespace karlo {
 
                     int batt;
 
-                    data["exBattVoltage"].empty() ? batt = 0 : batt = data["exBattVoltage"];
-
-                    std::cout << "latitude longitude : " << std::to_string(latitude) << "  |  " << std::to_string(longitude) << std::endl;
-
-
                     httplib::Params params;
                         params.emplace("latitude", std::to_string(latitude));
                         params.emplace("longitude", std::to_string(longitude));
-                        params.emplace("altitude", to_string(data["altitude"]));
-                        params.emplace("speed", to_string(data["speed"]));
-                        params.emplace("bearing", to_string(data["bearing"]));
+                        params.emplace("altitude", std::to_string((int)data["altitude"]));
+                        params.emplace("speed", std::to_string((int)data["speed"]));
+                        params.emplace("bearing", std::to_string((int)data["bearing"]));
                         params.emplace("imeiTracker", to_string(data["imei"]));
                         params.emplace("battery", std::to_string(batt));
                         params.emplace("status", status);
