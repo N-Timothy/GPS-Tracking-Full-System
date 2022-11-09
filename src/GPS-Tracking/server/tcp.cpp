@@ -71,17 +71,14 @@ namespace karlo {
       }
 
       if (close(socket) < 0) {
-        //std::cout << "failed"<< std::endl;
-        //failed_count++;
+        std::cout << "\x1b[31mFailed to close socket: \x1b[0m" << socket << std::endl;
       } else {
-        //std::cout << "success" << std::endl;
         init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), socket), init_socket.end());
       }
 
       thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), socket), thread_socket.end());
       std::cout << "Terminating thread: "  << socket << std::endl;
 
-      //std::cout << "Failed closing socket count: " << failed_count << "\n";
     }
 
     void tcpServer () {
@@ -89,8 +86,6 @@ namespace karlo {
       int opt = true;
       int master_socket, address_len, new_socket;
       int PrevSocket = 0, socketCounter = 0;
-
-      // idk adding another file descriptor prevention
 
       struct sockaddr_in address;
 
@@ -169,54 +164,55 @@ namespace karlo {
             for (auto i : thread_socket) {
               std::cout << i << ' ';
             }
+	    std::cout << std::endl;
 
-            if(thread_socket.size() > 1){
-              std::cout << std::endl;
-              if(thread_socket.front() == PrevSocket){
-                socketCounter++;
-                std::cout << "Counter : " << socketCounter << "  Socket Number : " << PrevSocket << std::endl;
-              } else {
-                socketCounter = 0;
-                PrevSocket = thread_socket.front();
-              }
+//            if(thread_socket.size() > 1){
+//              std::cout << std::endl;
+//              if(thread_socket.front() == PrevSocket){
+//                socketCounter++;
+//                std::cout << "Counter : " << socketCounter << "  Socket Number : " << PrevSocket << std::endl;
+//              } else {
+//                socketCounter = 0;
+//                PrevSocket = thread_socket.front();
+//              }
+//
+//             // assuming after 10 loops the thread still dosent closed
+//              if(socketCounter >= 10){
+//                if(close(PrevSocket) < 0) {
+//                  std::cout << "failed to remove socket" << std::endl;
+//                } else {
+//                  std::cout << "sucess to remove socket" << std::endl;
+//                  init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
+//                  thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), PrevSocket), thread_socket.end());
+//                  PrevSocket = 0;
+//                  socketCounter = 0;
+//               }
+//              }
+//            } else {
+//              PrevSocket = 0;
+//              socketCounter = 0;
+//            }
+//
+//
+//            if(!diff.empty()){
+//              //            std::cout << std::endl;
+//              //              std::cout << "TRY TO CLOSE UNCLOSED SOCKET" << std::endl;
+//              //            std::cout << std::endl;
+//              //
+//              for (auto i : diff) {
+//                if(close(i) < 0) {
+//                  //                  std::cout << "Failed to close socket try again next time" << std::endl;
+//                } else {
+//                  //                std::cout << "\033[1;34mclosing : \033[0m" << i << ' ' << std::endl;
+//                  init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
+//                  thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), i), thread_socket.end());
+//                  diff.erase(std::remove(diff.begin(), diff.end(), i), diff.end());
+//                }
+//              }
+//            };
 
-              // assuming after 10 loops the thread still dosent closed
-              if(socketCounter >= 10){
-                if(close(PrevSocket) < 0) {
-                  std::cout << "failed to remove socket" << std::endl;
-                } else {
-                  std::cout << "sucess to remove socket" << std::endl;
-                  init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), PrevSocket), init_socket.end());
-                  thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), PrevSocket), thread_socket.end());
-                  PrevSocket = 0;
-                  socketCounter = 0;
-                }
-              }
-            } else {
-              PrevSocket = 0;
-              socketCounter = 0;
-            }
-
-
-            if(!diff.empty()){
-              //            std::cout << std::endl;
-              //              std::cout << "TRY TO CLOSE UNCLOSED SOCKET" << std::endl;
-              //            std::cout << std::endl;
-              //
-              for (auto i : diff) {
-                if(close(i) < 0) {
-                  //                  std::cout << "Failed to close socket try again next time" << std::endl;
-                } else {
-                  //                std::cout << "\033[1;34mclosing : \033[0m" << i << ' ' << std::endl;
-                  init_socket.erase(std::remove(init_socket.begin(), init_socket.end(), i), init_socket.end());
-                  thread_socket.erase(std::remove(thread_socket.begin(), thread_socket.end(), i), thread_socket.end());
-                  diff.erase(std::remove(diff.begin(), diff.end(), i), diff.end());
-                }
-              }
-            }             std::cout << std::endl;
-
-            std::cout << "New connection established! socket : " << new_socket << ", IP : "
-                      << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
+            std::cout << "[New connection] Socket : " << new_socket << " | IP : "
+                      << inet_ntoa(address.sin_addr) << " | Port : " << ntohs(address.sin_port) << std::endl;
 
             // Adding thread on each new connection
             std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list));

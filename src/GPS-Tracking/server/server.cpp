@@ -106,7 +106,7 @@ namespace karlo {
         bNOD[2] = (numOfData & 0x0000ff00) >> 8; // 0
         bNOD[3] = (numOfData & 0x000000ff) >> 0; // numOfData
         send(connfd, (char*) &bNOD, sizeof(bNOD), 0);
-        printf("Received confirmation: %d data\n\n", numOfData);
+//        printf("Received confirmation: %d data\n\n", numOfData);
       }
 
       void sendGPRSCommand(int connfd, bool realTimeFlag) {
@@ -158,7 +158,10 @@ namespace karlo {
 
     void removeSocket(int socket) {
       for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
-        if (it->second == socket) imeiSocketMap.erase(it);
+        if (it->second == socket) {
+     	  imeiSocketMap.erase(it);
+	  break;
+	}
       }
     }
 
@@ -296,7 +299,7 @@ namespace karlo {
 
       // Register imei and socket file descriptor into map
       if (imeiSocketMap.find(data.imei) == imeiSocketMap.end()) {
-        imeiSocketMap.emplace( data.imei, connfd);
+        imeiSocketMap.emplace(data.imei, connfd);
       } else {
         imeiSocketMap.find(data.imei)->second = connfd;
       }
@@ -349,9 +352,9 @@ namespace karlo {
         activity = select(connfd + 1, &readfds, NULL, NULL, &tv);
 
         if (FD_ISSET(connfd, &readfds)) {
-          std::cout << "Activity: " << activity << "\n";
+//          std::cout << "Activity: " << activity << "\n";
 
-          std::cout << "=== Beginning of Zero Bytes ===\n";
+//          std::cout << "=== Beginning of Zero Bytes ===\n";
 
 //          // Uncomment if "network ping timeout" is configured
 //          hex = gps.getBytes(connfd, 1);
@@ -434,11 +437,11 @@ namespace karlo {
             if (numOfData1 != numOfData2) return -3;
 
             std::cout << "Imei\t\t\t: " << data.imei << "\n";
-            std::cout << "Codec ID\t\t: " << codec << "\n";
+//            std::cout << "Codec ID\t\t: " << codec << "\n";
             std::cout << "Number of Data\t\t: " << numOfData1 << "\n";
             std::cout << "Timestamp\t\t: " << stringSubstr(hex_stream ,AVL_POS, TIMESTAMP_NOB*2) << "(" << data.createdAt << ")\n";
-            std::cout << "Longitude\t\t: " << stringSubstr(hex_stream ,AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2) << "\n";
-            std::cout << "Latitude\t\t: " << stringSubstr(hex_stream ,AVL_POS + LATITUDE_POS, LATITUDE_NOB*2) << "\n";
+//            std::cout << "Longitude\t\t: " << stringSubstr(hex_stream ,AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2) << "\n";
+//            std::cout << "Latitude\t\t: " << stringSubstr(hex_stream ,AVL_POS + LATITUDE_POS, LATITUDE_NOB*2) << "\n";
 
             gps.sendConfirmation(connfd, numOfData2);
 
@@ -471,12 +474,11 @@ namespace karlo {
             }
           }
 
-          // Close connection if imei-socket pair is not found
-          if (imeiSocketMap.find(data.imei)->second != connfd) return -5;
-
-
-
         } // if FD_SET()
+	  
+        // Close connection if imei-socket pair is not found
+        if (imeiSocketMap.find(data.imei)->second != connfd) return -5;
+
 
         //--------- Thread Sleep ---------------
 
