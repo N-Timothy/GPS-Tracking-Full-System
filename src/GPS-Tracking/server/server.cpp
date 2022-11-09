@@ -106,13 +106,11 @@ namespace karlo {
         bNOD[2] = (numOfData & 0x0000ff00) >> 8; // 0
         bNOD[3] = (numOfData & 0x000000ff) >> 0; // numOfData
         send(connfd, (char*) &bNOD, sizeof(bNOD), 0);
-        printf("Received confirmation: %d data\n\n", numOfData);
+//        printf("Received confirmation: %d data\n\n", numOfData);
       }
 
       void sendGPRSCommand(int connfd, bool realTimeFlag) {
         std::cout << "SERVER COMMAND...\n";
-
-        // GPRS Command
         typedef unsigned char byte;
 
         // setparam 10050:10;10150:10;10250:10
@@ -126,6 +124,7 @@ namespace karlo {
                                    0x01,
                                    0x00, 0x00, 0xee, 0x70};
 
+        // setparam 10050:60;10150:60;10250:60
         byte normal_command[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2b,
                                  0x0c, 0x01, 0x05,
                                  0x00, 0x00, 0x00, 0x23,
@@ -138,7 +137,7 @@ namespace karlo {
 
         if (realTimeFlag) send(connfd, (char *) &realtime_command, sizeof(realtime_command), 0);
         else send(connfd, (char *) &normal_command, sizeof(normal_command), 0);
-        std::cout << "COMMAND SEND SUCCESS\n";
+        std::cout << "COMMAND SENT.\n";
 
       }
     };
@@ -158,7 +157,10 @@ namespace karlo {
 
     void removeSocket(int socket) {
       for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
-        if (it->second == socket) imeiSocketMap.erase(it);
+        if (it->second == socket) {
+          imeiSocketMap.erase(it);
+          break;
+        }
       }
     }
 
@@ -241,7 +243,6 @@ namespace karlo {
     }
 
     std::string stringSubstr(std::string hex, int start, int off) {
-
         std::string res;
         try {
             res = hex.substr(start, off);
@@ -294,7 +295,7 @@ namespace karlo {
       data.imei = gps.slice_imei(imei_raw);
       std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
 
-      // Register imei and socket file descriptor into map
+      // Register imei and socket file descriptor pair into map
       if (imeiSocketMap.find(data.imei) == imeiSocketMap.end()) {
         imeiSocketMap.emplace( data.imei, connfd);
       } else {
@@ -351,7 +352,7 @@ namespace karlo {
         if (FD_ISSET(connfd, &readfds)) {
           std::cout << "Activity: " << activity << "\n";
 
-          std::cout << "=== Beginning of Zero Bytes ===\n";
+//          std::cout << "=== Beginning of Zero Bytes ===\n";
 
 //          // Uncomment if "network ping timeout" is configured
 //          hex = gps.getBytes(connfd, 1);
@@ -434,11 +435,11 @@ namespace karlo {
             if (numOfData1 != numOfData2) return -3;
 
             std::cout << "Imei\t\t\t: " << data.imei << "\n";
-            std::cout << "Codec ID\t\t: " << codec << "\n";
+//            std::cout << "Codec ID\t\t: " << codec << "\n";
             std::cout << "Number of Data\t\t: " << numOfData1 << "\n";
             std::cout << "Timestamp\t\t: " << stringSubstr(hex_stream ,AVL_POS, TIMESTAMP_NOB*2) << "(" << data.createdAt << ")\n";
-            std::cout << "Longitude\t\t: " << stringSubstr(hex_stream ,AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2) << "\n";
-            std::cout << "Latitude\t\t: " << stringSubstr(hex_stream ,AVL_POS + LATITUDE_POS, LATITUDE_NOB*2) << "\n";
+//            std::cout << "Longitude\t\t: " << stringSubstr(hex_stream ,AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2) << "\n";
+//            std::cout << "Latitude\t\t: " << stringSubstr(hex_stream ,AVL_POS + LATITUDE_POS, LATITUDE_NOB*2) << "\n";
 
             gps.sendConfirmation(connfd, numOfData2);
 
@@ -457,12 +458,9 @@ namespace karlo {
           // Save necessary AVL data to database
           std::unique_lock<std::mutex> lk(m);
           if(!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return ready;})){
-            //std::cout << std::endl;
-            //std::cout << "\033[1;32mTIMEOUT .... !! \033[0m";
-            //std::cout << std::endl;
+            //std::cout << "\n\033[1;32mTIMEOUT .... !!\033[0m\n";
             return -3;
           }
-
           else {
             if(gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
               database::createData(data);
@@ -471,21 +469,10 @@ namespace karlo {
             }
           }
 
-          // Close connection if imei-socket pair is not found
-          if (imeiSocketMap.find(data.imei)->second != connfd) return -5;
-
-
-
         } // if FD_SET()
 
-        //--------- Thread Sleep ---------------
-
-        // while(!std::find(imeiRealTimeVec.begin(), imeiRealTimeVec.end(), data.imei) != imeiRealTimeVec.end()){
-        //  std::this_thread::sleep_for(std::chrono::seconds(5));
-        // }
-
-        //--------- Thread Sleep ---------------
-
+        // Close connection if imei-socket pair is not found
+        if (imeiSocketMap.find(data.imei)->second != connfd) return -5;
 
       } // for(;;)
 
