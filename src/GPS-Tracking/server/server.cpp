@@ -352,10 +352,10 @@ namespace karlo {
           std::cout << "Changed to normal\n";
         }
 
-        if(prevState && !currentState){
-          gps.sendGPRSCommand(connfd, false);
-          prevState = currentState;
-        }
+       // if(prevState && !currentState){
+       //   gps.sendGPRSCommand(connfd, false);
+       //   prevState = currentState;
+       // }
 
         // Read data or response from devices
         tv.tv_sec = 1;
