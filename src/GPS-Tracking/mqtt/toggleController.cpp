@@ -44,7 +44,7 @@ namespace karlo {
       if(index == 0) {
         return message.substr(0,i);
       } else {
-        return message.substr(i+1, message.length());
+        return message.substr(i+1, 4);
       }
 
     }
