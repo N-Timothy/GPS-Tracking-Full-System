@@ -279,7 +279,7 @@ namespace karlo {
       int data_NOB, AVL_NOB;
       int AVL_POS, ID_POS, VALUE_POS, NUM_OF_DATA2_POS;
       std::string hex_stream;
-      bool prevState = true, currentState = false;
+      bool prevState = false, currentState = false;
 
       int activity;
       struct timeval tv;
