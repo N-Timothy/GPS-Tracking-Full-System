@@ -39,7 +39,7 @@ namespace karlo {
       int number = 0;
       int connectivity;
       std::string result;
-      bool realTimeState;
+      bool realTimeState = false;
 
     public:
 
