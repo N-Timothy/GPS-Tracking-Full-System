@@ -39,9 +39,18 @@ namespace karlo {
       int number = 0;
       int connectivity;
       std::string result;
-
+      bool realTimeState;
 
     public:
+
+      bool getRealTimeState(){
+        return realTimeState;  
+      }
+
+      void setRealTimeState(bool newState) {
+        this->realTimeState =  newState;
+      }
+
       std::string getBytes (int connfd, int byteslen) {
         std::stringstream buff;
         for (n = 0; n < byteslen; n++) {
@@ -270,6 +279,7 @@ namespace karlo {
       int data_NOB, AVL_NOB;
       int AVL_POS, ID_POS, VALUE_POS, NUM_OF_DATA2_POS;
       std::string hex_stream;
+      bool prevState, currentState;
 
       int activity;
       struct timeval tv;
@@ -342,6 +352,9 @@ namespace karlo {
           std::cout << "Changed to normal\n";
         }
 
+        if(prevState && !currentState){
+          gps.sendGPRSCommand(connfd, false);
+        }
 
         // Read data or response from devices
         tv.tv_sec = 1;
@@ -412,6 +425,9 @@ namespace karlo {
               // Ignition ID = 239
               if (id == "ef") {
                 data.ignitionOn = std::stoi(stringSubstr(hex_stream ,AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
+                prevState = gps.getRealTimeState();
+                gps.setRealTimeState(data.ignitionOn);
+                currentState = gps.getRealTimeState();
                 break;
               }
             }
