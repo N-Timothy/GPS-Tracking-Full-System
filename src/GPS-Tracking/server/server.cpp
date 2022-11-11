@@ -352,9 +352,6 @@ namespace karlo {
           std::cout << "Changed to normal\n";
         }
 
-        std::cout << "prev state 2: " << prevState << std::endl;
-        std::cout << "current state 2: " << currentState << std::endl;
-
         if(prevState && !currentState){
           gps.sendGPRSCommand(connfd, false);
           prevState = currentState;
@@ -430,7 +427,6 @@ namespace karlo {
               if (id == "ef") {
                 data.ignitionOn = std::stoi(stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
                 prevState = gps.getRealTimeState();
-                std::cout << "prev state : " << prevState << std::endl;
                 gps.setRealTimeState(data.ignitionOn);
                 currentState = gps.getRealTimeState();
               }
