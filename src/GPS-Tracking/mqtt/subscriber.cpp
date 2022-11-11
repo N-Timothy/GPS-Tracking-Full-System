@@ -16,7 +16,7 @@ namespace karlo {
         int disc_finished = 0;
         int subscribed = 0;
         int finished = 0;
- 
+
         void connlost(void *context, char *cause)
 
         {
@@ -48,13 +48,21 @@ namespace karlo {
         int msgarrvd(void *context, char *topicName, int topicLen, MQTTAsync_message *message)
         {
    
+            char* payloadptr;
+            json msgJson;
+
             printf("Message arrived\n");
             printf("     topic: %s\n", topicName);
             printf("   message: %.*s\n", message->payloadlen, (char*)message->payload);
-            std::string msg = (char *) message->payload;
-            json msgJson;
+
+	        payloadptr = (char*)message->payload;
+            std::string msg = "";
+        	for (int i = 0; i<message->payloadlen; i++)
+        	{
+        		msg = msg + *payloadptr++;
+        	}
             try {
-            msgJson = json::parse(msg);
+                msgJson = json::parse(msg);
             } catch (json::parse_error& e){
                 std::cout << "wrong format" << std::endl;
             }
@@ -89,7 +97,7 @@ namespace karlo {
  
 
         void onSubscribeFailure(void* context, MQTTAsync_failureData* response)
-        {
+       {
             printf("Subscribe failed, rc %d\n", response->code);
             finished = 1;
         }
