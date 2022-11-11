@@ -125,15 +125,15 @@ namespace karlo {
                                    0x00, 0x00, 0xee, 0x70};
 
         // setparam 10050:60;10150:60;10250:60
-        byte normal_command[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2b,
+        byte normal_command[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2e,
                                  0x0c, 0x01, 0x05,
-                                 0x00, 0x00, 0x00, 0x23,
+                                 0x00, 0x00, 0x00, 0x26,
                                  's', 'e', 't', 'p', 'a', 'r', 'a', 'm', ' ',
-                                 '1', '0', '0', '5', '0', ':', '6', '0', ';',
-                                 '1', '0', '1', '5', '0', ':', '6', '0', ';',
-                                 '1', '0', '2', '5', '0', ':', '6', '0',
+                                 '1', '0', '0', '5', '0', ':', '3', '0', '0', ';',
+                                 '1', '0', '1', '5', '0', ':', '3', '0', '0', ';',
+                                 '1', '0', '2', '5', '0', ':', '3', '0', '0',
                                  0x01,
-                                 0x00, 0x00, 0x53, 0x42};
+                                 0x00, 0x00, 0xb7, 0x14};
 
         if (realTimeFlag) send(connfd, (char *) &realtime_command, sizeof(realtime_command), 0);
         else send(connfd, (char *) &normal_command, sizeof(normal_command), 0);
