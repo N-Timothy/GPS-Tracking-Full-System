@@ -24,7 +24,7 @@ namespace karlo {
 
             httplib::Client cli(URL);
             
-            cli.set_default_headers({ { "Authorization", staticToken } });
+            cli.set_default_headers({ { "Authorization", staticToken }, {"Content-Type","application/json"} });
 
             std::string postUrl = config["api"];
 
@@ -36,22 +36,7 @@ namespace karlo {
 
                 std::vector<json> postData = database::readData();
 
-
                 for (json data : postData) {
-
-                    // ------- Status ---------
-                    std::string status;
-    
-                    if(data["ignition"]){
-                        if (data["speed"] != 0){
-                            status = "moving";
-                        } else {
-                            status = "idle";
-                        }
-                    } else {
-                        status = "stop";
-                    }
-                    // ------- Status ---------
 
                     int tmp = ((float) data["latitude"] * 10000000);
                     float latitude = (float) tmp / 10000000;
@@ -59,16 +44,23 @@ namespace karlo {
                     tmp = ((float) data["longitude"] * 10000000);
                     float longitude = (float) tmp / 10000000;
 
-                    httplib::Params params;
-                        params.emplace("latitude", std::to_string(latitude));
-                        params.emplace("longitude", std::to_string(longitude));
-                        params.emplace("altitude", to_string(data["altitude"]));
-                        params.emplace("speed", to_string(data["speed"]));
-                        params.emplace("bearing", to_string(data["bearing"]));
-                        params.emplace("imeiTracker", data["imei"]);
-                        params.emplace("battery", to_string(data["batteryLevel"]));
-                        params.emplace("status", status);
-                    auto res = cli.Post(postUrl, params);
+                    std::string batt;
+                    data["exBattVoltage"].empty() ? batt = std::to_string(0) : batt = to_string(data["exBattVoltage"]);
+
+                    std::string status;
+                    if(data["ignitionOn"]) {
+                        if(to_string(data["speed"]) == "0"){
+                            status = "\"idle\"";
+                        } else {
+                            status = "\"moving\"";
+                        }
+                    } else {
+                        status = "\"stop\"";
+                    }
+
+                    std::string Msg = "{\"latitude\":" + std::to_string(latitude) + "," + "\"longitude\":" + std::to_string(longitude) + "," + "\"altitude\":" + to_string(data["altitude"]) + "," + "\"speed\":" + to_string(data["speed"]) + "," + "\"bearing\":" + to_string(data["bearing"]) + "," + "\"imeiTracker\":" + to_string(data["imei"]) + "," + "\"battery\":" + batt + "," + "\"status\":" + status + "}";
+                    
+                    auto res = cli.Post(postUrl, Msg , "application/json");
 
                     if (res) {
                         std::cout << res->body << std::endl;

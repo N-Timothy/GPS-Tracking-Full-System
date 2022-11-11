@@ -8,8 +8,9 @@ namespace karlo {
   struct trackingData {
     std::string driver = "None";
     std::string imei = "";
-    bool ignition = true;
-    int batteryLevel = 0;
+    bool ignitionOn = 0;
+    bool moving = false;
+    int exBattVoltage = 0;
     double latitude = 0;
     double longitude = 0;
     float altitude = 0;

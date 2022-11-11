@@ -1,6 +1,13 @@
 #ifndef _GPS_TRACKING_SERVER_SERVER2_HPP_
 #define _GPS_TRACKING_SERVER_SERVER2_HPP_
 
+// Change value based on GPS configuration
+#define NUM_OF_ONE_BYTE_ID 2
+#define NUM_OF_TWO_BYTES_ID 1
+#define NUM_OF_THREE_BYTES_ID 0
+#define NUM_OF_FOUR_BYTES_ID 0
+// END
+
 #define IMEI_NOB 17
 #define ZERO_NOB 4
 #define DATA_FIELD_NOB 4
@@ -43,7 +50,10 @@
 #define EVENT_IO_ID_POS 48
 #define NUM_OF_TOTAL_ID_POS 50
 #define NUM_OF_1B_IO_POS 52
-#define ONE_BYTE_ID_POS 54
+#define NUM_OF_2B_IO_POS (NUM_OF_1B_IO_POS + NUM_OF_IO_NOB*2 + NUM_OF_ONE_BYTE_ID*(ID_NOB + VALUE1_NOB)*2)
+#define NUM_OF_4B_IO_POS (NUM_OF_2B_IO_POS + NUM_OF_IO_NOB*2 + NUM_OF_TWO_BYTES_ID*(ID_NOB + VALUE2_NOB)*2)
+#define NUM_OF_8B_IO_POS (NUM_OF_4B_IO_POS + NUM_OF_IO_NOB*2 + NUM_OF_FOUR_BYTES_ID*(ID_NOB + VALUE4_NOB)*2)
+
 
 #include "GPS-Tracking/server/read_imei_json.hpp"
 
@@ -55,6 +65,8 @@ namespace karlo {
     int communicate(int connfd, std::vector<json> imei_list);
 
     void toRealTime(std::string imei, bool toggle);
+
+    void removeSocket(int socket);
 
   } // namespace server
 } // namespace karlo
