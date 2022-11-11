@@ -427,6 +427,7 @@ namespace karlo {
               if (id == "ef") {
                 data.ignitionOn = std::stoi(stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
                 prevState = gps.getRealTimeState();
+                std::cout << "prev state : " << prevState << std::endl;
                 gps.setRealTimeState(data.ignitionOn);
                 currentState = gps.getRealTimeState();
               }
