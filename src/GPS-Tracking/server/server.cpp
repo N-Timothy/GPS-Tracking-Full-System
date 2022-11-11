@@ -279,7 +279,7 @@ namespace karlo {
       int data_NOB, AVL_NOB;
       int AVL_POS, ID_POS, VALUE_POS, NUM_OF_DATA2_POS;
       std::string hex_stream;
-      bool prevState, currentState;
+      bool prevState = true, currentState = false;
 
       int activity;
       struct timeval tv;
@@ -354,6 +354,7 @@ namespace karlo {
 
         if(prevState && !currentState){
           gps.sendGPRSCommand(connfd, false);
+          prevState = currentState;
         }
 
         // Read data or response from devices
@@ -424,11 +425,14 @@ namespace karlo {
 
               // Ignition ID = 239
               if (id == "ef") {
-                data.ignitionOn = std::stoi(stringSubstr(hex_stream ,AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
+                data.ignitionOn = std::stoi(stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
                 prevState = gps.getRealTimeState();
                 gps.setRealTimeState(data.ignitionOn);
                 currentState = gps.getRealTimeState();
-                break;
+              }
+              // Sleep Mode ID = 200
+              else if (id == "c8") {
+                data.sleepMode = std::stoi(stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16); 
               }
             }
 
