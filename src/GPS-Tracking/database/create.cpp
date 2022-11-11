@@ -20,6 +20,7 @@ namespace karlo {
         << "altitude" << data.altitude
         << "speed" << data.speed
         << "bearing" << data.bearing
+        << "sleepMode" << data.sleepMode
         << "exBattVoltage" << data.exBattVoltage
         << "description" << data.description
         << "truck" << data.truck

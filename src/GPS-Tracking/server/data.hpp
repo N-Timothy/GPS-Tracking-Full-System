@@ -16,6 +16,7 @@ namespace karlo {
     float altitude = 0;
     int speed = 0;
     int bearing = 0;
+    int sleepMode = 0;
     std::string description = "This is default value";
     std::string truck = "None";
     short city = 0;
