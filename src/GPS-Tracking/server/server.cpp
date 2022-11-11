@@ -352,6 +352,9 @@ namespace karlo {
           std::cout << "Changed to normal\n";
         }
 
+        std::cout << "prev state 2: " << prevState << std::endl;
+        std::cout << "current state 2: " << currentState << std::endl;
+
         if(prevState && !currentState){
           gps.sendGPRSCommand(connfd, false);
           prevState = currentState;
