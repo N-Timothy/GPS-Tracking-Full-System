@@ -21,7 +21,7 @@ namespace karlo {
         void post(std::string URL, json config) {
 
             std::string staticToken = config["token"];
-            std::string battStatus = "OK";
+            std::string battStatus = "\"OK\"";
 
             httplib::Client cli(URL);
             
@@ -60,9 +60,9 @@ namespace karlo {
                     }
 
                     if(batt < 24500 && batt > 22500) {
-                        battStatus = "Warning";
+                        battStatus = "\"WARNING\"";
                     } else if (batt < 22500) {
-                        battStatus = "LOW";
+                        battStatus = "\"LOW\"";
                     }
 
                     std::string Msg = "{\"latitude\":" + std::to_string(latitude) + "," + "\"longitude\":" + std::to_string(longitude) + "," + "\"altitude\":" + to_string(data["altitude"]) + "," + "\"speed\":" + to_string(data["speed"]) + "," + "\"bearing\":" + to_string(data["bearing"]) + "," + "\"imeiTracker\":" + to_string(data["imei"]) + "," + "\"battStatus\":" + battStatus + "," + "\"status\":" + status + "}";
