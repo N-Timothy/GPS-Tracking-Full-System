@@ -62,6 +62,11 @@ namespace karlo {
         std::cout << "\x1b[Failed to close socket: \x1b[0m"<< socket << std::endl;
         failed_socket.push_back(socket);
       }
+      std::cout << "Failed socket: [ ";
+      for (auto it: failed_socket) {
+        std::cout << it << " ";
+      }
+      std::cout << " ]\n";
 
       std::cout << "Terminating thread: "  << socket << std::endl;
 
@@ -149,6 +154,9 @@ namespace karlo {
         for (auto it: failed_socket) {
           if (close(it) == 0) {
             failed_socket.erase(std::find(failed_socket.begin(), failed_socket.end(), it));
+          }
+          else {
+            std::cout << "Failed to close socket " << it << " again\n";
           }
         }
 
