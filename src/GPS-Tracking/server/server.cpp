@@ -3,6 +3,7 @@
 #include "GPS-Tracking/server/data.hpp"
 #include "GPS-Tracking/database/database.hpp"
 #include "GPS-Tracking/server/server.hpp"
+#include "GPS-Tracking/httpsRequest/httpsRequest.hpp"
 #include "server.hpp" // for development purpose only
 
 #include <stdio.h> // sprintf
@@ -267,6 +268,7 @@ namespace karlo {
 
       // init struct data
       trackingData data;
+      json eventData;
 
       std::string buff;
       unsigned i, numOfData1, numOfData2;
@@ -303,6 +305,7 @@ namespace karlo {
       if (confirm == -1) return -1;
       else if (confirm == -2) return -2;
       data.imei = gps.slice_imei(imei_raw);
+      eventData["imei"] = data.imei;
       std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
 
       // Register imei and socket file descriptor pair into map
@@ -353,6 +356,7 @@ namespace karlo {
         }
 
         if(prevState && !currentState){
+
           gps.sendGPRSCommand(connfd, false);
           prevState = currentState;
         }
@@ -413,9 +417,16 @@ namespace karlo {
 
             data.createdAt = timestampToDate(stringSubstr(hex_stream ,AVL_POS, TIMESTAMP_NOB*2));
             data.longitude = hexToLongitudeLatitude(stringSubstr(hex_stream ,AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2));
+            eventData["longitude"] = data.longitude;
+            
             data.latitude = hexToLongitudeLatitude(stringSubstr(hex_stream ,AVL_POS + LATITUDE_POS, LATITUDE_NOB*2));
+            eventData["latitiude"] = data.latitude;
+
             data.bearing = std::stoi(stringSubstr(hex_stream ,AVL_POS + ANGLE_POS, ANGLE_NOB*2), 0, 16);
+            eventData["bearing"] = data.bearing;
+
             data.speed = std::stoi(stringSubstr(hex_stream ,AVL_POS + SPEED_POS, SPEED_NOB*2), 0, 16);
+            eventData["speed"] = data.speed;
 
             numOfOneByteID = std::stoi(stringSubstr(hex_stream ,AVL_POS + NUM_OF_1B_IO_POS, NUM_OF_IO_NOB*2), 0, 16);
             for (i = 0; i < numOfOneByteID; i++) {
@@ -426,6 +437,8 @@ namespace karlo {
               // Ignition ID = 239
               if (id == "ef") {
                 data.ignitionOn = std::stoi(stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
+                eventData["ignitionOn"] = data.ignitionOn;
+
                 prevState = gps.getRealTimeState();
                 gps.setRealTimeState(data.ignitionOn);
                 currentState = gps.getRealTimeState();
@@ -445,6 +458,7 @@ namespace karlo {
               // Battery ID = 66
               if (id == "42") {
                 data.exBattVoltage = std::stoi(stringSubstr(hex_stream ,AVL_POS + VALUE_POS, VALUE2_NOB*2), 0, 16);
+                eventData["exBattVoltage"] = data.exBattVoltage;
                 break;
               }
             }
@@ -490,6 +504,10 @@ namespace karlo {
           }
 
         } // if FD_SET()
+
+        // if() {
+        //httpsRequest::singleConnect(eventData);
+        //}
 
         // Close connection if imei-socket pair is not found
         if (imeiSocketMap.find(data.imei)->second != connfd) return -5;

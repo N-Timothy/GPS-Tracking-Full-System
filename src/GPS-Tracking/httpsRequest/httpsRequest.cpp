@@ -30,5 +30,11 @@ namespace karlo {
             }
         }
 
+        void singleConnect(json data){
+            std::string URL = config["url"];
+
+            post(URL, config, data);
+        }
+
     } // namespace httpRequest
 } //namespace karlo

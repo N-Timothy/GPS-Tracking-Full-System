@@ -21,6 +21,8 @@ namespace karlo {
         void setHttpsConfig(json httpsConfig);
 
         void connect();
+        
+        void singleConnect(json data);
     
     } // namespace httpRequest
 } // namespace karlo

@@ -14,6 +14,8 @@ namespace karlo {
 
         void post(std::string URL, json config);
 
+        void post(std::string URL, json config, json data);
+
     } // namespace httpRequest
 } // namespace karlo
 
