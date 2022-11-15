@@ -44,12 +44,12 @@ namespace karlo {
 
     public:
 
-      bool getRealTimeState(){
+      bool getRealTimeState() {
         return this->realTimeState;  
       }
 
       void setRealTimeState(bool newState) {
-        this->realTimeState =  newState;
+        this->realTimeState = newState;
       }
 
       std::string getBytes (int connfd, int byteslen) {
@@ -359,8 +359,9 @@ namespace karlo {
         }
 
         // Turn GPS to normal period once ignition is turned off
-        if(gps.getRealTimeState() && data.description == "Ignition turned off."){
+        if(gps.getRealTimeState() && data.description == "Ignition turned off.") {
           gps.sendGPRSCommand(connfd, false);
+          gps.setRealTimeState(false);
         }
 
         // Read data or response from devices
@@ -407,7 +408,6 @@ namespace karlo {
           hex_stream = gps.getBytes(connfd, data_NOB + CRC16_NOB);
           if (hex_stream == "") return -3;
 
-          //codec = stringSubstr(hex_stream ,CODEC_ID_POS, CODEC_ID_NOB*2);
           codec = stringSubstr(hex_stream, CODEC_ID_POS, CODEC_ID_NOB*2);
 
           if (codec == "08") {
@@ -441,8 +441,6 @@ namespace karlo {
               if (id == "ef") {
                 data.ignitionOn = std::stoi(stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
                 eventData["ignitionOn"] = data.ignitionOn;
-
-                gps.setRealTimeState(data.ignitionOn);
               }
               // Sleep Mode ID = 200
               else if (id == "c8") {
@@ -466,7 +464,8 @@ namespace karlo {
 
             // Description
             if (event == "ef" && data.ignitionOn == true) data.description = "Ignition turned on!";
-            else if (if (event == "ef" && data.ignitionOn == false)) data.description = "Ignition turned off.";
+            else if (event == "ef" && data.ignitionOn == false) data.description = "Ignition turned off.";
+            else data.description = "This is default value";
 
             NUM_OF_DATA2_POS = 2 * (data_NOB - NUM_OF_DATA_NOB);
             numOfData2 = std::stoi(stringSubstr(hex_stream ,NUM_OF_DATA2_POS, NUM_OF_DATA_NOB*2), 0, 16);
