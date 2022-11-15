@@ -276,12 +276,11 @@ namespace karlo {
       unsigned numOfOneByteID, numOfTwoBytesID, numOfFourBytesID, numOfEightBytesID;
       std::string imei_raw, codec;
       std::string hex;
-      std::string id;
+      std::string event, id;
 
       int data_NOB, AVL_NOB;
       int AVL_POS, ID_POS, VALUE_POS, NUM_OF_DATA2_POS;
       std::string hex_stream;
-      bool prevState = false, currentState = false;
 
       int activity;
       struct timeval tv;
@@ -325,40 +324,43 @@ namespace karlo {
           std::cout << "Changing to realtime..\n";
           gps.sendGPRSCommand(connfd, true);
           std::cout << "imeiRealTime: ";
-          for (auto it = imeiRealTimeVec.begin(); it != imeiRealTimeVec.end(); it++) {
-            std::cout << *it << " ";
+          for (auto it: imeiRealTimeVec) {
+            std::cout << it << " ";
           }
           std::cout << std::endl;
           imeiRealTimeVec = removeImei(imeiRealTimeVec, data.imei);
           std::cout << "imeiRealTime: ";
-          for (auto it = imeiRealTimeVec.begin(); it != imeiRealTimeVec.end(); it++) {
-            std::cout << *it << " ";
+          for (auto it: imeiRealTimeVec) {
+            std::cout << it << " ";
           }
           std::cout << std::endl;
           std::cout << "Changed to realtime\n";
+
+          gps.setRealTimeState(true);
         }
 
         if (std::find(imeiNormalVec.begin(), imeiNormalVec.end(), data.imei) != imeiNormalVec.end()) {
           std::cout << "Changing to normal..\n";
           gps.sendGPRSCommand(connfd, false);
           std::cout << "imeiNormal: ";
-          for (auto it = imeiNormalVec.begin(); it != imeiNormalVec.end(); it++) {
-            std::cout << *it << " ";
+          for (auto it: imeiNormalVec) {
+            std::cout << it << " ";
           }
           std::cout << std::endl;
           imeiNormalVec = removeImei(imeiNormalVec, data.imei);
           std::cout << "imeiNormal: ";
-          for (auto it = imeiNormalVec.begin(); it != imeiNormalVec.end(); it++) {
-            std::cout << *it << " ";
+          for (auto it: imeiNormalVec) {
+            std::cout << it << " ";
           }
           std::cout << std::endl;
           std::cout << "Changed to normal\n";
+
+          gps.setRealTimeState(false);
         }
 
-        if(prevState && !currentState){
-
+        // Turn GPS to normal period once ignition is turned off
+        if(gps.getRealTimeState() && data.description == "Ignition turned off."){
           gps.sendGPRSCommand(connfd, false);
-          prevState = currentState;
         }
 
         // Read data or response from devices
@@ -419,13 +421,15 @@ namespace karlo {
             eventData["longitude"] = data.longitude;
             
             data.latitude = hexToLongitudeLatitude(stringSubstr(hex_stream ,AVL_POS + LATITUDE_POS, LATITUDE_NOB*2));
-            eventData["latitiude"] = data.latitude;
+            eventData["latitude"] = data.latitude;
 
             data.bearing = std::stoi(stringSubstr(hex_stream ,AVL_POS + ANGLE_POS, ANGLE_NOB*2), 0, 16);
             eventData["bearing"] = data.bearing;
 
             data.speed = std::stoi(stringSubstr(hex_stream ,AVL_POS + SPEED_POS, SPEED_NOB*2), 0, 16);
             eventData["speed"] = data.speed;
+
+            event = stringSubstr(hex_stream, AVL_POS + EVENT_IO_ID_POS, EVENT_IO_ID_NOB*2);
 
             numOfOneByteID = std::stoi(stringSubstr(hex_stream ,AVL_POS + NUM_OF_1B_IO_POS, NUM_OF_IO_NOB*2), 0, 16);
             for (i = 0; i < numOfOneByteID; i++) {
@@ -438,9 +442,7 @@ namespace karlo {
                 data.ignitionOn = std::stoi(stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
                 eventData["ignitionOn"] = data.ignitionOn;
 
-                prevState = gps.getRealTimeState();
                 gps.setRealTimeState(data.ignitionOn);
-                currentState = gps.getRealTimeState();
               }
               // Sleep Mode ID = 200
               else if (id == "c8") {
@@ -462,6 +464,10 @@ namespace karlo {
               }
             }
 
+            // Description
+            if (event == "ef" && data.ignitionOn == true) data.description = "Ignition turned on!";
+            else if (if (event == "ef" && data.ignitionOn == false)) data.description = "Ignition turned off.";
+
             NUM_OF_DATA2_POS = 2 * (data_NOB - NUM_OF_DATA_NOB);
             numOfData2 = std::stoi(stringSubstr(hex_stream ,NUM_OF_DATA2_POS, NUM_OF_DATA_NOB*2), 0, 16);
 
@@ -473,6 +479,7 @@ namespace karlo {
             std::cout << "Timestamp\t\t: " << stringSubstr(hex_stream ,AVL_POS, TIMESTAMP_NOB*2) << "(" << data.createdAt << ")\n";
 //            std::cout << "Longitude\t\t: " << stringSubstr(hex_stream ,AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2) << "\n";
 //            std::cout << "Latitude\t\t: " << stringSubstr(hex_stream ,AVL_POS + LATITUDE_POS, LATITUDE_NOB*2) << "\n";
+            std::cout << "Description: " << data.description << "\n";
 
             gps.sendConfirmation(connfd, numOfData2);
 
