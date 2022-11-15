@@ -23,6 +23,7 @@ namespace karlo {
     std::string IMEI_JSON_LOCATION = "/home/" + core::config::getUsername() + "/" + IMEI_JSON_FILENAME;
 
     std::vector<int> failed_socket;
+    int failed_count = 0;
 
     using json = nlohmann::json;
 
@@ -61,12 +62,13 @@ namespace karlo {
       if (close(socket) < 0) {
         std::cout << "\x1b[Failed to close socket: \x1b[0m"<< socket << std::endl;
         failed_socket.push_back(socket);
+        failed_count++;
       }
       std::cout << "Failed socket: [ ";
       for (auto it: failed_socket) {
         std::cout << it << " ";
       }
-      std::cout << " ]\n";
+      std::cout << " ] | Failed count: " << failed_count << "\n";
 
       std::cout << "Terminating thread: "  << socket << std::endl;
 
@@ -86,7 +88,7 @@ namespace karlo {
       imei_list = readImeiJson(IMEI_JSON_LOCATION);
 
       // Create master socket
-      if ((master_socket = socket (AF_INET, SOCK_STREAM, 0)) == 0) {
+      if ((master_socket = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
         perror("socket failed");
         exit(EXIT_FAILURE);
       }
