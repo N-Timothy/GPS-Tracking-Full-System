@@ -368,7 +368,6 @@ namespace karlo {
         activity = select(connfd + 1, &readfds, NULL, NULL, &tv);
 
         if (FD_ISSET(connfd, &readfds)) {
-          std::cout << "Activity: " << activity << "\n";
 
 //          std::cout << "=== Beginning of Zero Bytes ===\n";
 
@@ -503,7 +502,7 @@ namespace karlo {
             }
           }
 
-        } // if FD_SET()
+        } // if FD_ISSET()
 
         // if() {
         //httpsRequest::singleConnect(eventData);
