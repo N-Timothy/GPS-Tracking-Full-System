@@ -289,8 +289,16 @@ namespace karlo {
 
       fd_set readfds;
 
-      //clear the socket set
+      // Clear the socket set
       FD_ZERO(&readfds);
+      FD_SET(connfd, &readfds);
+
+      // Initialize timeval
+      tv.tv_sec = 5;
+      tv.tv_usec = 0;
+
+      activity = select(connfd + 1, &readfds, NULL, NULL, &tv);
+      if (activity == 0) return -3;
 
       // Get IMEI number from new connection
       imei_raw = gps.getBytes(connfd, IMEI_NOB);

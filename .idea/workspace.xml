@@ -55,13 +55,6 @@
     &quot;last_opened_file_path&quot;: &quot;C:/Users/nchon/Downloads/KARLO/main_karlo&quot;
   }
 }</component>
-  <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
-  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -75,7 +68,10 @@
       <workItem from="1667982457721" duration="8983000" />
       <workItem from="1668049122788" duration="3457000" />
       <workItem from="1668132914264" duration="5379000" />
-      <workItem from="1668389784030" duration="16364000" />
+      <workItem from="1668389784030" duration="17699000" />
+      <workItem from="1668564999271" duration="3494000" />
+      <workItem from="1668653219613" duration="1632000" />
+      <workItem from="1668863966506" duration="275000" />
     </task>
     <servers />
   </component>
