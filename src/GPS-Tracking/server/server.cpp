@@ -516,6 +516,9 @@ namespace karlo {
             }
           }
 
+          // Check if GPS in sleep mode
+          if (data.sleepMode == 2) return 0;
+
         } // if FD_ISSET()
 
         // if() {
