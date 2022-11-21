@@ -372,7 +372,7 @@ namespace karlo {
           gps.setRealTimeState(false);
         }
 
-        // Read data or response from devices
+        // Check activity in read file descriptor
         tv.tv_sec = 1;
         tv.tv_usec = 0;
         FD_SET(connfd, &readfds);
@@ -486,7 +486,6 @@ namespace karlo {
             std::cout << "Timestamp\t\t: " << stringSubstr(hex_stream ,AVL_POS, TIMESTAMP_NOB*2) << "(" << data.createdAt << ")\n";
 //            std::cout << "Longitude\t\t: " << stringSubstr(hex_stream ,AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2) << "\n";
 //            std::cout << "Latitude\t\t: " << stringSubstr(hex_stream ,AVL_POS + LATITUDE_POS, LATITUDE_NOB*2) << "\n";
-            std::cout << "Description: " << data.description << "\n";
 
             gps.sendConfirmation(connfd, numOfData2);
 
@@ -517,7 +516,7 @@ namespace karlo {
           }
 
           // Check if GPS in sleep mode
-          if (data.sleepMode == 2) return 0;
+          if (data.ignitionOn == false) return 0;
 
         } // if FD_ISSET()
 
