@@ -515,7 +515,7 @@ namespace karlo {
             }
           }
 
-          // Check if GPS in sleep mode
+          // Check if fleet ignition is off
           if (data.ignitionOn == false) return 0;
 
         } // if FD_ISSET()
