@@ -494,7 +494,7 @@ namespace karlo {
           else if (codec == "0c") {
             std::cout << "GPRS RESPONSE:\n";
             std::cout << hex_stream;
-            std::cout << "sasageyo\n\n";
+            std::cout << "\n\n";
           }
 
           // Save necessary AVL data to database
