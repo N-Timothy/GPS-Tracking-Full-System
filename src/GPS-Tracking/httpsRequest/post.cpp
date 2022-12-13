@@ -21,9 +21,11 @@ namespace karlo {
         void post(std::string URL, json config) {
 
             std::string staticToken = config["token"];
+            std::string URL_STAGING = config["url_staging"];
             std::string battStatus = "\"OK\"";
 
             httplib::Client cli(URL);
+            httplib::Client cli_staging(URL_STAGING);
             
             cli.set_default_headers({ { "Authorization", staticToken }, {"Content-Type","application/json"} });
 
@@ -68,9 +70,14 @@ namespace karlo {
                     std::string Msg = "{\"latitude\":" + std::to_string(latitude) + "," + "\"longitude\":" + std::to_string(longitude) + "," + "\"altitude\":" + std::to_string(0) + "," + "\"speed\":" + to_string(data["speed"]) + "," + "\"bearing\":" + to_string(data["bearing"]) + "," + "\"imeiTracker\":" + to_string(data["imei"]) + "," + "\"battStatus\":" + battStatus + "," + "\"status\":" + status + "}";
                     
                     auto res = cli.Post(postUrl, Msg , "application/json");
+                    auto res_staging = cli_staging.Post(postUrl, Msg , "application/json");
 
                     if (res) {
-                        std::cout << res->body << std::endl;
+                        std::cout <<"production : " << res->body << std::endl;
+                    }
+
+                    if (res_staging) {
+                        std::cout <<" staging : " << res_staging->body << std::endl;
                     }
                 }
             }
