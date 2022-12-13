@@ -29,8 +29,6 @@ namespace karlo {
             void config () {
             
                 std::string config = "/home/" + getUsername() + "/" + CONFIG_DIR;
-                
-//                std::cout << "CONFIG: " << config << std::endl;
 
                 std::ifstream ifs(config);
                 if(ifs){
