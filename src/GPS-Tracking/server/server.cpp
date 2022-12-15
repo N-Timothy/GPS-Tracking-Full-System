@@ -280,7 +280,7 @@ namespace karlo {
       std::vector<json> postDataVec;
 
       std::string buff;
-      unsigned i, numOfData1, numOfData2;
+      unsigned i, dataCount, numOfData1, numOfData2;
       int confirm, recognition;
       unsigned numOfOneByteID, numOfTwoBytesID, numOfFourBytesID, numOfEightBytesID;
       std::string imei_raw, codec;
@@ -420,7 +420,7 @@ namespace karlo {
             
             AVL_NOB = data_NOB - CODEC_ID_NOB - 2 * NUM_OF_DATA_NOB;
 
-            for (i = 0; i < numOfData1; i++) {
+            for (dataCount = 0; dataCount < numOfData1; dataCount++) {
               std::cout << "numOfData counting...\n";
               std::this_thread::sleep_for(std::chrono::seconds(1));
               AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2*NUM_OF_DATA_NOB + 2*(AVL_NOB/numOfData1)*i;
