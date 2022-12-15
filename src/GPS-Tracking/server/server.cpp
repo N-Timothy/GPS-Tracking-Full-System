@@ -143,11 +143,22 @@ namespace karlo {
                                  0x0c, 0x01, 0x05,
                                  0x00, 0x00, 0x00, 0x26,
                                  's', 'e', 't', 'p', 'a', 'r', 'a', 'm', ' ',
-                                 '1', '0', '0', '5', '0', ':', '3', '0', '0', ';',
-                                 '1', '0', '1', '5', '0', ':', '3', '0', '0', ';',
-                                 '1', '0', '2', '5', '0', ':', '3', '0', '0',
+                                 '1', '0', '0', '5', '0', ':', '6', '0', ';',
+                                 '1', '0', '1', '5', '0', ':', '6', '0', ';',
+                                 '1', '0', '2', '5', '0', ':', '6', '0',
                                  0x01,
-                                 0x00, 0x00, 0xb7, 0x14};
+                                 0x00, 0x00, 0x53, 0x42};
+
+        // setparam 10050:300;10150:300;10250:300
+        // byte normal_command[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2e,
+        //                          0x0c, 0x01, 0x05,
+        //                          0x00, 0x00, 0x00, 0x26,
+        //                          's', 'e', 't', 'p', 'a', 'r', 'a', 'm', ' ',
+        //                          '1', '0', '0', '5', '0', ':', '3', '0', '0', ';',
+        //                          '1', '0', '1', '5', '0', ':', '3', '0', '0', ';',
+        //                          '1', '0', '2', '5', '0', ':', '3', '0', '0',
+        //                          0x01,
+        //                          0x00, 0x00, 0xb7, 0x14};
 
         if (realTimeFlag) send(connfd, (char *) &realtime_command, sizeof(realtime_command), 0);
         else send(connfd, (char *) &normal_command, sizeof(normal_command), 0);
@@ -458,7 +469,8 @@ namespace karlo {
 
               if (gps.getRealTimeState()) {
                 realTimeElapsed += 5;
-                if (realTimeElapsed >= 300) {
+                std::cout << "Real Time Elapsed: " << realTimeElapsed << std::endl;
+                if (realTimeElapsed >= 60) {
                   postDataVec.push_back(postData);
                   realTimeElapsed = 0;
                 }
