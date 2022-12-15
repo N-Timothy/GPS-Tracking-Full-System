@@ -17,7 +17,6 @@ namespace karlo {
     using json = nlohmann::json;
 
     std::map<int, std::pair<std::time_t, bool>> TIMEOUT;
-
     void post(std::string URL, json config) {
 
       std::string staticToken = config["token"];
