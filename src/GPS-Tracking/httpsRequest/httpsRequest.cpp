@@ -18,7 +18,7 @@ namespace karlo {
     void connect() {
 
       // json config = core::config::config_https();
-      std::string URL = config["url_staging"];
+      std::string URL = config["url"];
       int timeInterval = config["interval"];
 
       while (true) {
@@ -28,7 +28,7 @@ namespace karlo {
     }
 
     void singleConnect(json data) {
-      std::string URL = config["url_staging"];
+      std::string URL = config["url"];
 
       post(URL, config, data);
     }
