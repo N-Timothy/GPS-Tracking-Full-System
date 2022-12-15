@@ -471,7 +471,7 @@ namespace karlo {
                 realTimeElapsed += 5;
                 std::cout << "Real Time Elapsed: " << realTimeElapsed << std::endl;
                 if (realTimeElapsed >= 60) {
-                  postDataVec.push_back(postData);
+                  httpsRequest::singleConnect(postData);
                   realTimeElapsed = 0;
                 }
               } else {
