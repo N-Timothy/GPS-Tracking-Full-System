@@ -345,40 +345,14 @@ namespace karlo {
       for (;;) {
         // Check for GPRS command
         if (std::find(imeiRealTimeVec.begin(), imeiRealTimeVec.end(), data.imei) != imeiRealTimeVec.end()) {
-          std::cout << "Changing to realtime..\n";
           gps.sendGPRSCommand(connfd, true);
-          std::cout << "imeiRealTime: ";
-          for (auto it: imeiRealTimeVec) {
-            std::cout << it << " ";
-          }
-          std::cout << std::endl;
           imeiRealTimeVec = removeImei(imeiRealTimeVec, data.imei);
-          std::cout << "imeiRealTime: ";
-          for (auto it: imeiRealTimeVec) {
-            std::cout << it << " ";
-          }
-          std::cout << std::endl;
-          std::cout << "Changed to realtime\n";
-
           gps.setRealTimeState(true);
         }
 
         if (std::find(imeiNormalVec.begin(), imeiNormalVec.end(), data.imei) != imeiNormalVec.end()) {
-          std::cout << "Changing to normal..\n";
           gps.sendGPRSCommand(connfd, false);
-          std::cout << "imeiNormal: ";
-          for (auto it: imeiNormalVec) {
-            std::cout << it << " ";
-          }
-          std::cout << std::endl;
           imeiNormalVec = removeImei(imeiNormalVec, data.imei);
-          std::cout << "imeiNormal: ";
-          for (auto it: imeiNormalVec) {
-            std::cout << it << " ";
-          }
-          std::cout << std::endl;
-          std::cout << "Changed to normal\n";
-
           gps.setRealTimeState(false);
         }
 
@@ -515,13 +489,15 @@ namespace karlo {
 
           // Post all AVL data one-by-one
           int postDataCount = 0;
-          for (auto postDataIt: postDataVec) {
-            postDataCount++;
-            std::cout << "POSTING DATA " << postDataCount << "\n";
-            httpsRequest::singleConnect(postDataIt);
+          if (!gps.getRealTimeState()) {
+            for (auto postDataIt: postDataVec) {
+              postDataCount++;
+              std::cout << "POSTING DATA " << postDataCount << "\n";
+              httpsRequest::singleConnect(postDataIt);
+            }
+            // Clear postDataVec
+            postDataVec.clear();
           }
-          // Clear postDataVec
-          postDataVec.clear();
 
           // Terminate thread if ignition is turned off
           if (!gps.getRealTimeState() && data.ignitionOn == false) return 1;
