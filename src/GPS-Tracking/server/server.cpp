@@ -259,14 +259,8 @@ namespace karlo {
     std::string dateAndTimeNow(std::string time_zone = "UTC") {
       std::stringstream dateAndTime;
       int secondsFromUTC;
-      switch (time_zone) {
-        case "WIB":
-          secondsFromUTC = 3600*7;
-          break;
-        default:
-          secondsFromUTC = 3600*7;
-          break;
-      }
+      if (time_zome == "WIB") secondsFromUTC = 3600*7;
+      else secondsFromUTC = 0;
 
       auto now = std::chrono::system_clock::now();
       auto in_time_t = std::chrono::system_clock::to_time_t(now) + secondsFromUTC;
@@ -410,11 +404,13 @@ namespace karlo {
 
           // Reading all remaining hexadecimal stream that comes after data field length
           hex_stream = gps.getBytes(connfd, data_NOB + CRC16_NOB);
+          std::cout << hex_stream << std::endl;
           if (hex_stream == "") return -3;
 
           codec = stringSubstr(hex_stream, CODEC_ID_POS, CODEC_ID_NOB*2);
 
           if (codec == "08") {
+            std::cout << "if codec checkpoint\n";
             numOfData1 = std::stoi(stringSubstr(hex_stream ,NUM_OF_DATA1_POS, NUM_OF_DATA_NOB*2), 0, 16);
             NUM_OF_DATA2_POS = 2 * (data_NOB - NUM_OF_DATA_NOB);
             numOfData2 = std::stoi(stringSubstr(hex_stream, NUM_OF_DATA2_POS, NUM_OF_DATA_NOB*2), 0, 16);
@@ -423,6 +419,7 @@ namespace karlo {
             AVL_NOB = data_NOB - CODEC_ID_NOB - 2 * NUM_OF_DATA_NOB;
 
             for (i = 0; i < numOfData1; i++) {
+              std::cout << "numOfData counting...\n";
               AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2*NUM_OF_DATA_NOB + 2*(AVL_NOB/numOfData1)*i;
 
               data.createdAt = timestampToDate(stringSubstr(hex_stream, AVL_POS + TIMESTAMP_POS, TIMESTAMP_NOB*2));
@@ -476,6 +473,7 @@ namespace karlo {
               else if (event == "ef" && data.ignitionOn == false) data.description = "Ignition turned off.";
               else data.description = "This is default value";
 
+              std::cout << "push back post data...\n";
               postDataVec.push_back(postData);
             }
             // AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2*NUM_OF_DATA_NOB + 2*(AVL_NOB/numOfData1)*(numOfData1-1);

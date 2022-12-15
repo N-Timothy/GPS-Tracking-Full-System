@@ -66,7 +66,7 @@ namespace karlo {
           } else if (batt < 22500) {
             battStatus = "\"LOW\"";
           } else if (batt == 0) {
-            battStatus = "\"UNPLUGGED\""
+            battStatus = "\"UNPLUGGED\"";
           }
 
           std::string Msg = "{\"latitude\":" + std::to_string(latitude) + "," + "\"longitude\":" + std::to_string(longitude) + "," + "\"altitude\":" + std::to_string(0) + "," + "\"speed\":" + to_string(data["speed"]) + "," + "\"bearing\":" + to_string(data["bearing"]) + "," + "\"imeiTracker\":" + to_string(data["imei"]) + "," + "\"battStatus\":" + battStatus + "," + "\"status\":" + status + "}";
@@ -79,7 +79,7 @@ namespace karlo {
           }
 
           if (res_staging) {
-            syd::cout << "staging: " << res_staging->body << std::endl;
+            std::cout << "staging: " << res_staging->body << std::endl;
           }
         }
       }

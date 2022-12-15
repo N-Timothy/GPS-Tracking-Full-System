@@ -57,7 +57,7 @@ namespace karlo {
         std::cout << "\x1b[31mSocket " << socket << ": socket is not used\x1b[0m\n";
       }
       else if (comm == -6) {
-        std::cout << "\x1b[31mSocket " << socket << ": timeout\x1b[0m\n"
+        std::cout << "\x1b[31mSocket " << socket << ": timeout\x1b[0m\n";
       }
 
       removeSocket(socket);
@@ -159,9 +159,6 @@ namespace karlo {
         for (auto it: failed_socket) {
           if (close(it) == 0) {
             failed_socket.erase(std::find(failed_socket.begin(), failed_socket.end(), it));
-          }
-          else {
-            std::cout << "Failed to close socket " << it << " again\n";
           }
         }
 
