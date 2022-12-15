@@ -56,6 +56,9 @@ namespace karlo {
       else if (comm == -5) {
         std::cout << "\x1b[31mSocket " << socket << ": socket is not used\x1b[0m\n";
       }
+      else if (comm == -6) {
+        std::cout << "\x1b[31mSocket " << socket << ": timeout\x1b[0m\n"
+      }
 
       removeSocket(socket);
 

@@ -64,11 +64,6 @@ namespace karlo {
         }
         return buff.str();
       }
-      std::string getBytes2 (int connfd, int byteslen) {
-        result = getBytes(connfd, byteslen);
-        std::cout << result;
-        return result;
-      }
 
       std::string slice_imei(std::string imei_raw) {
         std::string imei;
@@ -82,8 +77,8 @@ namespace karlo {
 
         if (imei_raw.substr(0, 4) != "000f") return -2;
 
-        for (auto i = imei_list.begin(); i != imei_list.end(); i++) {
-          if (imei == *i) return 0;
+        for (auto it: imei_list) {
+          if (imei == it) return 0;
         }
         return -1;
       }
@@ -103,8 +98,8 @@ namespace karlo {
         }
       }
       int imeiCheckForDatabase(std::string imei, std::vector<json> imei_list) {
-        for (auto i = imei_list.begin(); i != imei_list.end(); i++) {
-          if (imei == *i) return 0;
+        for (auto it: imei_list) {
+          if (imei == it) return 0;
         }
         return -1;
       }
@@ -116,7 +111,6 @@ namespace karlo {
         bNOD[2] = (numOfData & 0x0000ff00) >> 8; // 0
         bNOD[3] = (numOfData & 0x000000ff) >> 0; // numOfData
         send(connfd, (char*) &bNOD, sizeof(bNOD), 0);
-//        printf("Received confirmation: %d data\n\n", numOfData);
       }
 
       void sendGPRSCommand(int connfd, bool realTimeFlag) {
@@ -253,14 +247,33 @@ namespace karlo {
     }
 
     std::string stringSubstr(std::string hex, int start, int off) {
-        std::string res;
-        try {
-            res = hex.substr(start, off);
-        } catch (const std::out_of_range& e) {
-            res = "0";
-        }
-        return res;
+      std::string res;
+      try {
+        res = hex.substr(start, off);
+      } catch (const std::out_of_range& e) {
+        res = "0";
       }
+      return res;
+    }
+
+    std::string dateAndTimeNow(std::string time_zone = "UTC") {
+      std::stringstream dateAndTime;
+      int secondsFromUTC;
+      switch (time_zone) {
+        case "WIB":
+          secondsFromUTC = 3600*7;
+          break;
+        default:
+          secondsFromUTC = 3600*7;
+          break;
+      }
+
+      auto now = std::chrono::system_clock::now();
+      auto in_time_t = std::chrono::system_clock::to_time_t(now) + secondsFromUTC;
+      dateAndTime << std::put_time(std::localtime(&in_time_t), "%A, %F, %T [WIB]");
+      
+      return dateAndTime.str();
+    }
 
 
 // Function designed for chat between client and server.
@@ -268,7 +281,9 @@ namespace karlo {
 
       // init struct data
       trackingData data;
-      json eventData;
+      json postData;
+
+      std::vector<json> postDataVec;
 
       std::string buff;
       unsigned i, numOfData1, numOfData2;
@@ -302,22 +317,18 @@ namespace karlo {
 
       // Get IMEI number from new connection
       imei_raw = gps.getBytes(connfd, IMEI_NOB);
-      if (imei_raw == "") {
-        return -3;
-      }
-//      recognition = gps.imeiRecognition(imei_raw, imei_list);
-//      if (recognition == -1) return -1;
-//      else if (recognition == -2) return -2;
+      if (imei_raw == "") return -3;
+
       confirm = gps.imeiConfirmation(connfd, gps.imeiRecognition(imei_raw, imei_list));
       if (confirm == -1) return -1;
       else if (confirm == -2) return -2;
       data.imei = gps.slice_imei(imei_raw);
-      eventData["imei"] = data.imei;
+      postData["imei"] = data.imei;
       std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
 
       // Register imei and socket file descriptor pair into map
       if (imeiSocketMap.find(data.imei) == imeiSocketMap.end()) {
-        imeiSocketMap.emplace( data.imei, connfd);
+        imeiSocketMap.emplace(data.imei, connfd);
       } else {
         imeiSocketMap.find(data.imei)->second = connfd;
       }
@@ -326,7 +337,7 @@ namespace karlo {
       }
 
       // Continuously reading AVL Data as long as connection is linked
-      for(;;) {
+      for (;;) {
         // Check for GPRS command
         if (std::find(imeiRealTimeVec.begin(), imeiRealTimeVec.end(), data.imei) != imeiRealTimeVec.end()) {
           std::cout << "Changing to realtime..\n";
@@ -380,28 +391,15 @@ namespace karlo {
 
         if (FD_ISSET(connfd, &readfds)) {
 
-        //  // Uncomment if "network ping timeout" is configured
-        //  hex = gps.getBytes(connfd, 1);
-        //  if (hex == "ff") {
-        //    std::cout << "Network ping\t\t: " << hex << std::endl;
-        //    continue;
-        //  }
-        //  else if (hex == "00") {
-        //    hex = gps.getBytes(connfd, ZERO_NOB-1);
-        //  }
-
           hex = gps.getBytes(connfd, ZERO_NOB);
-          std::cout << "Zero Bytes\t\t: " << hex << std::endl;
+          std::cout << "Zero Bytes\t\t: " << hex << "\n";
           if (hex == "" || hex != "00000000") {
-            auto now = std::chrono::system_clock::now();
-            auto in_time_t = std::chrono::system_clock::to_time_t(now);
-            std::cout << std::put_time(std::localtime(&in_time_t), "%A, %F, %T [WIB]");
-            std::cout << "\n";
+            std::cout << dateAndTimeNow("WIB") << "\n";
             return -3;
           }
 
           hex = gps.getBytes(connfd, DATA_FIELD_NOB);
-          std::cout << "Data Field Length\t: " << hex << std::endl;
+          std::cout << "Data Field Length\t: " << hex << "\n";
           if (hex == "") return -3;
 
           try {
@@ -418,78 +416,80 @@ namespace karlo {
 
           if (codec == "08") {
             numOfData1 = std::stoi(stringSubstr(hex_stream ,NUM_OF_DATA1_POS, NUM_OF_DATA_NOB*2), 0, 16);
-
-            AVL_NOB = data_NOB - CODEC_ID_NOB - 2 * NUM_OF_DATA_NOB;
-            AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2 * NUM_OF_DATA_NOB + 2 * (AVL_NOB/numOfData1) * (numOfData1-1);
-
-            data.createdAt = timestampToDate(stringSubstr(hex_stream, AVL_POS, TIMESTAMP_NOB*2));
-            data.longitude = hexToLongitudeLatitude(stringSubstr(hex_stream, AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2));
-            eventData["longitude"] = data.longitude;
-            
-            data.latitude = hexToLongitudeLatitude(stringSubstr(hex_stream, AVL_POS + LATITUDE_POS, LATITUDE_NOB*2));
-            eventData["latitude"] = data.latitude;
-
-            data.bearing = std::stoi(stringSubstr(hex_stream, AVL_POS + ANGLE_POS, ANGLE_NOB*2), 0, 16);
-            eventData["bearing"] = data.bearing;
-
-            data.speed = std::stoi(stringSubstr(hex_stream, AVL_POS + SPEED_POS, SPEED_NOB*2), 0, 16);
-            eventData["speed"] = data.speed;
-
-            event = stringSubstr(hex_stream, AVL_POS + EVENT_IO_ID_POS, EVENT_IO_ID_NOB*2);
-
-            numOfOneByteID = std::stoi(stringSubstr(hex_stream, AVL_POS + NUM_OF_1B_IO_POS, NUM_OF_IO_NOB*2), 0, 16);
-            for (i = 0; i < numOfOneByteID; i++) {
-              ID_POS = NUM_OF_1B_IO_POS + NUM_OF_IO_NOB*2 + 2*i * (ID_NOB + VALUE1_NOB);
-              VALUE_POS = ID_POS + 2 * ID_NOB;
-              id = stringSubstr(hex_stream, AVL_POS + ID_POS, ID_NOB*2);
-
-              // Ignition ID = 239
-              if (id == "ef") {
-                data.ignitionOn = std::stoi(stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
-                eventData["ignitionOn"] = data.ignitionOn;
-              }
-              // Sleep Mode ID = 200
-              else if (id == "c8") {
-                data.sleepMode = std::stoi(stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16); 
-              }
-            }
-
-            numOfTwoBytesID = std::stoi(stringSubstr(hex_stream, AVL_POS + NUM_OF_2B_IO_POS, NUM_OF_IO_NOB*2), 0, 16);
-            for (i = 0; i < numOfTwoBytesID; i++) {
-              ID_POS = NUM_OF_2B_IO_POS + NUM_OF_IO_NOB*2 + 2*i * (ID_NOB + VALUE2_NOB);
-              VALUE_POS = ID_POS + ID_NOB*2;
-              id = stringSubstr(hex_stream, AVL_POS + ID_POS, ID_NOB*2);
-
-              // Battery ID = 66
-              if (id == "42") {
-                data.exBattVoltage = std::stoi(stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE2_NOB*2), 0, 16);
-                eventData["exBattVoltage"] = data.exBattVoltage;
-                break;
-              }
-            }
-
-            // Description
-            if (event == "ef" && data.ignitionOn == true) data.description = "Ignition turned on!";
-            else if (event == "ef" && data.ignitionOn == false) data.description = "Ignition turned off.";
-            else data.description = "This is default value";
-
             NUM_OF_DATA2_POS = 2 * (data_NOB - NUM_OF_DATA_NOB);
             numOfData2 = std::stoi(stringSubstr(hex_stream, NUM_OF_DATA2_POS, NUM_OF_DATA_NOB*2), 0, 16);
-
             if (numOfData1 != numOfData2) return -3;
+            
+            AVL_NOB = data_NOB - CODEC_ID_NOB - 2 * NUM_OF_DATA_NOB;
 
-            std::cout << "Imei\t\t\t: " << data.imei << "\n";
+            for (i = 0; i < numOfData1; i++) {
+              AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2*NUM_OF_DATA_NOB + 2*(AVL_NOB/numOfData1)*i;
+
+              data.createdAt = timestampToDate(stringSubstr(hex_stream, AVL_POS + TIMESTAMP_POS, TIMESTAMP_NOB*2));
+              data.longitude = hexToLongitudeLatitude(stringSubstr(hex_stream, AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2));
+              postData["longitude"] = data.longitude;
+              
+              data.latitude = hexToLongitudeLatitude(stringSubstr(hex_stream, AVL_POS + LATITUDE_POS, LATITUDE_NOB*2));
+              postData["latitude"] = data.latitude;
+
+              data.bearing = std::stoi(stringSubstr(hex_stream, AVL_POS + ANGLE_POS, ANGLE_NOB*2), 0, 16);
+              postData["bearing"] = data.bearing;
+
+              data.speed = std::stoi(stringSubstr(hex_stream, AVL_POS + SPEED_POS, SPEED_NOB*2), 0, 16);
+              postData["speed"] = data.speed;
+
+              event = stringSubstr(hex_stream, AVL_POS + EVENT_IO_ID_POS, EVENT_IO_ID_NOB*2);
+
+              numOfOneByteID = std::stoi(stringSubstr(hex_stream, AVL_POS + NUM_OF_1B_IO_POS, NUM_OF_IO_NOB*2), 0, 16);
+              for (i = 0; i < numOfOneByteID; i++) {
+                ID_POS = NUM_OF_1B_IO_POS + NUM_OF_IO_NOB*2 + 2*i * (ID_NOB + VALUE1_NOB);
+                VALUE_POS = ID_POS + 2 * ID_NOB;
+                id = stringSubstr(hex_stream, AVL_POS + ID_POS, ID_NOB*2);
+
+                // Ignition ID = 239
+                if (id == "ef") {
+                  data.ignitionOn = std::stoi(stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16);
+                  postData["ignitionOn"] = data.ignitionOn;
+                }
+                // Sleep Mode ID = 200
+                else if (id == "c8") {
+                  data.sleepMode = std::stoi(stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB*2), 0, 16); 
+                }
+              }
+
+              numOfTwoBytesID = std::stoi(stringSubstr(hex_stream, AVL_POS + NUM_OF_2B_IO_POS, NUM_OF_IO_NOB*2), 0, 16);
+              for (i = 0; i < numOfTwoBytesID; i++) {
+                ID_POS = NUM_OF_2B_IO_POS + NUM_OF_IO_NOB*2 + 2*i * (ID_NOB + VALUE2_NOB);
+                VALUE_POS = ID_POS + ID_NOB*2;
+                id = stringSubstr(hex_stream, AVL_POS + ID_POS, ID_NOB*2);
+
+                // Battery ID = 66
+                if (id == "42") {
+                  data.exBattVoltage = std::stoi(stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE2_NOB*2), 0, 16);
+                  postData["exBattVoltage"] = data.exBattVoltage;
+                  break;
+                }
+              }
+
+              // Description of event
+              if (event == "ef" && data.ignitionOn == true) data.description = "Ignition turned on!";
+              else if (event == "ef" && data.ignitionOn == false) data.description = "Ignition turned off.";
+              else data.description = "This is default value";
+
+              postDataVec.push_back(postData);
+            }
+            // AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2*NUM_OF_DATA_NOB + 2*(AVL_NOB/numOfData1)*(numOfData1-1);
+
+
+            std::cout << "IMEI\t\t\t: " << data.imei << "\n";
             std::cout << "Number of Data\t\t: " << numOfData1 << "\n";
-            std::cout << "Timestamp\t\t: " << stringSubstr(hex_stream, AVL_POS, TIMESTAMP_NOB*2) << "(" << data.createdAt << ")\n";
+            std::cout << "Timestamp\t\t: " << stringSubstr(hex_stream, AVL_POS, TIMESTAMP_NOB*2) << " (" << data.createdAt << ")\n";
 
             gps.sendConfirmation(connfd, numOfData2);
 
             // Print time right after AVL data is received
-            auto now = std::chrono::system_clock::now();
-            auto in_time_t = std::chrono::system_clock::to_time_t(now) + 3600*7;
-            data.updatedAt = std::put_time(std::localtime(&in_time_t), "%A, %F, %T [WIB]");
-            std::cout << "Updated At: " << data.updatedAt;
-            std::cout << "\n\n";
+            data.updatedAt = dateAndTimeNow("WIB");
+            std::cout << "Updated At: " << data.updatedAt << "\n\n";
           }
           else if (codec == "0c") {
             std::cout << "GPRS RESPONSE:\n";
@@ -497,29 +497,27 @@ namespace karlo {
             std::cout << "\n\n";
           }
 
-          // Save necessary AVL data to database
+          // Save newest AVL data to database
           std::unique_lock<std::mutex> lk(m);
           if (!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return ready;})){
-            //std::cout << "\n\033[1;32mTIMEOUT .... !!\033[0m\n";
-            return -3;
+            return -6;
           }
           else {
-            if (gps.imeiCheckForDatabase(data.imei, imei_list) == 0) {
-              database::createData(data);
-            } else {
-              return -1;
-            }
+            database::createData(data);
+          }
+
+          // Post all AVL data one-by-one
+          int postDataCount = 0;
+          for (auto postDataIt: postDataVec) {
+            postDataCount++;
+            std::cout << "POSTING DATA " << postDataCount << "\n";
+            httpsRequest::singleConnect(postDataIt);
           }
 
           // Check if fleet ignition is off
           if (data.ignitionOn == false) return 0;
 
         } // if FD_ISSET()
-
-        // If ignition event occurs
-        if (event == "ef") {
-          httpsRequest::singleConnect(eventData);
-        }
 
         // Close connection if imei-socket pair is not found
         if (imeiSocketMap.find(data.imei)->second != connfd) return -5;
