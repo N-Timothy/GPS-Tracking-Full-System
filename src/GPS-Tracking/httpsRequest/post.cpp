@@ -68,7 +68,15 @@ namespace karlo {
             battStatus = "\"Unplugged\"";
           }
 
-          std::string Msg = "{\"latitude\":" + std::to_string(latitude) + "," + "\"longitude\":" + std::to_string(longitude) + "," + "\"altitude\":" + std::to_string(0) + "," + "\"speed\":" + to_string(data["speed"]) + "," + "\"bearing\":" + to_string(data["bearing"]) + "," + "\"imeiTracker\":" + to_string(data["imei"]) + "," + "\"battStatus\":" + battStatus + "," + "\"status\":" + status + "}";
+          std::string Msg = "{\"timeCreated\":" + to_string(data["timestamp"]) + "," +
+          "\"latitude\":" + std::to_string(latitude) + "," +
+          "\"longitude\":" + std::to_string(longitude) + "," +
+          "\"altitude\":" + std::to_string(0) + "," +
+          "\"speed\":" + to_string(data["speed"]) + "," +
+          "\"bearing\":" + to_string(data["bearing"]) + "," +
+          "\"imeiTracker\":" + to_string(data["imei"]) + "," +
+          "\"battStatus\":" + battStatus + "," +
+          "\"status\":" + status + "}";
 
           auto res = cli.Post(postUrl, Msg, "application/json");
           auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
@@ -127,7 +135,15 @@ namespace karlo {
         battStatus = "\"Unplugged\"";
       }
 
-      std::string Msg = "{\"latitude\":" + std::to_string(latitude) + "," +"\"longitude\":" + std::to_string(longitude) + "," + "\"altitude\":" + to_string(data["altitude"]) + "," + "\"speed\":" + to_string(data["speed"]) + "," + "\"bearing\":" + to_string(data["bearing"]) + "," + "\"imeiTracker\":" + to_string(data["imei"]) + "," + "\"battStatus\":" + battStatus + "," + "\"status\":" + status + "}";
+      std::string Msg = "{\"timeCreated\":" + to_string(data["timestamp"]) + "," +
+      "\"latitude\":" + std::to_string(latitude) + "," +
+      "\"longitude\":" + std::to_string(longitude) + "," +
+      "\"altitude\":" + to_string(data["altitude"]) + "," +
+      "\"speed\":" + to_string(data["speed"]) + "," +
+      "\"bearing\":" + to_string(data["bearing"]) + "," +
+      "\"imeiTracker\":" + to_string(data["imei"]) + "," +
+      "\"battStatus\":" + battStatus + "," +
+      "\"status\":" + status + "}";
 
       auto res = cli.Post(postUrl, Msg, "application/json");
       auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
