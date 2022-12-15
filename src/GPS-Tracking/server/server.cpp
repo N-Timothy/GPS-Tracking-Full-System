@@ -509,6 +509,8 @@ namespace karlo {
             std::cout << "POSTING DATA " << postDataCount << "\n";
             httpsRequest::singleConnect(postDataIt);
           }
+          // Clear postDataVec
+          postDataVec.clear();
 
           // Check if fleet ignition is off
           if (data.ignitionOn == false) return 0;
