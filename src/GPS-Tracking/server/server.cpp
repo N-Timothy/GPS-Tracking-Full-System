@@ -139,26 +139,26 @@ namespace karlo {
         //                            0x00, 0x00, 0xee, 0x70};
 
         // setparam 10050:60;10150:60;10250:60
-        byte normal_command[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2b,
-                                 0x0c, 0x01, 0x05,
-                                 0x00, 0x00, 0x00, 0x23,
-                                 's', 'e', 't', 'p', 'a', 'r', 'a', 'm', ' ',
-                                 '1', '0', '0', '5', '0', ':', '6', '0', ';',
-                                 '1', '0', '1', '5', '0', ':', '6', '0', ';',
-                                 '1', '0', '2', '5', '0', ':', '6', '0',
-                                 0x01,
-                                 0x00, 0x00, 0x53, 0x42};
+        // byte normal_command[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2b,
+        //                          0x0c, 0x01, 0x05,
+        //                          0x00, 0x00, 0x00, 0x23,
+        //                          's', 'e', 't', 'p', 'a', 'r', 'a', 'm', ' ',
+        //                          '1', '0', '0', '5', '0', ':', '6', '0', ';',
+        //                          '1', '0', '1', '5', '0', ':', '6', '0', ';',
+        //                          '1', '0', '2', '5', '0', ':', '6', '0',
+        //                          0x01,
+        //                          0x00, 0x00, 0x53, 0x42};
 
         // setparam 10050:300;10150:300;10250:300
-        // byte normal_command[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2e,
-        //                          0x0c, 0x01, 0x05,
-        //                          0x00, 0x00, 0x00, 0x26,
-        //                          's', 'e', 't', 'p', 'a', 'r', 'a', 'm', ' ',
-        //                          '1', '0', '0', '5', '0', ':', '3', '0', '0', ';',
-        //                          '1', '0', '1', '5', '0', ':', '3', '0', '0', ';',
-        //                          '1', '0', '2', '5', '0', ':', '3', '0', '0',
-        //                          0x01,
-        //                          0x00, 0x00, 0xb7, 0x14};
+        byte normal_command[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2e,
+                                 0x0c, 0x01, 0x05,
+                                 0x00, 0x00, 0x00, 0x26,
+                                 's', 'e', 't', 'p', 'a', 'r', 'a', 'm', ' ',
+                                 '1', '0', '0', '5', '0', ':', '3', '0', '0', ';',
+                                 '1', '0', '1', '5', '0', ':', '3', '0', '0', ';',
+                                 '1', '0', '2', '5', '0', ':', '3', '0', '0',
+                                 0x01,
+                                 0x00, 0x00, 0xb7, 0x14};
 
         if (realTimeFlag) send(connfd, (char *) &realtime_command, sizeof(realtime_command), 0);
         else send(connfd, (char *) &normal_command, sizeof(normal_command), 0);
@@ -471,8 +471,7 @@ namespace karlo {
 
               if (gps.getRealTimeState()) {
                 realTimeElapsed += 5;
-                std::cout << "Real Time Elapsed: " << realTimeElapsed << std::endl;
-                if (realTimeElapsed >= 60) {
+                if (realTimeElapsed > 300) {
                   httpsRequest::singleConnect(postData);
                   realTimeElapsed = 0;
                 }
@@ -480,8 +479,6 @@ namespace karlo {
                 postDataVec.push_back(postData);
               }
             }
-            // AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2*NUM_OF_DATA_NOB + 2*(AVL_NOB/numOfData1)*(numOfData1-1);
-
 
             std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
             std::cout << "Number of Data\t\t: " << numOfData1 << std::endl;
