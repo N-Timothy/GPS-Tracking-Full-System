@@ -197,11 +197,8 @@ namespace karlo {
       std::time_t t_c = std::chrono::system_clock::to_time_t(sc);
       std::stringstream dateAndTime;
       std::stringstream year;
-      dateAndTime << std::put_time(std::localtime(&t_c), "%A, %F, %T [WIB]");
-      year << std::put_time(std::localtime(&t_c), "%F");
-      if (year.str() == "1970-01-01" || year.str() == "") {
-        return "";
-      }
+      dateAndTime << std::put_time(std::localtime(&t_c), "%FT%TZ");
+
       return dateAndTime.str();
     }
 
