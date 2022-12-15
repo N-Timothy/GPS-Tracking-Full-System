@@ -3,7 +3,7 @@
 
 /*
     #define CPPHTTPLIB_OPENSSL_SUPPORT is required for https
-    this need to be placed before #include "httplib.h" 
+    this need to be placed before #include "httplib.h"
     or it will produce segmentation fault
 */
 
@@ -12,18 +12,17 @@
 
 #include <nlohmann/json.hpp>
 
-
 namespace karlo {
-    namespace httpsRequest {
-        
-        using json = nlohmann::json;
+  namespace httpsRequest {
 
-        void setHttpsConfig(json httpsConfig);
+    using json = nlohmann::json;
 
-        void connect();
-        
-        void singleConnect(json data);
-    
-    } // namespace httpRequest
+    void setHttpsConfig(json httpsConfig);
+
+    void connect();
+
+    void singleConnect(json data);
+
+  } // namespace httpRequest
 } // namespace karlo
 #endif //_GPS_TRACKING_HTTPS_REQUEST_HPP_

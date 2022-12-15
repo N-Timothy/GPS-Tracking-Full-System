@@ -7,34 +7,31 @@
 #include <chrono>
 
 namespace karlo {
-    namespace httpsRequest {
+  namespace httpsRequest {
 
+    json config;
 
-        json config;
+    void setHttpsConfig(json httpsConfig) {
+      config = httpsConfig;
+    }
 
-        void setHttpsConfig(json httpsConfig){
-            config = httpsConfig;
-        }
+    void connect() {
 
-        void connect() {
+      // json config = core::config::config_https();
+      std::string URL = config["url"];
+      int timeInterval = config["interval"];
 
-//            json config = core::config::config_https();
-            std::string URL = config["url"];
+      while (true) {
+        std::this_thread::sleep_for(std::chrono::seconds(timeInterval));
+        post(URL, config);
+      }
+    }
 
-            int timeInterval = config["interval"];
-//            post(URL);
+    void singleConnect(json data) {
+      std::string URL = config["url"];
 
-            while (true) {
-                std::this_thread::sleep_for(std::chrono::seconds(timeInterval));
-                post(URL, config);
-            }
-        }
+      post(URL, config, data);
+    }
 
-        void singleConnect(json data){
-            std::string URL = config["url"];
-
-            post(URL, config, data);
-        }
-
-    } // namespace httpRequest
-} //namespace karlo
+  } // namespace httpRequest
+} // namespace karlo

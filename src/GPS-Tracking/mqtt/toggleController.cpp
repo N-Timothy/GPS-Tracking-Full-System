@@ -41,18 +41,17 @@ namespace karlo {
         }
       }
 
-      if(index == 0) {
+      if (index == 0) {
         return message.substr(0,i);
       } else {
         return message.substr(i+1, message.length());
       }
-
     }
 
     int publisher_thread(std::string imei) {
 
       std::unique_lock<std::mutex> lk(mtx);
-      if(!con_var.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return pub_ready;})){
+      if (!con_var.wait_until(lk, std::chrono::system_clock::now() + 3s, []{return pub_ready;})) {
         std::cout << "publish is beeing used" << std::endl;
         return -1;
       } else {
@@ -94,7 +93,6 @@ namespace karlo {
 //              std::cout << "MQTT TIMEOUT" << std::endl;
 //              continue;
             } else {
-
 //              std::cout << "Succeed ... " << std::endl;
               counter++;
             }
@@ -115,7 +113,7 @@ namespace karlo {
 
     std::vector<std::string> removeVectorElement(std::vector<std::string> vecId, std::string id) {
       auto it = find(vecId.begin(), vecId.end(), id);
-      if (it != vecId.end()){
+      if (it != vecId.end()) {
         vecId.erase(it);
       }
       return vecId;
@@ -123,7 +121,7 @@ namespace karlo {
 
     void toggleController (json subscribeMessage) {
 
-      if(!subscribeMessage.is_null()) {
+      if (!subscribeMessage.is_null()) {
 
         std::string imei = subscribeMessage["id"];
 
@@ -148,28 +146,26 @@ namespace karlo {
 
 
 
-        if(toggle == "true") {
-          if(idVector.empty()) {
+        if (toggle == "true") {
+          if (idVector.empty()) {
             idVector.push_back(driverId);
-            std::cout << "== REALTIME ==\n";
+            std::cout << imei << ": TO REALTIME\n";
             server::toRealTime(imei, true);
-//            std::cout << "Toggle True by : " << driverId << std::endl;
           } else {
-            if(std::find(idVector.begin(), idVector.end(), driverId) == idVector.end()) {
+            if (std::find(idVector.begin(), idVector.end(), driverId) == idVector.end()) {
               idVector.push_back(driverId);
             }
           }
         } else if (toggle == "false") {
-          if(std::find(idVector.begin(), idVector.end(), driverId) != idVector.end()) {
+          if (std::find(idVector.begin(), idVector.end(), driverId) != idVector.end()) {
             idVector = removeVectorElement(idVector, driverId);
 
             // If there is no user asking for real-time, turn to normal
             if (idVector.empty()) {
-              std::cout << "== NORMAL ==\n";
+              std::cout << imei << ": TO NORMAL\n";
               server::toRealTime(imei, false);
             }
           }
-//          std::cout << "Toggle False by : " << driverId << std::endl;
           Publish:
           int res = publisher_thread(imei);
 

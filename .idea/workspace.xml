@@ -52,7 +52,8 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/nchon/Downloads/KARLO/main_karlo&quot;
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/nchon/Downloads/KARLO/main_karlo&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
 }</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -74,7 +75,9 @@
       <workItem from="1668863966506" duration="403000" />
       <workItem from="1668922290662" duration="1010000" />
       <workItem from="1668944535355" duration="2648000" />
-      <workItem from="1668994947956" duration="4877000" />
+      <workItem from="1668994947956" duration="6221000" />
+      <workItem from="1669081757286" duration="2974000" />
+      <workItem from="1669217485759" duration="104000" />
     </task>
     <servers />
   </component>
