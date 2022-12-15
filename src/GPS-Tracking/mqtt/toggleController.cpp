@@ -149,7 +149,7 @@ namespace karlo {
         if (toggle == "true") {
           if (idVector.empty()) {
             idVector.push_back(driverId);
-            std::cout << "== TO REALTIME ==\n";
+            std::cout << imei << ": TO REALTIME\n";
             server::toRealTime(imei, true);
           } else {
             if (std::find(idVector.begin(), idVector.end(), driverId) == idVector.end()) {
@@ -162,7 +162,7 @@ namespace karlo {
 
             // If there is no user asking for real-time, turn to normal
             if (idVector.empty()) {
-              std::cout << "== TO NORMAL ==\n";
+              std::cout << imei << ": TO NORMAL\n";
               server::toRealTime(imei, false);
             }
           }
