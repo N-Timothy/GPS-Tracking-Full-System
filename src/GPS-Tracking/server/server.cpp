@@ -417,7 +417,8 @@ namespace karlo {
             AVL_NOB = data_NOB - CODEC_ID_NOB - 2 * NUM_OF_DATA_NOB;
 
             for (dataCount = 0; dataCount < numOfData1; dataCount++) {
-              AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2*NUM_OF_DATA_NOB + 2*(AVL_NOB/numOfData1)*i;
+              AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2*NUM_OF_DATA_NOB + 2*(AVL_NOB/numOfData1)*dataCount;
+              std::cout << "AVL POS: " << AVL_POS << std::endl;
 
               data.createdAt = timestampToDate(stringSubstr(hex_stream, AVL_POS + TIMESTAMP_POS, TIMESTAMP_NOB*2));
               data.longitude = hexToLongitudeLatitude(stringSubstr(hex_stream, AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2));
