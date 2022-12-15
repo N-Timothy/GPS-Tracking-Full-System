@@ -414,6 +414,8 @@ namespace karlo {
               AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2*NUM_OF_DATA_NOB + 2*(AVL_NOB/numOfData1)*dataCount;
 
               data.createdAt = timestampToDate(stringSubstr(hex_stream, AVL_POS + TIMESTAMP_POS, TIMESTAMP_NOB*2));
+              postData["timestamp"] = data.createdAt;
+
               data.longitude = hexToLongitudeLatitude(stringSubstr(hex_stream, AVL_POS + LONGITUDE_POS, LONGITUDE_NOB*2));
               postData["longitude"] = data.longitude;
               
