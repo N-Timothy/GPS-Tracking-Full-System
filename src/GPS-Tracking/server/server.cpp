@@ -259,7 +259,7 @@ namespace karlo {
     std::string dateAndTimeNow(std::string time_zone = "UTC") {
       std::stringstream dateAndTime;
       int secondsFromUTC;
-      if (time_zome == "WIB") secondsFromUTC = 3600*7;
+      if (time_zone == "WIB") secondsFromUTC = 3600*7;
       else secondsFromUTC = 0;
 
       auto now = std::chrono::system_clock::now();
@@ -412,14 +412,17 @@ namespace karlo {
           if (codec == "08") {
             std::cout << "if codec checkpoint\n";
             numOfData1 = std::stoi(stringSubstr(hex_stream ,NUM_OF_DATA1_POS, NUM_OF_DATA_NOB*2), 0, 16);
+            std::cout << "numOfData1 = " << numOfData1 << std::endl;
             NUM_OF_DATA2_POS = 2 * (data_NOB - NUM_OF_DATA_NOB);
             numOfData2 = std::stoi(stringSubstr(hex_stream, NUM_OF_DATA2_POS, NUM_OF_DATA_NOB*2), 0, 16);
+            std::cout << "numOfData2 = " << numOfData2 << std::endl;
             if (numOfData1 != numOfData2) return -3;
             
             AVL_NOB = data_NOB - CODEC_ID_NOB - 2 * NUM_OF_DATA_NOB;
 
             for (i = 0; i < numOfData1; i++) {
               std::cout << "numOfData counting...\n";
+              std::this_thread::sleep_for(std::chrono::seconds(1));
               AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2*NUM_OF_DATA_NOB + 2*(AVL_NOB/numOfData1)*i;
 
               data.createdAt = timestampToDate(stringSubstr(hex_stream, AVL_POS + TIMESTAMP_POS, TIMESTAMP_NOB*2));
