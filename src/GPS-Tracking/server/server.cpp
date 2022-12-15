@@ -458,7 +458,7 @@ namespace karlo {
 
               if (gps.getRealTimeState()) {
                 realTimeElapsed += 5;
-                if (realTimeDataCounter >= 300) {
+                if (realTimeElapsed >= 300) {
                   postDataVec.push_back(postData);
                   realTimeElapsed = 0;
                 }
