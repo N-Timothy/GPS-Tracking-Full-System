@@ -404,18 +404,14 @@ namespace karlo {
 
           // Reading all remaining hexadecimal stream that comes after data field length
           hex_stream = gps.getBytes(connfd, data_NOB + CRC16_NOB);
-          std::cout << hex_stream << std::endl;
           if (hex_stream == "") return -3;
 
           codec = stringSubstr(hex_stream, CODEC_ID_POS, CODEC_ID_NOB*2);
 
           if (codec == "08") {
-            std::cout << "if codec checkpoint\n";
             numOfData1 = std::stoi(stringSubstr(hex_stream ,NUM_OF_DATA1_POS, NUM_OF_DATA_NOB*2), 0, 16);
-            std::cout << "numOfData1 = " << numOfData1 << std::endl;
             NUM_OF_DATA2_POS = 2 * (data_NOB - NUM_OF_DATA_NOB);
             numOfData2 = std::stoi(stringSubstr(hex_stream, NUM_OF_DATA2_POS, NUM_OF_DATA_NOB*2), 0, 16);
-            std::cout << "numOfData2 = " << numOfData2 << std::endl;
             if (numOfData1 != numOfData2) return -3;
             
             AVL_NOB = data_NOB - CODEC_ID_NOB - 2 * NUM_OF_DATA_NOB;
@@ -477,8 +473,6 @@ namespace karlo {
               else if (event == "ef" && data.ignitionOn == false) data.description = "Ignition turned off.";
               else data.description = "This is default value";
 
-              std::cout << "push back post data...\n";
-              std::this_thread::sleep_for(std::chrono::seconds(1));
               postDataVec.push_back(postData);
             }
             // AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2*NUM_OF_DATA_NOB + 2*(AVL_NOB/numOfData1)*(numOfData1-1);
