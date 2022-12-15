@@ -421,8 +421,6 @@ namespace karlo {
             AVL_NOB = data_NOB - CODEC_ID_NOB - 2 * NUM_OF_DATA_NOB;
 
             for (dataCount = 0; dataCount < numOfData1; dataCount++) {
-              std::cout << "numOfData counting...\n";
-              std::this_thread::sleep_for(std::chrono::seconds(1));
               AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2*NUM_OF_DATA_NOB + 2*(AVL_NOB/numOfData1)*i;
 
               data.createdAt = timestampToDate(stringSubstr(hex_stream, AVL_POS + TIMESTAMP_POS, TIMESTAMP_NOB*2));
@@ -431,6 +429,9 @@ namespace karlo {
               
               data.latitude = hexToLongitudeLatitude(stringSubstr(hex_stream, AVL_POS + LATITUDE_POS, LATITUDE_NOB*2));
               postData["latitude"] = data.latitude;
+
+              data.altitude = std::stoi(stringSubstr(hex_stream, AVL_POS + ALTITUDE_POS, ALTITUDE_NOB*2), 0, 16);
+              postData["altitude"] = data.altitude;
 
               data.bearing = std::stoi(stringSubstr(hex_stream, AVL_POS + ANGLE_POS, ANGLE_NOB*2), 0, 16);
               postData["bearing"] = data.bearing;
@@ -477,13 +478,14 @@ namespace karlo {
               else data.description = "This is default value";
 
               std::cout << "push back post data...\n";
+              std::this_thread::sleep_for(std::chrono::seconds(1));
               postDataVec.push_back(postData);
             }
             // AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2*NUM_OF_DATA_NOB + 2*(AVL_NOB/numOfData1)*(numOfData1-1);
 
 
-            std::cout << "IMEI\t\t\t: " << data.imei << "\n";
-            std::cout << "Number of Data\t\t: " << numOfData1 << "\n";
+            std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
+            std::cout << "Number of Data\t\t: " << numOfData1 << std::endl;
             std::cout << "Timestamp\t\t: " << stringSubstr(hex_stream, AVL_POS, TIMESTAMP_NOB*2) << " (" << data.createdAt << ")\n";
 
             gps.sendConfirmation(connfd, numOfData2);
@@ -494,8 +496,7 @@ namespace karlo {
           }
           else if (codec == "0c") {
             std::cout << "GPRS RESPONSE:\n";
-            std::cout << hex_stream;
-            std::cout << "\n\n";
+            std::cout << hex_stream << "\n\n";
           }
 
           // Save newest AVL data to database
