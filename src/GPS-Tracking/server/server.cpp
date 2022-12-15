@@ -114,7 +114,6 @@ namespace karlo {
       }
 
       void sendGPRSCommand(int connfd, bool realTimeFlag) {
-        std::cout << "SERVER COMMAND...\n";
         typedef unsigned char byte;
 
         // setparam 10050:5;10150:5;10250:5
@@ -152,8 +151,6 @@ namespace karlo {
 
         if (realTimeFlag) send(connfd, (char *) &realtime_command, sizeof(realtime_command), 0);
         else send(connfd, (char *) &normal_command, sizeof(normal_command), 0);
-        std::cout << "COMMAND SENT.\n";
-
       }
     };
 
@@ -292,6 +289,7 @@ namespace karlo {
 
       std::string buff;
       unsigned i, dataCount, numOfData1, numOfData2;
+      unsigned realTimeElapsed = 0;
       int confirm, recognition;
       unsigned numOfOneByteID, numOfTwoBytesID, numOfFourBytesID, numOfEightBytesID;
       std::string imei_raw, codec;
@@ -458,7 +456,15 @@ namespace karlo {
               else if (event == "ef" && data.ignitionOn == false) data.description = "Ignition turned off.";
               else data.description = "This is default value";
 
-              postDataVec.push_back(postData);
+              if (gps.getRealTimeState()) {
+                realTimeElapsed += 5;
+                if (realTimeDataCounter >= 300) {
+                  postDataVec.push_back(postData);
+                  realTimeElapsed = 0;
+                }
+              } else {
+                postDataVec.push_back(postData);
+              }
             }
             // AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2*NUM_OF_DATA_NOB + 2*(AVL_NOB/numOfData1)*(numOfData1-1);
 
