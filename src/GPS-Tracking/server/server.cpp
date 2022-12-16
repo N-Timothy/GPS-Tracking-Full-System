@@ -276,7 +276,7 @@ namespace karlo {
       std::string buff;
       unsigned i, dataCount, numOfData1, numOfData2;
       unsigned realTimeElapsed = 0;
-      int confirm, recognition;
+      int confirm;
       unsigned numOfOneByteID, numOfTwoBytesID, numOfFourBytesID, numOfEightBytesID;
       std::string imei_raw, codec;
       std::string hex;
@@ -355,15 +355,17 @@ namespace karlo {
         if (FD_ISSET(connfd, &readfds)) {
 
           hex = gps.getBytes(connfd, ZERO_NOB);
-          std::cout << "Zero Bytes\t\t: " << hex << "\n";
           if (hex == "" || hex != "00000000") {
-            std::cout << dateAndTimeNow("WIB") << "\n";
+            std::cout << "Zero Bytes\t\t: " << hex << std::endl;
+            std::cout << dateAndTimeNow("WIB") << std::endl;
             return -3;
           }
 
           hex = gps.getBytes(connfd, DATA_FIELD_NOB);
-          std::cout << "Data Field Length\t: " << hex << "\n";
-          if (hex == "") return -3;
+          if (hex == "") {
+            std::cout << "Data Field Length\t: " << hex << std::endl;
+            return -3;
+          }
 
           try {
             data_NOB = std::stoi(hex, 0, 16);
@@ -451,14 +453,13 @@ namespace karlo {
                   realTimeElapsed = 0;
                 }
               } else {
-                std::cout << "Pushback post data...\n";
                 postDataVec.push_back(postData);
               }
             }
 
             std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
             std::cout << "Number of Data\t\t: " << numOfData1 << std::endl;
-            std::cout << "Timestamp\t\t: " << stringSubstr(hex_stream, AVL_POS, TIMESTAMP_NOB*2) << " (" << data.createdAt << ")\n";
+            std::cout << "Timestamp\t\t: " << "" << data.createdAt << std::endl;
 
             gps.sendConfirmation(connfd, numOfData2);
 
