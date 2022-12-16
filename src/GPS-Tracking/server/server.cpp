@@ -503,7 +503,7 @@ namespace karlo {
 
           // Post all AVL data one-by-one
           int postDataCount = 0;
-          if (!gps.getRealTimeState()) {
+          if (!postDataVec.empty() && !gps.getRealTimeState()) {
             for (auto postDataIt: postDataVec) {
               postDataCount++;
               std::cout << "POSTING DATA " << postDataCount << "\n";
