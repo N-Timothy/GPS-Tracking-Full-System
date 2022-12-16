@@ -105,11 +105,11 @@ namespace karlo {
 
       std::string postUrl = config["api"];
 
-      int tmp = ((float)data["latitude"] * 10000000);
-      float latitude = (float)tmp / 10000000;
+      // int tmp = ((float)data["latitude"] * 10000000);
+      // float latitude = (float)tmp / 10000000;
 
-      tmp = ((float)data["longitude"] * 10000000);
-      float longitude = (float)tmp / 10000000;
+      // tmp = ((float)data["longitude"] * 10000000);
+      // float longitude = (float)tmp / 10000000;
 
       int batt;
       data["exBattVoltage"].empty() ? batt = 0 : batt = data["exBattVoltage"];
