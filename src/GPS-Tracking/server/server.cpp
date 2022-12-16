@@ -127,28 +127,6 @@ namespace karlo {
                                    0x01,
                                    0x00, 0x00, 0x99, 0x74};
 
-        // setparam 10050:10;10150:10;10250:10
-        // byte realtime_command[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2b,
-        //                            0x0c, 0x01, 0x05,
-        //                            0x00, 0x00, 0x00, 0x23,
-        //                            's', 'e', 't', 'p', 'a', 'r', 'a', 'm', ' ',
-        //                            '1', '0', '0', '5', '0', ':', '1', '0', ';',
-        //                            '1', '0', '1', '5', '0', ':', '1', '0', ';',
-        //                            '1', '0', '2', '5', '0', ':', '1', '0',
-        //                            0x01,
-        //                            0x00, 0x00, 0xee, 0x70};
-
-        // setparam 10050:60;10150:60;10250:60
-        // byte normal_command[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2b,
-        //                          0x0c, 0x01, 0x05,
-        //                          0x00, 0x00, 0x00, 0x23,
-        //                          's', 'e', 't', 'p', 'a', 'r', 'a', 'm', ' ',
-        //                          '1', '0', '0', '5', '0', ':', '6', '0', ';',
-        //                          '1', '0', '1', '5', '0', ':', '6', '0', ';',
-        //                          '1', '0', '2', '5', '0', ':', '6', '0',
-        //                          0x01,
-        //                          0x00, 0x00, 0x53, 0x42};
-
         // setparam 10050:300;10150:300;10250:300
         byte normal_command[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2e,
                                  0x0c, 0x01, 0x05,
@@ -232,8 +210,8 @@ namespace karlo {
     }
 
     std::string TwoComplement(std::string binary) {
-      for(unsigned i = 0; i < binary.size(); i++) {
-        if(binary[i] == '1'){
+      for (unsigned i = 0; i < binary.size(); i++) {
+        if (binary[i] == '1'){
           binary[i] = '0';
         } else {
           binary[i] = '1';
@@ -252,7 +230,7 @@ namespace karlo {
       return number;
     }
 
-    float hexToLongitudeLatitude(std::string hex) {
+    double hexToLongitudeLatitude(std::string hex) {
       std::string bin;
       bin = hexToBin(hex);
       if (bin[0] == '0') {
@@ -514,7 +492,7 @@ namespace karlo {
             postDataVec.clear();
           }
 
-          // Terminate thread if ignition is turned off
+          // Terminate thread if ignition is off
           if (!gps.getRealTimeState() && data.ignitionOn == false) return 1;
 
         } // if FD_ISSET()

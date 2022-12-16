@@ -42,7 +42,7 @@ namespace karlo {
       comm = communicate(socket, imei_list);
 
       if (comm == 1) {
-        std::cout << "\x1b[32mSocket " << socket << ": Ignition turned off\x1b[0m\n";
+        std::cout << "\x1b[32mSocket " << socket << ": Ignition is off\x1b[0m\n";
       }
       else if (comm == -1) {
         imei_list = readImeiJson(IMEI_JSON_LOCATION);
