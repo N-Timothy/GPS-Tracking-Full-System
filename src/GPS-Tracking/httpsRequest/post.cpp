@@ -136,8 +136,8 @@ namespace karlo {
       }
 
       std::string Msg = "{\"timeCreated\":" + to_string(data["timestamp"]) + "," +
-      "\"latitude\":" + std::to_string(data["latitude"]) + "," +
-      "\"longitude\":" + std::to_string(data["longitude"]) + "," +
+      "\"latitude\":" + to_string(data["latitude"]) + "," +
+      "\"longitude\":" + to_string(data["longitude"]) + "," +
       "\"altitude\":" + to_string(data["altitude"]) + "," +
       "\"speed\":" + to_string(data["speed"]) + "," +
       "\"bearing\":" + to_string(data["bearing"]) + "," +
