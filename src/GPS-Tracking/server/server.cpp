@@ -473,6 +473,7 @@ namespace karlo {
                   realTimeElapsed = 0;
                 }
               } else {
+                std::cout << "Pushback post data...\n";
                 postDataVec.push_back(postData);
               }
             }
