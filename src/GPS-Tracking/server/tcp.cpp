@@ -45,6 +45,7 @@ namespace karlo {
         std::cout << "\x1b[32mSocket " << socket << ": Ignition is off\x1b[0m\n";
       }
       else if (comm == -1) {
+        std::cout << "\x1b[32mSocket " << socket << ": Proceed to read IMEI JSON file\x1b[0m\n";
         imei_list = readImeiJson(IMEI_JSON_LOCATION);
       }
       else if (comm == -2) {
