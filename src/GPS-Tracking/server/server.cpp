@@ -487,7 +487,11 @@ namespace karlo {
             for (auto postDataIt: postDataVec) {
               postDataCount++;
               std::cout << "POSTING DATA " << postDataCount << "\n";
-              httpsRequest::singleConnect(postDataIt);
+              try {
+                httpsRequest::singleConnect(postDataIt);
+              } catch (...) {
+                continue;
+              }
             }
             // Clear postDataVec
             postDataVec.clear();
