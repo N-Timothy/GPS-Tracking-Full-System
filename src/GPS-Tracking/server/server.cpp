@@ -308,6 +308,9 @@ namespace karlo {
       imei_raw = gps.getBytes(connfd, IMEI_NOB);
       if (imei_raw == "") return -3;
 
+      std::cout <<"get BYTES: " << imei_raw  << std::endl;
+      return 0;
+
       confirm = gps.imeiConfirmation(connfd, gps.imeiRecognition(imei_raw, imei_list));
       if (confirm == -1) return -1;
       else if (confirm == -2) return -2;
