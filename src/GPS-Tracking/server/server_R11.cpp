@@ -89,14 +89,14 @@ namespace karlo {
           
          std::cout << "stop bit : " << stop_bit.str() << std::endl; 
 
-         std::cout << "raw data : " << rawData << std::endl; 
-
          auto package = start_bit.str() + packet_length.str() + protocol_number.str() + serial_number.str() + error_check.str() + stop_bit.str();
 
          std::cout << "response package : " << package << std::endl;
 
           // byte package[] = {}
-          send(connfd, (char* ) &package, sizeof(package), 0);
+        send(connfd, (char* ) &package, sizeof(package), 0);
+
+        return 0;
         }
     }; // getData
       
@@ -139,6 +139,15 @@ namespace karlo {
 
     if(confirm == -1) return -1;
     else if (confirm == -2) return -2;
+
+    for(;;) {
+
+       std::string rawData = gps.getBytes(connfd, 41);
+
+       std::cout << "RAW DATA : " << rawData << std::endl;
+
+       std::this_thread::sleep_for(2000s); 
+    }
 
     return 0;
 
