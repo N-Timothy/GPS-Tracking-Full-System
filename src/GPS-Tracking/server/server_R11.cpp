@@ -146,11 +146,51 @@ namespace karlo {
 
        std::cout << "RAW DATA : " << rawData << std::endl;
 
-       std::this_thread::sleep_for(2000s); 
+       // get raw datetime
+
+       std::stringstream raw_datetime;
+       raw_datetime << std::hex << rawData.substr(8, DATE_TIME * 2);
+
+       std::cout << "date time : " << raw_datetime.str()  << std::endl;
+       
+       // get raw latitude 
+       
+       std::stringstream raw_latitude;
+       raw_latitude << std::hex << rawData.substr(22, LATITUDE * 2);
+
+       std::cout << "latitude : " << raw_latitude.str() << std::endl;
+       
+       // get raw longitude
+
+       std::stringstream raw_longitude;
+       raw_longitude << std::hex << rawData.substr(30, LONGITUDE * 2);
+
+       std::cout << "longitude : " << raw_longitude.str() << std::endl;
+       
+       // get raw speed
+
+       std::stringstream raw_speed;
+       raw_speed << std::hex << rawData.substr(38, SPEED * 2);
+
+       std::cout << "Speed : " << raw_speed.str()  << std::endl;
+
+       // get raw course (bearing)
+
+       std::stringstream raw_course;
+       raw_course << std::hex << rawData.substr(40, COURSE * 2);
+
+       std::cout << "course : " << raw_course.str()  << std::endl;
+
+       // get raw voltage
+
+       std::stringstream raw_voltage;
+       raw_voltage << std::hex << rawData.substr(62, VOLTAGE * 2);
+
+       std::cout << "voltage : " << raw_voltage.str()  << std::endl;
+
+       std::this_thread::sleep_for(60s); 
     }
-
     return 0;
-
     }
 
   } // namespace server_r11

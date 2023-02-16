@@ -18,7 +18,7 @@
 #define LATITUDE 4
 #define LONGITUDE 4 
 #define SPEED 1 
-#define STATUS 2
+#define COURSE 2
 #define MCC 2 
 #define MNC 1 
 #define LAC 2 
