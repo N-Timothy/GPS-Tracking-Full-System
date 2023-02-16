@@ -96,7 +96,7 @@ namespace karlo {
          std::cout << "response package : " << package << std::endl;
 
           // byte package[] = {}
-          // send(connfd, (char* ) &package, sizeof(package), 0);
+          send(connfd, (char* ) &package, sizeof(package), 0);
         }
     }; // getData
       
