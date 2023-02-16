@@ -54,49 +54,40 @@ namespace karlo {
       int packet_confirmation(int connfd, std::string rawData) {
          // prepate the data 
         
-          std::stringstream ss;
-
-          unsigned int start_bit;
-          ss << std::hex << rawData.substr(0, PACKET_LENGTH * 2);
-          ss >> start_bit;
-
-          std::cout << "start bit : " << ss.str() << std::endl; 
-
-          unsigned int packet_length;
-          ss << std::hex << rawData.substr(4, PACKET_LENGTH * 2);
-          ss >> packet_length;
-
-          std::cout << "packet length : " << ss.str() << std::endl; 
-
-          unsigned int protocol_number;
-          ss << std::hex << rawData.substr(6, PROTOCOL_NUMBER * 2);
-          ss >> protocol_number;
-
-          std::cout << "protocol number : " << ss.str() << std::endl; 
-
-          unsigned int imei;
-          ss << std::hex << rawData.substr(8, IMEI * 2);
-          ss >> imei;
-
-          std::cout << "imei : " << ss.str() << std::endl; 
-
-          unsigned int serial_number;
-          ss << std::hex << rawData.substr(24, SERIAL_NUMBER * 2);
-          ss >> serial_number;
-
-          std::cout << "serial number : " << ss.str() << std::endl; 
+         std::stringstream start_bit;
+         start_bit << std::hex << rawData.substr(0, START_BIT * 2);
           
-          unsigned int error_check;
-          ss << std::hex << rawData.substr(28, ERROR_CHECK * 2);
-          ss >> error_check;
+         std::cout << "start bit : " << start_bit.str() << std::endl; 
 
-          std::cout << "error check : " << ss.str() << std::endl; 
+         std::stringstream packet_length;
+         packet_length << std::hex << rawData.substr(4, PACKET_LENGTH * 2);
+        
+         std::cout << "packet length : " << packet_length.str() << std::endl; 
 
-          unsigned int stop_bit;
-          ss << std::hex << rawData.substr(32, STOP_BIT * 2);
-          ss >> stop_bit;
+         std::stringstream protocol_number;
+         protocol_number << std::hex << rawData.substr(6, PROTOCOL_NUMBER * 2);
 
-          std::cout << "stop bit : " << ss.str() << std::endl; 
+         std::cout << "protocol number : " << protocol_number.str() << std::endl; 
+
+         std::stringstream imei;
+         imei << std::hex << rawData.substr(8, IMEI * 2);
+
+         std::cout << "imei : " << imei.str() << std::endl; 
+
+         std::stringstream serial_number;
+         serial_number << std::hex << rawData.substr(24, SERIAL_NUMBER * 2);
+         
+         std::cout << "serial number : " << serial_number.str() << std::endl; 
+          
+         std::stringstream error_check;
+         error_check << std::hex << rawData.substr(28, ERROR_CHECK * 2);
+
+         std::cout << "error check : " << error_check.str() << std::endl; 
+
+         std::stringstream stop_bit;
+         stop_bit << std::hex << rawData.substr(32, STOP_BIT * 2);
+          
+         std::cout << "stop bit : " << stop_bit.str() << std::endl; 
 
           std::cout << "raw data : " << rawData << std::endl; 
 
