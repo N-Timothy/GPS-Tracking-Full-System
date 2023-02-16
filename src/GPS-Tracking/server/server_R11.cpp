@@ -68,7 +68,7 @@ namespace karlo {
           unsigned int stop_bit[STOP_BIT] = {};
 
           std::cout << "raw data : " << rawData << std::endl; 
-          std::cout << "imei : " << imei << std::endl; 
+          std::cout << "imei : " << ss.str() << std::endl; 
 
           // byte package[] = {}
           // send(connfd, (char* ) &package, sizeof(package), 0);
