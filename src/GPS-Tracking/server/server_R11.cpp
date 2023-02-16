@@ -60,7 +60,7 @@ namespace karlo {
           unsigned int packet_length[PACKET_LENGTH] = {};
           unsigned int protocol_number[PROTOCOL_NUMBER] = {};
           unsigned int imei;
-          ss << std::hex << rawData.substr(4, IMEI);
+          ss << std::hex << rawData.substr(8, IMEI * 2);
           ss >> imei;
 
           unsigned int serial_number[SERIAL_NUMBER] = {};
