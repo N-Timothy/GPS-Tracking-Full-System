@@ -56,20 +56,49 @@ namespace karlo {
         
           std::stringstream ss;
 
-          unsigned int start_bit[START_BIT] = {};
-          unsigned int packet_length[PACKET_LENGTH] = {};
-          unsigned int protocol_number[PROTOCOL_NUMBER] = {};
+          unsigned int start_bit;
+          ss << std::setw(2) << std::setfill('0') << std::hex << rawData.substr(0, PACKET_LENGTH * 2);
+          ss >> start_bit;
+
+          std::cout << "start bit : " << ss.str() << std::endl; 
+
+          unsigned int packet_length;
+          ss << std::setw(2) << std::setfill('0') << std::hex << rawData.substr(4, PACKET_LENGTH * 2);
+          ss >> packet_length;
+
+          std::cout << "packet length : " << ss.str() << std::endl; 
+
+          unsigned int protocol_number;
+          ss << std::setw(2) << std::setfill('0') << std::hex << rawData.substr(6, PROTOCOL_NUMBER * 2);
+          ss >> protocol_number;
+
+          std::cout << "protocol number : " << ss.str() << std::endl; 
+
           unsigned int imei;
           ss << std::setw(2) << std::setfill('0') << std::hex << rawData.substr(8, IMEI * 2);
           ss >> imei;
 
-          unsigned int serial_number[SERIAL_NUMBER] = {};
-          unsigned int error_check[ERROR_CHECK] = {};
-          unsigned int stop_bit[STOP_BIT] = {};
+          std::cout << "imei : " << ss.str() << std::endl; 
+
+          unsigned int serial_number;
+          ss << std::setw(2) << std::setfill('0') << std::hex << rawData.substr(24, SERIAL_NUMBER * 2);
+          ss >> serial_number;
+
+          std::cout << "serial number : " << ss.str() << std::endl; 
+          
+          unsigned int error_check;
+          ss << std::setw(2) << std::setfill('0') << std::hex << rawData.substr(28, ERROR_CHECK * 2);
+          ss >> error_check;
+
+          std::cout << "error check : " << ss.str() << std::endl; 
+
+          unsigned int stop_bit;
+          ss << std::setw(2) << std::setfill('0') << std::hex << rawData.substr(32, STOP_BIT * 2);
+          ss >> stop_bit;
+
+          std::cout << "stop bit : " << ss.str() << std::endl; 
 
           std::cout << "raw data : " << rawData << std::endl; 
-          std::cout << "imei raw : " << ss.str() << std::endl; 
-          std::cout << "imei : " << imei << std::endl; 
 
           // byte package[] = {}
           // send(connfd, (char* ) &package, sizeof(package), 0);
