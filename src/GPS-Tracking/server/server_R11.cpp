@@ -60,7 +60,7 @@ namespace karlo {
           unsigned int packet_length[PACKET_LENGTH] = {};
           unsigned int protocol_number[PROTOCOL_NUMBER] = {};
           unsigned int imei;
-          ss << std::hex << rawData.substr(8, IMEI * 2);
+          ss << std::setw(2) << std::setfill('0') << std::hex << rawData.substr(8, IMEI * 2);
           ss >> imei;
 
           unsigned int serial_number[SERIAL_NUMBER] = {};
@@ -68,7 +68,8 @@ namespace karlo {
           unsigned int stop_bit[STOP_BIT] = {};
 
           std::cout << "raw data : " << rawData << std::endl; 
-          std::cout << "imei : " << ss.str() << std::endl; 
+          std::cout << "imei raw : " << ss.str() << std::endl; 
+          std::cout << "imei : " << imei << std::endl; 
 
           // byte package[] = {}
           // send(connfd, (char* ) &package, sizeof(package), 0);
