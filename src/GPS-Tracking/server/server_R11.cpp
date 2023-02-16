@@ -109,6 +109,30 @@ namespace karlo {
       }
     }
 
+    std::string parseDateTime(std::string raw) {
+
+    }
+
+    float parseLatitiude(std::string raw) {
+
+    }
+
+    float parseLongitude(std::string raw) {
+
+    }
+
+    int parseSpeed(std::string raw) {
+
+    }
+
+    int parseCourse(std::string raw) {
+
+    }
+
+    float parseVoltage(std::string raw) {
+
+    }
+
     int communicate(int connfd) {
 
     json postData;
@@ -152,6 +176,9 @@ namespace karlo {
        raw_datetime << std::hex << rawData.substr(8, DATE_TIME * 2);
 
        std::cout << "date time : " << raw_datetime.str()  << std::endl;
+
+       // tempoarary create model later
+       std::string date = parseDateTime(raw_datetime.str());
        
        // get raw latitude 
        
@@ -159,6 +186,9 @@ namespace karlo {
        raw_latitude << std::hex << rawData.substr(22, LATITUDE * 2);
 
        std::cout << "latitude : " << raw_latitude.str() << std::endl;
+
+      // tempoarary create model later
+      float latitiude = parseLatitiude(raw_latitude.str());
        
        // get raw longitude
 
@@ -166,6 +196,9 @@ namespace karlo {
        raw_longitude << std::hex << rawData.substr(30, LONGITUDE * 2);
 
        std::cout << "longitude : " << raw_longitude.str() << std::endl;
+
+       // temporary create model later
+       float longitude = parseLongitude(raw_longitude.str());
        
        // get raw speed
 
@@ -174,12 +207,18 @@ namespace karlo {
 
        std::cout << "Speed : " << raw_speed.str()  << std::endl;
 
+       // temporary create model later
+       int speed = parseSpeed(raw_speed.str());
+
        // get raw course (bearing)
 
        std::stringstream raw_course;
        raw_course << std::hex << rawData.substr(40, COURSE * 2);
 
        std::cout << "course : " << raw_course.str()  << std::endl;
+
+       // temporary create model later
+       int course = parseCourse(raw_course.str());
 
        // get raw voltage
 
@@ -188,7 +227,10 @@ namespace karlo {
 
        std::cout << "voltage : " << raw_voltage.str()  << std::endl;
 
-       std::this_thread::sleep_for(60s); 
+       //temporary create model later
+       float voltage = parseVoltage(raw_voltage.str());
+
+       std::this_thread::sleep_for(10s);
     }
     return 0;
     }
