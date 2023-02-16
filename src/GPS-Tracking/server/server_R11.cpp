@@ -53,7 +53,23 @@ namespace karlo {
 
       int packet_confirmation(int connfd, std::string rawData) {
          // prepate the data 
+        
+          std::stringstream ss;
+
+          unsigned int start_bit[START_BIT] = {};
+          unsigned int packet_length[PACKET_LENGTH] = {};
+          unsigned int protocol_number[PROTOCOL_NUMBER] = {};
+          unsigned int imei;
+          ss << std::hex << rawData.substr(4, IMEI);
+          ss >> imei;
+
+          unsigned int serial_number[SERIAL_NUMBER] = {};
+          unsigned int error_check[ERROR_CHECK] = {};
+          unsigned int stop_bit[STOP_BIT] = {};
+
           std::cout << "raw data : " << rawData << std::endl; 
+          std::cout << "imei : " << imei << std::endl; 
+
           // byte package[] = {}
           // send(connfd, (char* ) &package, sizeof(package), 0);
         }
