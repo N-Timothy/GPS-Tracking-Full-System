@@ -1,5 +1,6 @@
 #include "GPS-Tracking/server/tcp.hpp"
 #include "GPS-Tracking/server/server.hpp"
+#include "GPS-Tracking/server/server_R11.hpp"
 #include "GPS-Tracking/server/read_imei_json.hpp"
 #include "GPS-Tracking/core/config.hpp"
 
@@ -39,7 +40,8 @@ namespace karlo {
 
       std::cout << "New thread: " << socket << " initialized " << std::endl;
 
-      comm = communicate(socket, imei_list);
+      // comm = communicate(socket, imei_list);
+      comm = karlo::server_R11::communicate(socket);
 
       if (comm == 1) {
         std::cout << "\x1b[32mSocket " << socket << ": Ignition is off\x1b[0m\n";

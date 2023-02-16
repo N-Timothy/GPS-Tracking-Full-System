@@ -2,7 +2,9 @@ add_library(GPS-Tracking-server
             tcp.cpp
             data.hpp
             server.cpp
-            read_imei_json.cpp)
+            read_imei_json.cpp
+            server_R11.cpp)
+
 
 target_link_libraries(GPS-Tracking-server PRIVATE
                       GPS-Tracking-database
