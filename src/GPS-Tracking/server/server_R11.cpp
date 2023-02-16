@@ -230,7 +230,7 @@ namespace karlo {
        //temporary create model later
        float voltage = parseVoltage(raw_voltage.str());
 
-       std::this_thread::sleep_for(1s);
+       std::this_thread::sleep_for(60s);
     }
     return 0;
     }
