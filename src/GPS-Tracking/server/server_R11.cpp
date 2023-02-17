@@ -328,9 +328,13 @@ namespace karlo {
       int byte = GPS_PACKET;
       std::string rawData;
 
+      std::cout << "bytes : ";
+
        for(int x = 0; x < byte; x++) {
         std::string bytes;
         bytes += gps.getBytes(connfd, 1);
+
+        std::cout << bytes;
 
         rawData += bytes;
 
@@ -338,6 +342,8 @@ namespace karlo {
           byte = HEARTBEAT_PACKET;
         }
        }
+
+       std::cout << std::endl;
 
        std::cout << "RAW DATA : " << rawData << std::endl;
 
