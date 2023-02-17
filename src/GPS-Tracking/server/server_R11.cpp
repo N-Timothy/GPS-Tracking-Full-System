@@ -339,11 +339,11 @@ namespace karlo {
 
        std::cout << "RAW DATA : " << rawData << std::endl;
 
-       if(byte = HEARTBEAT_PACKET) {
+       if(byte == HEARTBEAT_PACKET) {
 
-        confirm = gps.heartbeat_packet_confirmation(connfd, rawData);
-        if(confirm == -1) return -1;
-        else if (confirm == -2) return -2;
+          confirm = gps.heartbeat_packet_confirmation(connfd, rawData);
+          if(confirm == -1) return -1;
+          else if (confirm == -2) return -2;
 
        } else {
           // get raw datetime
