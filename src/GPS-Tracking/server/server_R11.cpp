@@ -329,9 +329,9 @@ namespace karlo {
 
         rawData += bytes;
 
-        if(x == 3 && bytes == "13") {
-          std::cout << "HEART BEAT PACKAGE" << std::endl;
-          byte = HEARTBEAT_PACKET;
+        if(x == 3 ) {
+          std::cout << "HEART BEAT PACKAGE : "<< bytes << std::endl;
+          // byte = HEARTBEAT_PACKET;
         }
        }
 
