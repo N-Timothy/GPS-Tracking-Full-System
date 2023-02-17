@@ -163,6 +163,44 @@ namespace karlo {
         default: return "0000";
       }
     }
+
+    std::string hexToBin(std::string hex) {
+      std::string bin;
+      for (unsigned i = 0; i < hex.size(); i++)
+        bin += hexCharToBin(hex[i]);
+      return bin;
+    }
+
+    std::string TwoComplement(std::string binary) {
+      for (unsigned i = 0; i < binary.size(); i++) {
+        if (binary[i] == '1'){
+          binary[i] = '0';
+        } else {
+          binary[i] = '1';
+        }
+      }
+      return binary;
+    }
+
+    int binToDecimal(std::string bin) {
+      int number = 0;
+      try {
+        number += std::stoi(bin, 0, 2);
+      } catch (const std::out_of_range& oor) {
+        return -4;
+      }
+      return number;
+    }
+
+    double hexToLongitudeLatitude(std::string hex) {
+      std::string bin;
+      bin = hexToBin(hex);
+      if (bin[0] == '0') {
+        return binToDecimal(bin) / 1e7;
+      } else {
+        return -(binToDecimal(TwoComplement(bin)) + 1) / 1e7;
+      }
+    }
       
     void removeSocket(int socket) {
         for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
@@ -229,7 +267,7 @@ namespace karlo {
 
       latitude = raw_latitude / 3000;
 
-      std::cout << "latitiude : " << latitude << std::endl;
+      std::cout << "latitiude : " << hexToLongitudeLatitude(tLatitude.str()) << std::endl;
 
     }
 
@@ -244,7 +282,7 @@ namespace karlo {
 
       longitude = raw_longitude / 3000;
 
-      std::cout << "Longitude : " << longitude << std::endl;
+      std::cout << "Longitude : " << hexToLongitudeLatitude(tLongitude.str()) << std::endl;
 
     }
 
@@ -262,31 +300,33 @@ namespace karlo {
 
     std::string parseCourseAndIgnition(std::string raw) {
         
-        std::string raw_bit;
+      std::string raw_bit;
 
-        for(int ch = 0; ch < 4; ch++) {
-          raw_bit += hexCharToBin(raw[ch]);
-        }
+      for(int ch = 0; ch < 4; ch++) {
+        raw_bit += hexCharToBin(raw[ch]);
+      }
 
-        std::cout << "Raw bit : " << raw_bit << std::endl;
+      std::cout << "Raw bit : " << raw_bit << std::endl;
 
-        std::string ignition = raw_bit.substr(1,1);
-        std::string bearing = raw_bit.substr(6, 10);
+      std::stringstream tBearing;
 
-        std::cout << "Ignition : " << ignition << std::endl;
-        std::cout << "Bearing : " << bearing << std::endl;
+      int ignition = stoi(raw_bit.substr(1,1), 0, 2);
+      int bearing = stoi(raw_bit.substr(6, 10), 0, 2);
+
+      std::cout << "Ignition : " << ignition << std::endl;
+      std::cout << "Bearing : " << bearing << std::endl;
     }
 
-    float parseVoltage(std::string raw) {
+    double parseVoltage(std::string raw) {
 
-      float voltage;
+      double voltage;
       unsigned int raw_voltage;
       std::stringstream tVoltage;
       
       tVoltage << std::hex << raw;
       tVoltage >> raw_voltage;
 
-      voltage = raw_voltage / 100;
+      voltage = (double) raw_voltage / 100;
 
       std::cout << "Voltage : " << voltage << std::endl;
 
