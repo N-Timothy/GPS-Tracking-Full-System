@@ -99,6 +99,28 @@ namespace karlo {
         return 0;
         }
     }; // getData
+
+    const char* hexCharToBin (char hex_c) {
+      switch(hex_c) {
+        case '0': return "0000";
+        case '1': return "0001";
+        case '2': return "0010";
+        case '3': return "0011";
+        case '4': return "0100";
+        case '5': return "0101";
+        case '6': return "0110";
+        case '7': return "0111";
+        case '8': return "1000";
+        case '9': return "1001";
+        case 'a': return "1010";
+        case 'b': return "1011";
+        case 'c': return "1100";
+        case 'd': return "1101";
+        case 'e': return "1110";
+        case 'f': return "1111";
+        default: return "0000";
+      }
+    }
       
     void removeSocket(int socket) {
         for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
@@ -110,26 +132,117 @@ namespace karlo {
     }
 
     std::string parseDateTime(std::string raw) {
+      unsigned int year = 0;
+      std::stringstream tYear;
+      tYear << std::hex << raw.substr(0,2);
+      tYear >> year;
+
+      std::cout << "Date: 20" << year << "-";
+
+      unsigned int month = 0;
+      std::stringstream tMonth;
+      tMonth << std::hex << raw.substr(2,4);
+      tMonth >> month;
+
+      std::cout << month << "-";
+
+      unsigned int day = 0;
+      std::stringstream tDay;
+      tDay << std::hex << raw.substr(4,6);
+      tDay >> day;
+
+      std::cout << day << " ";
+
+      unsigned int hour = 0;
+      std::stringstream tHour;
+      tHour << std::hex << raw.substr(6,8);
+      tHour >> hour;
+
+      std::cout << hour << ":";
+
+      unsigned int minutes = 0;
+      std::stringstream tMinutes;
+      tMinutes << std::hex << raw.substr(8,10);
+      tMinutes >> minutes;
+
+      std::cout << minutes << ":";
+
+      unsigned int seconds = 0;
+      std::stringstream tSeconds;
+      tSeconds << std::hex << raw.substr(10,12);
+      tSeconds >> seconds;
+
+      std::cout << seconds << std::endl;
 
     }
 
     float parseLatitiude(std::string raw) {
 
+      float latitude;
+      int raw_latitude;
+      std::stringstream tLatitude;
+
+      tLatitude << std::hex << raw;
+      tLatitude >> raw_latitude;
+
+      latitude = raw_latitude / 3000;
+
+      std::cout << "latitiude : " << latitude << std::endl;
+
     }
 
     float parseLongitude(std::string raw) {
+
+      float longitude;
+      int raw_longitude;
+      std::stringstream tLongitude;
+
+      tLongitude << std::hex << raw;
+      tLongitude >> raw_longitude;
+
+      longitude = raw_longitude / 3000;
+
+      std::cout << "Longitude : " << longitude << std::endl;
 
     }
 
     int parseSpeed(std::string raw) {
 
+      unsigned int speed;
+      std::stringstream tSpeed;
+
+      tSpeed << std::hex << raw;
+      tSpeed >> speed;
+
+      std::cout << "Speed : " << speed << std::endl;
+
     }
 
-    int parseCourse(std::string raw) {
+    std::string parseCourseAndIgnition(std::string raw) {
+        
+        std::string raw_bit = "";
 
+        for(int ch = 0; ch < sizeof(raw); ch++) {
+          std::string bit;
+
+          raw_bit += hexCharToBin(raw[ch]);
+        }
+
+        std::cout << "Raw bit : " << raw_bit << std::endl;
     }
 
     float parseVoltage(std::string raw) {
+
+      float voltage;
+      unsigned int raw_voltage;
+      std::stringstream tVoltage;
+      
+      tVoltage << std::hex << raw;
+      tVoltage >> raw_voltage;
+
+      voltage = raw_voltage / 100;
+
+      std::cout << "Voltage : " << voltage << std::endl;
 
     }
 
@@ -218,7 +331,7 @@ namespace karlo {
        std::cout << "course : " << raw_course.str()  << std::endl;
 
        // temporary create model later
-       int course = parseCourse(raw_course.str());
+       std::string course = parseCourseAndIgnition(raw_course.str());
 
        // get raw voltage
 
