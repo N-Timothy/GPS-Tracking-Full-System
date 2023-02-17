@@ -264,9 +264,7 @@ namespace karlo {
         
         std::string raw_bit;
 
-        std::cout << raw.length() << std::endl;
-
-        for(int ch = 0; ch < raw.length(); ch++) {
+        for(int ch = 0; ch < 4; ch++) {
           raw_bit += hexCharToBin(raw[ch]);
         }
 
