@@ -220,16 +220,14 @@ namespace karlo {
 
     std::string parseCourseAndIgnition(std::string raw) {
         
-        std::string raw_bit = "";
+        std::string raw_bit;
 
         std::cout << sizeof(raw);
 
         for(int ch = 0; ch < sizeof(raw); ch++) {
-          std::string bit;
-
           raw_bit += hexCharToBin(raw[ch]);
           std::cout << "raw : " << raw[ch] << std::endl;
-          std::cout << "string bit : " << bit << std::endl;
+          std::cout << "string bit : " << raw_bit << std::endl;
         }
 
         // std::cout << "Raw bit : " << raw_bit << std::endl;
