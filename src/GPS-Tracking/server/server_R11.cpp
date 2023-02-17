@@ -361,7 +361,7 @@ namespace karlo {
           std::stringstream raw_datetime;
           raw_datetime << std::hex << rawData.substr(8, DATE_TIME * 2);
 
-          std::cout << "date time : " << raw_datetime.str()  << std::endl;
+          // std::cout << "date time : " << raw_datetime.str()  << std::endl;
 
           // tempoarary create model later
           std::string date = parseDateTime(raw_datetime.str());
@@ -371,7 +371,7 @@ namespace karlo {
           std::stringstream raw_latitude;
           raw_latitude << std::hex << rawData.substr(22, LATITUDE * 2);
 
-          std::cout << "latitude : " << raw_latitude.str() << std::endl;
+          // std::cout << "latitude : " << raw_latitude.str() << std::endl;
 
           // tempoarary create model later
           float latitiude = parseLatitiude(raw_latitude.str());
@@ -381,7 +381,7 @@ namespace karlo {
           std::stringstream raw_longitude;
           raw_longitude << std::hex << rawData.substr(30, LONGITUDE * 2);
 
-          std::cout << "longitude : " << raw_longitude.str() << std::endl;
+          // std::cout << "longitude : " << raw_longitude.str() << std::endl;
 
           // temporary create model later
           float longitude = parseLongitude(raw_longitude.str());
@@ -391,7 +391,7 @@ namespace karlo {
           std::stringstream raw_speed;
           raw_speed << std::hex << rawData.substr(38, SPEED * 2);
 
-          std::cout << "Speed : " << raw_speed.str()  << std::endl;
+          // std::cout << "Speed : " << raw_speed.str()  << std::endl;
 
           // temporary create model later
           int speed = parseSpeed(raw_speed.str());
@@ -401,7 +401,7 @@ namespace karlo {
           std::stringstream raw_course;
           raw_course << std::hex << rawData.substr(40, COURSE * 2);
 
-          std::cout << "course : " << raw_course.str()  << std::endl;
+          // std::cout << "course : " << raw_course.str()  << std::endl;
 
           // temporary create model later
           std::string course = parseCourseAndIgnition(raw_course.str());
@@ -411,7 +411,7 @@ namespace karlo {
           std::stringstream raw_voltage;
           raw_voltage << std::hex << rawData.substr(62, VOLTAGE * 2);
 
-          std::cout << "voltage : " << raw_voltage.str()  << std::endl;
+          // std::cout << "voltage : " << raw_voltage.str()  << std::endl;
 
           //temporary create model later
           float voltage = parseVoltage(raw_voltage.str());
