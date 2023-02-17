@@ -185,7 +185,7 @@ namespace karlo {
       tLatitude << std::hex << raw;
       tLatitude >> raw_latitude;
 
-      latitude = (double) raw_latitude / 3000;
+      latitude = (float) raw_latitude / 3000;
 
       std::cout << "latitiude : " << latitude << std::endl;
 
@@ -200,7 +200,7 @@ namespace karlo {
       tLongitude << std::hex << raw;
       tLongitude >> raw_longitude;
 
-      longitude = (double)raw_longitude / 3000;
+      longitude = (float)raw_longitude / 3000;
 
       std::cout << "Longitude : " << longitude << std::endl;
 
@@ -226,11 +226,11 @@ namespace karlo {
 
         for(int ch = 0; ch < sizeof(raw); ch++) {
           raw_bit += hexCharToBin(raw[ch]);
-          std::cout << "raw : " << raw[ch] << std::endl;
-          std::cout << "string bit : " << raw_bit << std::endl;
+          // std::cout << "raw : " << raw[ch] << std::endl;
+          // std::cout << "string bit : " << raw_bit << std::endl;
         }
 
-        // std::cout << "Raw bit : " << raw_bit << std::endl;
+        std::cout << "Raw bit : " << raw_bit << std::endl;
     }
 
     float parseVoltage(std::string raw) {
@@ -242,7 +242,7 @@ namespace karlo {
       tVoltage << std::hex << raw;
       tVoltage >> raw_voltage;
 
-      voltage = (double)raw_voltage / 100;
+      voltage = (float)raw_voltage / 100;
 
       std::cout << "Voltage : " << voltage << std::endl;
 
