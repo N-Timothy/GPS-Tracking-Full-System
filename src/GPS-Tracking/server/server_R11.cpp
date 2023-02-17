@@ -332,8 +332,6 @@ namespace karlo {
         std::string bytes;
         bytes += gps.getBytes(connfd, 1);
 
-        std::cout << "bytes : " << bytes << std::endl;
-
         rawData += bytes;
 
         if(x == 3 && bytes == "13") {
