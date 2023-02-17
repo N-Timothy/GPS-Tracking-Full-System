@@ -315,6 +315,7 @@ namespace karlo {
     if(activity == 0) return -3;
 
     confirm = gps.login_packet_confirmation(connfd, gps.getBytes(connfd, LOGIN_PACKET));
+    std::cout << "CONFIRM : " << confirm << std::endl;
 
     if(confirm == -1) return -1;
     else if (confirm == -2) return -2;
