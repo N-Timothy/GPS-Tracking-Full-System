@@ -163,44 +163,6 @@ namespace karlo {
         default: return "0000";
       }
     }
-
-    std::string hexToBin(std::string hex) {
-      std::string bin;
-      for (unsigned i = 0; i < hex.size(); i++)
-        bin += hexCharToBin(hex[i]);
-      return bin;
-    }
-
-    std::string TwoComplement(std::string binary) {
-      for (unsigned i = 0; i < binary.size(); i++) {
-        if (binary[i] == '1'){
-          binary[i] = '0';
-        } else {
-          binary[i] = '1';
-        }
-      }
-      return binary;
-    }
-
-    int binToDecimal(std::string bin) {
-      int number = 0;
-      try {
-        number += std::stoi(bin, 0, 2);
-      } catch (const std::out_of_range& oor) {
-        return -4;
-      }
-      return number;
-    }
-
-    double hexToLongitudeLatitude(std::string hex) {
-      std::string bin;
-      bin = hexToBin(hex);
-      if (bin[0] == '0') {
-        return binToDecimal(bin) / 1e7;
-      } else {
-        return -(binToDecimal(TwoComplement(bin)) + 1) / 1e7;
-      }
-    }
       
     void removeSocket(int socket) {
         for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
@@ -256,33 +218,33 @@ namespace karlo {
 
     }
 
-    float parseLatitiude(std::string raw) {
+    double parseLatitiude(std::string raw) {
 
-      float latitude;
+      double latitude;
       int raw_latitude;
       std::stringstream tLatitude;
 
       tLatitude << std::hex << raw;
       tLatitude >> raw_latitude;
 
-      latitude = raw_latitude / 3000;
+      latitude = (double)raw_latitude / 30000;
 
-      std::cout << "latitiude : " << hexToLongitudeLatitude(tLatitude.str()) << std::endl;
+      std::cout << "latitiude : " << latitude << std::endl;
 
     }
 
-    float parseLongitude(std::string raw) {
+    double parseLongitude(std::string raw) {
 
-      float longitude;
+      double longitude;
       int raw_longitude;
       std::stringstream tLongitude;
 
       tLongitude << std::hex << raw;
       tLongitude >> raw_longitude;
 
-      longitude = raw_longitude / 3000;
+      longitude = (double)raw_longitude / 30000;
 
-      std::cout << "Longitude : " << hexToLongitudeLatitude(tLongitude.str()) << std::endl;
+      std::cout << "Longitude : " << longitude << std::endl;
 
     }
 
