@@ -185,7 +185,7 @@ namespace karlo {
       tLatitude << std::hex << raw;
       tLatitude >> raw_latitude;
 
-      latitude = (float) raw_latitude / 3000;
+      latitude = raw_latitude / 3000;
 
       std::cout << "latitiude : " << latitude << std::endl;
 
@@ -200,7 +200,7 @@ namespace karlo {
       tLongitude << std::hex << raw;
       tLongitude >> raw_longitude;
 
-      longitude = (float)raw_longitude / 3000;
+      longitude = raw_longitude / 3000;
 
       std::cout << "Longitude : " << longitude << std::endl;
 
@@ -242,7 +242,7 @@ namespace karlo {
       tVoltage << std::hex << raw;
       tVoltage >> raw_voltage;
 
-      voltage = (float)raw_voltage / 100;
+      voltage = raw_voltage / 100;
 
       std::cout << "Voltage : " << voltage << std::endl;
 
