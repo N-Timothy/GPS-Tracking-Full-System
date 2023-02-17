@@ -141,35 +141,35 @@ namespace karlo {
 
       unsigned int month = 0;
       std::stringstream tMonth;
-      tMonth << std::hex << raw.substr(2,4);
+      tMonth << std::hex << raw.substr(2,2);
       tMonth >> month;
 
       std::cout << month << "-";
 
       unsigned int day = 0;
       std::stringstream tDay;
-      tDay << std::hex << raw.substr(4,6);
+      tDay << std::hex << raw.substr(4,2);
       tDay >> day;
 
       std::cout << day << " ";
 
       unsigned int hour = 0;
       std::stringstream tHour;
-      tHour << std::hex << raw.substr(6,8);
+      tHour << std::hex << raw.substr(6,2);
       tHour >> hour;
 
       std::cout << hour << ":";
 
       unsigned int minutes = 0;
       std::stringstream tMinutes;
-      tMinutes << std::hex << raw.substr(8,10);
+      tMinutes << std::hex << raw.substr(8,2);
       tMinutes >> minutes;
 
       std::cout << minutes << ":";
 
       unsigned int seconds = 0;
       std::stringstream tSeconds;
-      tSeconds << std::hex << raw.substr(10,12);
+      tSeconds << std::hex << raw.substr(10,2);
       tSeconds >> seconds;
 
       std::cout << seconds << std::endl;
@@ -185,7 +185,7 @@ namespace karlo {
       tLatitude << std::hex << raw;
       tLatitude >> raw_latitude;
 
-      latitude = raw_latitude / 3000;
+      latitude = (double) raw_latitude / 3000;
 
       std::cout << "latitiude : " << latitude << std::endl;
 
@@ -200,7 +200,7 @@ namespace karlo {
       tLongitude << std::hex << raw;
       tLongitude >> raw_longitude;
 
-      longitude = raw_longitude / 3000;
+      longitude = (double)raw_longitude / 3000;
 
       std::cout << "Longitude : " << longitude << std::endl;
 
@@ -222,13 +222,17 @@ namespace karlo {
         
         std::string raw_bit = "";
 
+        std::cout << sizeof(raw);
+
         for(int ch = 0; ch < sizeof(raw); ch++) {
           std::string bit;
 
           raw_bit += hexCharToBin(raw[ch]);
+          std::cout << "raw : " << raw[ch] << std::endl;
+          std::cout << "string bit : " << bit << std::endl;
         }
 
-        std::cout << "Raw bit : " << raw_bit << std::endl;
+        // std::cout << "Raw bit : " << raw_bit << std::endl;
     }
 
     float parseVoltage(std::string raw) {
@@ -240,7 +244,7 @@ namespace karlo {
       tVoltage << std::hex << raw;
       tVoltage >> raw_voltage;
 
-      voltage = raw_voltage / 100;
+      voltage = (double)raw_voltage / 100;
 
       std::cout << "Voltage : " << voltage << std::endl;
 
