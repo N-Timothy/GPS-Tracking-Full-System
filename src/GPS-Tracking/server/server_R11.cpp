@@ -269,6 +269,12 @@ namespace karlo {
         }
 
         std::cout << "Raw bit : " << raw_bit << std::endl;
+
+        std::string ignition = raw_bit.substr(1,1);
+        std::string bearing = raw_bit.substr(6, 10);
+
+        std::cout << "Ignition : " << ignition << std::endl;
+        std::cout << "Bearing : " << bearing << std::endl;
     }
 
     float parseVoltage(std::string raw) {
@@ -313,7 +319,6 @@ namespace karlo {
     if(activity == 0) return -3;
 
     confirm = gps.login_packet_confirmation(connfd, gps.getBytes(connfd, LOGIN_PACKET));
-    std::cout << "CONFIRM : " << confirm << std::endl;
 
     if(confirm == -1) return -1;
     else if (confirm == -2) return -2;
@@ -327,10 +332,11 @@ namespace karlo {
         std::string bytes;
         bytes += gps.getBytes(connfd, 1);
 
+        std::cout << "bytes : " << bytes << std::endl;
+
         rawData += bytes;
 
         if(x == 3 && bytes == "13") {
-          std::cout << "HEART BEAT PACKAGE : "<< bytes << std::endl;
           byte = HEARTBEAT_PACKET;
         }
        }
