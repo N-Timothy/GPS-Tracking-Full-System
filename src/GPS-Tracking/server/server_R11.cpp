@@ -281,7 +281,20 @@ namespace karlo {
 
     for(;;) {
 
-       std::string rawData = gps.getBytes(connfd, 41);
+      int byte = GPS_PACKET;
+      std::string rawData;
+
+       for(int x = 0; x < byte; x++) {
+        std::string bytes;
+        bytes += gps.getBytes(connfd, 1);
+
+        rawData += bytes;
+
+        if(x == 3) {
+          std::cout << "Protocol : " << bytes << std::endl;
+        }
+
+       }
 
        std::cout << "RAW DATA : " << rawData << std::endl;
 

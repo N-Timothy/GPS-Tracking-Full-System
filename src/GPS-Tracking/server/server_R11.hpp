@@ -28,6 +28,9 @@
 #define SIGNAL_STENGHT 1 
 #define ALARAM 1 
 
+#define GPS_PACKET 41
+#define HEARTBEAT_PACKET 15
+
 #include "GPS-Tracking/server/read_imei_json.hpp"
 
 #include <string> 
