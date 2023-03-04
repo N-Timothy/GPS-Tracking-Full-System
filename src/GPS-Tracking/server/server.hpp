@@ -2,8 +2,8 @@
 #define _GPS_TRACKING_SERVER_SERVER2_HPP_
 
 // Change value based on GPS configuration
-#define NUM_OF_ONE_BYTE_ID 2
-#define NUM_OF_TWO_BYTES_ID 1
+#define NUM_OF_ONE_BYTE_ID 3
+#define NUM_OF_TWO_BYTES_ID 2
 #define NUM_OF_THREE_BYTES_ID 0
 #define NUM_OF_FOUR_BYTES_ID 0
 // END
