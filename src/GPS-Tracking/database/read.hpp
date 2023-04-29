@@ -11,6 +11,7 @@ namespace karlo {
 
     json readOne(mongocxx::collection collection, std::string imei);
     std::vector<json> readAll(mongocxx::collection collection);
+    bool checkImei(mongocxx::collection collection, std::string imei);
 
   } // namespace database
 } // namespace karlo

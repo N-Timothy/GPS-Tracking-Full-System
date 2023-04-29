@@ -62,7 +62,7 @@
 namespace karlo {
   namespace server {
 
-    int communicate(int connfd, std::vector<json> imei_list);
+    int communicate(int connfd);
 
     void toRealTime(std::string imei, bool toggle);
 

@@ -38,6 +38,8 @@ namespace karlo {
 
     std::vector<json> readData();
 
+    bool confirmImei(std::string imei);
+
 
   } // namespace database
 } // namespace karlo

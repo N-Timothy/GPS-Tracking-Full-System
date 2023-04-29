@@ -48,12 +48,14 @@ namespace karlo {
     mongocxx::uri uri(URI);
     mongocxx::client client(uri);
     mongocxx::database db;    
-    mongocxx::collection collection;
+    mongocxx::collection collection_one;
+    mongocxx::collection collection_two;
 
     void setDatabaseConfig(json databaseConfig){
         config = databaseConfig;
         db = client[(std::string) config["table"]];
-        collection = db[(std::string) config["collection"]];
+        collection_one = db[(std::string) config["collection_one"]];
+        collection_two = db[(std::string) config["collection_two"]];
     }
 
 
@@ -61,7 +63,7 @@ namespace karlo {
 
       ready = false;
 
-      create(data, collection);
+      create(data, collection_one);
 
       ready = true;
       cv.notify_one();
@@ -71,7 +73,7 @@ namespace karlo {
 
       ready = false;
       
-      json res = readOne(collection, imei);
+      json res = readOne(collection_one, imei);
 
       ready = true;
       cv.notify_one();
@@ -83,12 +85,17 @@ namespace karlo {
 
       ready = false;
 
-      std::vector<json> res = readAll(collection);
+      std::vector<json> res = readAll(collection_one);
 
       ready = true;
       cv.notify_one();
 
       return res;
+    }
+
+    bool confirmImei(std::string imei) {
+
+        return checkImei(collection_two, imei);
     }
 
   } // namespace database

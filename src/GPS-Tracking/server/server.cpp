@@ -72,14 +72,15 @@ namespace karlo {
         }
         return imei;
       }
-      int imeiRecognition(std::string imei_raw, std::vector<json> imei_list) {
+      int imeiRecognition(std::string imei_raw) {
         std::string imei = slice_imei(imei_raw);
 
         if (imei_raw.substr(0, 4) != "000f") return -2;
 
-        for (auto it: imei_list) {
-          if (imei == it) return 0;
+        if(database::confirmImei(imei)){
+            return 0;
         }
+
         return -1;
       }
       int imeiConfirmation(int connfd, int recognized) {
@@ -97,10 +98,12 @@ namespace karlo {
           else return -2;
         }
       }
-      int imeiCheckForDatabase(std::string imei, std::vector<json> imei_list) {
-        for (auto it: imei_list) {
-          if (imei == it) return 0;
+      int imeiCheckForDatabase(std::string imei) {
+        
+        if (database::confirmImei(imei)) {
+            return 0; 
         }
+        
         return -1;
       }
 
@@ -265,7 +268,7 @@ namespace karlo {
 
 
 // Function designed for chat between client and server.
-    int communicate(int connfd, std::vector<json> imei_list) {
+    int communicate(int connfd) {
 
       // init struct data
       trackingData data;
@@ -308,7 +311,7 @@ namespace karlo {
       imei_raw = gps.getBytes(connfd, IMEI_NOB);
       if (imei_raw == "") return -3;
 
-      confirm = gps.imeiConfirmation(connfd, gps.imeiRecognition(imei_raw, imei_list));
+      confirm = gps.imeiConfirmation(connfd, gps.imeiRecognition(imei_raw));
       if (confirm == -1) return -1;
       else if (confirm == -2) return -2;
       data.imei = gps.slice_imei(imei_raw);

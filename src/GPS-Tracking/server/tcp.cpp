@@ -33,20 +33,19 @@ namespace karlo {
       config = setTcpConfig;
     }
 
-    void newClient(int socket, std::vector<json> imei_list) {
+    void newClient(int socket) {
 
       int comm;
 
       std::cout << "New thread: " << socket << " initialized " << std::endl;
 
-      comm = communicate(socket, imei_list);
+      comm = communicate(socket);
 
       if (comm == 1) {
         std::cout << "\x1b[32mSocket " << socket << ": Ignition is off\x1b[0m\n";
       }
       else if (comm == -1) {
         std::cout << "\x1b[32mSocket " << socket << ": Proceed to read IMEI JSON file\x1b[0m\n";
-        imei_list = readImeiJson(IMEI_JSON_LOCATION);
       }
       else if (comm == -2) {
         std::cout << "\x1b[31mSocket " << socket << ": IMEI not recognized\x1b[0m\n";
@@ -155,7 +154,7 @@ namespace karlo {
                     << inet_ntoa(address.sin_addr) << " | Port: " << ntohs(address.sin_port) << "\x1b[0m\n";
 
           // Adding thread on each new connection
-          std::thread newClientThread(newClient, std::cref(new_socket), std::ref(imei_list));
+          std::thread newClientThread(newClient, std::cref(new_socket));
           newClientThread.detach();
 
         }
