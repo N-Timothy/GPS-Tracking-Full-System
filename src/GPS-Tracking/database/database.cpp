@@ -94,8 +94,15 @@ namespace karlo {
     }
 
     bool confirmImei(std::string imei) {
+	
+	ready = false;
 
-        return checkImei(collection_two, imei);
+	bool res =  checkImei(collection_two, imei);
+
+      	ready = true;
+      	cv.notify_one();
+
+        return  res;  
     }
 
   } // namespace database
