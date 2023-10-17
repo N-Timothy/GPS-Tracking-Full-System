@@ -37,8 +37,6 @@ void config() {
 
   httpsRequest::setHttpsConfig(data["https_request"]);
 
-  std::cout << data["database"] << std::endl;
-
   database::setDatabaseConfig(data["database"]);
 
   mqtt::setMqttConfig(data["mqtt"]);
