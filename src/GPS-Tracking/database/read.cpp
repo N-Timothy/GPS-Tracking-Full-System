@@ -49,13 +49,14 @@ namespace karlo {
       bsoncxx::document::view filterDocument = filterDocValue.view();
 
       bool data = false;
+      json test;
 
       bsoncxx::stdx::optional<bsoncxx::document::value> maybe_result =
       collection.find_one(filterDocument);
+
       if(maybe_result) {
           data = true;
       }
-        
       return data;
         
     }
