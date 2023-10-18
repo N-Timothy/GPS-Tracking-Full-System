@@ -170,8 +170,8 @@ void publisher(std::string _imei) {
     printf("Failed to start connect, return code %d\n", rc);
   }
 
-  // std::string pub_topic = config["pub_topic"];
-  std::string pub_topic = _imei;
+  std::string pub_topic = config["pub_topic"];
+  // std::string pub_topic = _imei;
 
   std::unique_lock<std::mutex> lk(m);
   if (!cv.wait_until(lk, std::chrono::system_clock::now() + 3s,

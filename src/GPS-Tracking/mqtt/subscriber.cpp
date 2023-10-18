@@ -67,7 +67,7 @@ int msgarrvd(void *context, char *topicName, int topicLen,
 
   MQTTAsync_freeMessage(&message);
   MQTTAsync_free(topicName);
-  // toggleController(msgJson);
+  toggleController(msgJson);
   return 1;
 }
 
