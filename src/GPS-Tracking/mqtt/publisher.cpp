@@ -196,23 +196,23 @@ void publisher(std::string _imei) {
     data["exBattVoltage"].empty() ? batt = 0 : batt = data["exBattVoltage"];
 
     std::string status;
-    std::string battStatus = "\"Normal\"";
+    std::string battStatus = "Normal";
     if (data["ignitionOn"]) {
       if (to_string(data["speed"]) == "0") {
-        status = "\"Idle\"";
+        status = "Idle";
       } else {
-        status = "\"Moving\"";
+        status = "Moving";
       }
     } else {
-      status = "\"Stop\"";
+      status = "Stop";
     }
 
     if (batt > 22500 && batt < 24500) {
-      battStatus = "\"Warning\"";
+      battStatus = "Warning";
     } else if (batt < 22500) {
-      battStatus = "\"Low\"";
+      battStatus = "Low";
     } else if (batt == 0) {
-      battStatus = "\"Unplugged\"";
+      battStatus = "Unplugged";
     }
 
     json PAYLOAD;
