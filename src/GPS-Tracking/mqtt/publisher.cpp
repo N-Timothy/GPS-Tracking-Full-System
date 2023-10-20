@@ -192,6 +192,29 @@ void publisher(std::string _imei) {
     tmp = ((float)data["longitude"] * 10000000);
     float longitude = (float)tmp / 10000000;
 
+    int batt;
+    data["exBattVoltage"].empty() ? batt = 0 : batt = data["exBattVoltage"];
+
+    std::string status;
+    std::string battStatus = "\"Normal\"";
+    if (data["ignitionOn"]) {
+      if (to_string(data["speed"]) == "0") {
+        status = "\"Idle\"";
+      } else {
+        status = "\"Moving\"";
+      }
+    } else {
+      status = "\"Stop\"";
+    }
+
+    if (batt > 22500 && batt < 24500) {
+      battStatus = "\"Warning\"";
+    } else if (batt < 22500) {
+      battStatus = "\"Low\"";
+    } else if (batt == 0) {
+      battStatus = "\"Unplugged\"";
+    }
+
     json PAYLOAD;
     PAYLOAD["latitude"] = std::to_string(latitude);
     PAYLOAD["longitude"] = std::to_string(longitude);
@@ -199,6 +222,9 @@ void publisher(std::string _imei) {
     PAYLOAD["speed"] = to_string(data["speed"]);
     PAYLOAD["bearing"] = to_string(data["bearing"]);
     PAYLOAD["imeiTracker"] = data["imei"];
+    PAYLOAD["battStatus"] = battStatus;
+    PAYLOAD["status"] = status;
+
     msg = PAYLOAD.dump().c_str();
   }
 
