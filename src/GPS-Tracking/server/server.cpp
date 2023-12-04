@@ -504,15 +504,15 @@ int communicate(int connfd) {
           else
             data.description = "This is default value";
 
-          if (gps.getRealTimeState()) {
-            realTimeElapsed += 5;
-            if (realTimeElapsed > 300) {
-              httpsRequest::singleConnect(postData);
-              realTimeElapsed = 0;
-            }
-          } else {
-            postDataVec.push_back(postData);
-          }
+          // if (gps.getRealTimeState()) {
+          // realTimeElapsed += 5;
+          // if (realTimeElapsed > 300) {
+          httpsRequest::singleConnect(postData);
+          // realTimeElapsed = 0;
+          //}
+          //} else {
+          // postDataVec.push_back(postData);
+          //}
         }
 
         std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
@@ -546,7 +546,7 @@ int communicate(int connfd) {
       // postDataCount++;
       std::cout << "POSTING DATA " << postDataCount << "\n";
       try {
-        httpsRequest::singleConnect(postData);
+        // httpsRequest::singleConnect(postData);
         mqtt::publisher(data.imei);
       } catch (...) {
         // continue;
