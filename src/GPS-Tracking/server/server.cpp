@@ -341,9 +341,9 @@ int communicate(int connfd) {
   } else {
     imeiSocketMap.find(data.imei)->second = connfd;
   }
-  for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
-    std::cout << it->first << ": " << it->second << std::endl;
-  }
+  // for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
+  //   std::cout << it->first << ": " << it->second << std::endl;
+  // }
 
   // Continuously reading AVL Data as long as connection is linked
   for (;;) {
