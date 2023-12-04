@@ -541,20 +541,20 @@ int communicate(int connfd) {
 
       // Post all AVL data one-by-one
       int postDataCount = 0;
-      if (!postDataVec.empty() && !gps.getRealTimeState()) {
-        for (auto postDataIt : postDataVec) {
-          postDataCount++;
-          std::cout << "POSTING DATA " << postDataCount << "\n";
-          try {
-            httpsRequest::singleConnect(postDataIt);
-            mqtt::publisher(data.imei);
-          } catch (...) {
-            continue;
-          }
-        }
-        // Clear postDataVec
-        postDataVec.clear();
+      // if (!postDataVec.empty() && !gps.getRealTimeState()) {
+      // for (auto postDataIt : postDataVec) {
+      // postDataCount++;
+      std::cout << "POSTING DATA " << postDataCount << "\n";
+      try {
+        httpsRequest::singleConnect(postData);
+        mqtt::publisher(data.imei);
+      } catch (...) {
+        // continue;
       }
+      //}
+      // Clear postDataVec
+      // postDataVec.clear();
+      //}
 
       // Terminate thread if ignition is off
       if (!gps.getRealTimeState() && data.ignitionOn == false)
