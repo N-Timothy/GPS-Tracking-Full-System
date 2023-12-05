@@ -336,234 +336,232 @@ int communicate(int connfd) {
   } else {
     imeiSocketMap.find(data.imei)->second = connfd;
   }
-  // for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
-  //   std::cout << it->first << ": " << it->second << std::endl;
-  // }
+  for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
+    std::cout << it->first << ": " << it->second << std::endl;
+  }
 
   // Continuously reading AVL Data as long as connection is linked
-  // for (;;) {
-  //  // Check for GPRS command
-  //  if (std::find(imeiRealTimeVec.begin(), imeiRealTimeVec.end(), data.imei)
-  //  !=
-  //      imeiRealTimeVec.end()) {
-  //    gps.sendGPRSCommand(connfd, true);
-  //    imeiRealTimeVec = removeImei(imeiRealTimeVec, data.imei);
-  //    gps.setRealTimeState(true);
-  //  }
+  for (;;) {
+    // Check for GPRS command
+    if (std::find(imeiRealTimeVec.begin(), imeiRealTimeVec.end(), data.imei) !=
+        imeiRealTimeVec.end()) {
+      gps.sendGPRSCommand(connfd, true);
+      imeiRealTimeVec = removeImei(imeiRealTimeVec, data.imei);
+      gps.setRealTimeState(true);
+    }
 
-  //  if (std::find(imeiNormalVec.begin(), imeiNormalVec.end(), data.imei) !=
-  //      imeiNormalVec.end()) {
-  //    gps.sendGPRSCommand(connfd, false);
-  //    imeiNormalVec = removeImei(imeiNormalVec, data.imei);
-  //    gps.setRealTimeState(false);
-  //  }
+    if (std::find(imeiNormalVec.begin(), imeiNormalVec.end(), data.imei) !=
+        imeiNormalVec.end()) {
+      gps.sendGPRSCommand(connfd, false);
+      imeiNormalVec = removeImei(imeiNormalVec, data.imei);
+      gps.setRealTimeState(false);
+    }
 
-  //  // Turn GPS to normal period once ignition is turned off
-  //  if (gps.getRealTimeState() && data.description == "Ignition turned off.")
-  //  {
-  //    gps.sendGPRSCommand(connfd, false);
-  //    gps.setRealTimeState(false);
-  //  }
+    // Turn GPS to normal period once ignition is turned off
+    if (gps.getRealTimeState() && data.description == "Ignition turned off.") {
+      gps.sendGPRSCommand(connfd, false);
+      gps.setRealTimeState(false);
+    }
 
-  //  // Check activity in read file descriptor
-  //  tv.tv_sec = 1;
-  //  tv.tv_usec = 0;
-  //  FD_SET(connfd, &readfds);
-  //  activity = select(connfd + 1, &readfds, NULL, NULL, &tv);
+    // Check activity in read file descriptor
+    tv.tv_sec = 1;
+    tv.tv_usec = 0;
+    FD_SET(connfd, &readfds);
+    activity = select(connfd + 1, &readfds, NULL, NULL, &tv);
 
-  //  if (FD_ISSET(connfd, &readfds)) {
+    if (FD_ISSET(connfd, &readfds)) {
 
-  //    hex = gps.getBytes(connfd, ZERO_NOB);
-  //    if (hex == "" || hex != "00000000") {
-  //      std::cout << "Zero Bytes\t\t: " << hex << std::endl;
-  //      std::cout << dateAndTimeNow("WIB") << std::endl;
-  //      return -3;
-  //    }
+      hex = gps.getBytes(connfd, ZERO_NOB);
+      if (hex == "" || hex != "00000000") {
+        std::cout << "Zero Bytes\t\t: " << hex << std::endl;
+        std::cout << dateAndTimeNow("WIB") << std::endl;
+        return -3;
+      }
 
-  //    hex = gps.getBytes(connfd, DATA_FIELD_NOB);
-  //    if (hex == "") {
-  //      std::cout << "Data Field Length\t: " << hex << std::endl;
-  //      return -3;
-  //    }
+      hex = gps.getBytes(connfd, DATA_FIELD_NOB);
+      if (hex == "") {
+        std::cout << "Data Field Length\t: " << hex << std::endl;
+        return -3;
+      }
 
-  //    try {
-  //      data_NOB = std::stoi(hex, 0, 16);
-  //    } catch (const std::out_of_range &oor) {
-  //      return -4;
-  //    }
+      try {
+        data_NOB = std::stoi(hex, 0, 16);
+      } catch (const std::out_of_range &oor) {
+        return -4;
+      }
 
-  //    // Reading all remaining hexadecimal stream that comes after data field
-  //    // length
-  //    hex_stream = gps.getBytes(connfd, data_NOB + CRC16_NOB);
-  //    if (hex_stream == "")
-  //      return -3;
+      // Reading all remaining hexadecimal stream that comes after data field
+      // length
+      hex_stream = gps.getBytes(connfd, data_NOB + CRC16_NOB);
+      if (hex_stream == "")
+        return -3;
 
-  //    codec = stringSubstr(hex_stream, CODEC_ID_POS, CODEC_ID_NOB * 2);
+      codec = stringSubstr(hex_stream, CODEC_ID_POS, CODEC_ID_NOB * 2);
 
-  //    if (codec == "08") {
-  //      numOfData1 = std::stoi(
-  //          stringSubstr(hex_stream, NUM_OF_DATA1_POS, NUM_OF_DATA_NOB * 2),
-  //          0, 16);
-  //      NUM_OF_DATA2_POS = 2 * (data_NOB - NUM_OF_DATA_NOB);
-  //      numOfData2 = std::stoi(
-  //          stringSubstr(hex_stream, NUM_OF_DATA2_POS, NUM_OF_DATA_NOB * 2),
-  //          0, 16);
-  //      if (numOfData1 != numOfData2)
-  //        return -3;
+      if (codec == "08") {
+        numOfData1 = std::stoi(
+            stringSubstr(hex_stream, NUM_OF_DATA1_POS, NUM_OF_DATA_NOB * 2), 0,
+            16);
+        NUM_OF_DATA2_POS = 2 * (data_NOB - NUM_OF_DATA_NOB);
+        numOfData2 = std::stoi(
+            stringSubstr(hex_stream, NUM_OF_DATA2_POS, NUM_OF_DATA_NOB * 2), 0,
+            16);
+        if (numOfData1 != numOfData2)
+          return -3;
 
-  //      AVL_NOB = data_NOB - CODEC_ID_NOB - 2 * NUM_OF_DATA_NOB;
+        AVL_NOB = data_NOB - CODEC_ID_NOB - 2 * NUM_OF_DATA_NOB;
 
-  //      for (dataCount = 0; dataCount < numOfData1; dataCount++) {
-  //        AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2 * NUM_OF_DATA_NOB +
-  //                  2 * (AVL_NOB / numOfData1) * dataCount;
+        for (dataCount = 0; dataCount < numOfData1; dataCount++) {
+          AVL_POS = CODEC_ID_POS + NUM_OF_DATA1_POS + 2 * NUM_OF_DATA_NOB +
+                    2 * (AVL_NOB / numOfData1) * dataCount;
 
-  //        data.createdAt = timestampToDate(stringSubstr(
-  //            hex_stream, AVL_POS + TIMESTAMP_POS, TIMESTAMP_NOB * 2));
-  //        postData["timestamp"] = data.createdAt;
+          data.createdAt = timestampToDate(stringSubstr(
+              hex_stream, AVL_POS + TIMESTAMP_POS, TIMESTAMP_NOB * 2));
+          postData["timestamp"] = data.createdAt;
 
-  //        data.longitude = hexToLongitudeLatitude(stringSubstr(
-  //            hex_stream, AVL_POS + LONGITUDE_POS, LONGITUDE_NOB * 2));
-  //        postData["longitude"] = data.longitude;
+          data.longitude = hexToLongitudeLatitude(stringSubstr(
+              hex_stream, AVL_POS + LONGITUDE_POS, LONGITUDE_NOB * 2));
+          postData["longitude"] = data.longitude;
 
-  //        data.latitude = hexToLongitudeLatitude(stringSubstr(
-  //            hex_stream, AVL_POS + LATITUDE_POS, LATITUDE_NOB * 2));
-  //        postData["latitude"] = data.latitude;
+          data.latitude = hexToLongitudeLatitude(stringSubstr(
+              hex_stream, AVL_POS + LATITUDE_POS, LATITUDE_NOB * 2));
+          postData["latitude"] = data.latitude;
 
-  //        data.altitude =
-  //            std::stoi(stringSubstr(hex_stream, AVL_POS + ALTITUDE_POS,
-  //                                   ALTITUDE_NOB * 2),
-  //                      0, 16);
-  //        postData["altitude"] = data.altitude;
+          data.altitude =
+              std::stoi(stringSubstr(hex_stream, AVL_POS + ALTITUDE_POS,
+                                     ALTITUDE_NOB * 2),
+                        0, 16);
+          postData["altitude"] = data.altitude;
 
-  //        data.bearing = std::stoi(
-  //            stringSubstr(hex_stream, AVL_POS + ANGLE_POS, ANGLE_NOB * 2), 0,
-  //            16);
-  //        postData["bearing"] = data.bearing;
+          data.bearing = std::stoi(
+              stringSubstr(hex_stream, AVL_POS + ANGLE_POS, ANGLE_NOB * 2), 0,
+              16);
+          postData["bearing"] = data.bearing;
 
-  //        data.speed = std::stoi(
-  //            stringSubstr(hex_stream, AVL_POS + SPEED_POS, SPEED_NOB * 2), 0,
-  //            16);
-  //        postData["speed"] = data.speed;
+          data.speed = std::stoi(
+              stringSubstr(hex_stream, AVL_POS + SPEED_POS, SPEED_NOB * 2), 0,
+              16);
+          postData["speed"] = data.speed;
 
-  //        event = stringSubstr(hex_stream, AVL_POS + EVENT_IO_ID_POS,
-  //                             EVENT_IO_ID_NOB * 2);
+          event = stringSubstr(hex_stream, AVL_POS + EVENT_IO_ID_POS,
+                               EVENT_IO_ID_NOB * 2);
 
-  //        numOfOneByteID =
-  //            std::stoi(stringSubstr(hex_stream, AVL_POS + NUM_OF_1B_IO_POS,
-  //                                   NUM_OF_IO_NOB * 2),
-  //                      0, 16);
-  //        for (i = 0; i < numOfOneByteID; i++) {
-  //          ID_POS = NUM_OF_1B_IO_POS + NUM_OF_IO_NOB * 2 +
-  //                   2 * i * (ID_NOB + VALUE1_NOB);
-  //          VALUE_POS = ID_POS + 2 * ID_NOB;
-  //          id = stringSubstr(hex_stream, AVL_POS + ID_POS, ID_NOB * 2);
+          numOfOneByteID =
+              std::stoi(stringSubstr(hex_stream, AVL_POS + NUM_OF_1B_IO_POS,
+                                     NUM_OF_IO_NOB * 2),
+                        0, 16);
+          for (i = 0; i < numOfOneByteID; i++) {
+            ID_POS = NUM_OF_1B_IO_POS + NUM_OF_IO_NOB * 2 +
+                     2 * i * (ID_NOB + VALUE1_NOB);
+            VALUE_POS = ID_POS + 2 * ID_NOB;
+            id = stringSubstr(hex_stream, AVL_POS + ID_POS, ID_NOB * 2);
 
-  //          // Ignition ID = 239
-  //          if (id == "ef") {
-  //            data.ignitionOn = std::stoi(
-  //                stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB *
-  //                2), 0, 16);
-  //            postData["ignitionOn"] = data.ignitionOn;
-  //          }
-  //          // Sleep Mode ID = 200
-  //          else if (id == "c8") {
-  //            data.sleepMode = std::stoi(
-  //                stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB *
-  //                2), 0, 16);
-  //          }
-  //        }
+            // Ignition ID = 239
+            if (id == "ef") {
+              data.ignitionOn = std::stoi(
+                  stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB * 2),
+                  0, 16);
+              postData["ignitionOn"] = data.ignitionOn;
+            }
+            // Sleep Mode ID = 200
+            else if (id == "c8") {
+              data.sleepMode = std::stoi(
+                  stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE1_NOB * 2),
+                  0, 16);
+            }
+          }
 
-  //        numOfTwoBytesID =
-  //            std::stoi(stringSubstr(hex_stream, AVL_POS + NUM_OF_2B_IO_POS,
-  //                                   NUM_OF_IO_NOB * 2),
-  //                      0, 16);
-  //        for (i = 0; i < numOfTwoBytesID; i++) {
-  //          ID_POS = NUM_OF_2B_IO_POS + NUM_OF_IO_NOB * 2 +
-  //                   2 * i * (ID_NOB + VALUE2_NOB);
-  //          VALUE_POS = ID_POS + ID_NOB * 2;
-  //          id = stringSubstr(hex_stream, AVL_POS + ID_POS, ID_NOB * 2);
+          numOfTwoBytesID =
+              std::stoi(stringSubstr(hex_stream, AVL_POS + NUM_OF_2B_IO_POS,
+                                     NUM_OF_IO_NOB * 2),
+                        0, 16);
+          for (i = 0; i < numOfTwoBytesID; i++) {
+            ID_POS = NUM_OF_2B_IO_POS + NUM_OF_IO_NOB * 2 +
+                     2 * i * (ID_NOB + VALUE2_NOB);
+            VALUE_POS = ID_POS + ID_NOB * 2;
+            id = stringSubstr(hex_stream, AVL_POS + ID_POS, ID_NOB * 2);
 
-  //          // Battery ID = 66
-  //          if (id == "42") {
-  //            data.exBattVoltage = std::stoi(
-  //                stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE2_NOB *
-  //                2), 0, 16);
-  //            postData["exBattVoltage"] = data.exBattVoltage;
-  //            break;
-  //          }
-  //        }
+            // Battery ID = 66
+            if (id == "42") {
+              data.exBattVoltage = std::stoi(
+                  stringSubstr(hex_stream, AVL_POS + VALUE_POS, VALUE2_NOB * 2),
+                  0, 16);
+              postData["exBattVoltage"] = data.exBattVoltage;
+              break;
+            }
+          }
 
-  //        // Description of event
-  //        if (event == "ef" && data.ignitionOn == true)
-  //          data.description = "Ignition turned on!";
-  //        else if (event == "ef" && data.ignitionOn == false)
-  //          data.description = "Ignition turned off.";
-  //        else
-  //          data.description = "This is default value";
+          // Description of event
+          if (event == "ef" && data.ignitionOn == true)
+            data.description = "Ignition turned on!";
+          else if (event == "ef" && data.ignitionOn == false)
+            data.description = "Ignition turned off.";
+          else
+            data.description = "This is default value";
 
-  //        // if (gps.getRealTimeState()) {
-  //        // realTimeElapsed += 5;
-  //        // if (realTimeElapsed > 300) {
-  //        httpsRequest::singleConnect(postData);
-  //        // realTimeElapsed = 0;
-  //        //}
-  //        //} else {
-  //        // postDataVec.push_back(postData);
-  //        //}
-  //      }
+          // if (gps.getRealTimeState()) {
+          // realTimeElapsed += 5;
+          // if (realTimeElapsed > 300) {
+          httpsRequest::singleConnect(postData);
+          // realTimeElapsed = 0;
+          //}
+          //} else {
+          // postDataVec.push_back(postData);
+          //}
+        }
 
-  //      std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
-  //      std::cout << "Number of Data\t\t: " << numOfData1 << std::endl;
-  //      std::cout << "Timestamp\t\t: "
-  //                << "" << data.createdAt << std::endl;
+        std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
+        std::cout << "Number of Data\t\t: " << numOfData1 << std::endl;
+        std::cout << "Timestamp\t\t: "
+                  << "" << data.createdAt << std::endl;
 
-  //      gps.sendConfirmation(connfd, numOfData2);
+        gps.sendConfirmation(connfd, numOfData2);
 
-  //      // Print time right after AVL data is received
-  //      data.updatedAt = dateAndTimeNow("WIB");
-  //      std::cout << "Updated At: " << data.updatedAt << "\n\n";
-  //    } else if (codec == "0c") {
-  //      std::cout << "GPRS RESPONSE:\n";
-  //      std::cout << hex_stream << "\n\n";
-  //    }
+        // Print time right after AVL data is received
+        data.updatedAt = dateAndTimeNow("WIB");
+        std::cout << "Updated At: " << data.updatedAt << "\n\n";
+      } else if (codec == "0c") {
+        std::cout << "GPRS RESPONSE:\n";
+        std::cout << hex_stream << "\n\n";
+      }
 
-  //    // Save newest AVL data to database
-  //    std::unique_lock<std::mutex> lk(m);
-  //    if (!cv.wait_until(lk, std::chrono::system_clock::now() + 3s,
-  //                       [] { return ready; })) {
-  //      return -6;
-  //    } else {
-  //      database::createData(data);
-  //    }
+      // Save newest AVL data to database
+      std::unique_lock<std::mutex> lk(m);
+      if (!cv.wait_until(lk, std::chrono::system_clock::now() + 3s,
+                         [] { return ready; })) {
+        return -6;
+      } else {
+        database::createData(data);
+      }
 
-  //    // Post all AVL data one-by-one
-  //    int postDataCount = 0;
-  //    // if (!postDataVec.empty() && !gps.getRealTimeState()) {
-  //    // for (auto postDataIt : postDataVec) {
-  //    // postDataCount++;
-  //    std::cout << "POSTING DATA " << postDataCount << "\n";
-  //    try {
-  //      // httpsRequest::singleConnect(postData);
-  //      mqtt::publisher(data.imei);
-  //    } catch (...) {
-  //      // continue;
-  //    }
-  //    //}
-  //    // Clear postDataVec
-  //    // postDataVec.clear();
-  //    //}
+      // Post all AVL data one-by-one
+      int postDataCount = 0;
+      // if (!postDataVec.empty() && !gps.getRealTimeState()) {
+      // for (auto postDataIt : postDataVec) {
+      // postDataCount++;
+      std::cout << "POSTING DATA " << postDataCount << "\n";
+      try {
+        // httpsRequest::singleConnect(postData);
+        mqtt::publisher(data.imei);
+      } catch (...) {
+        // continue;
+      }
+      //}
+      // Clear postDataVec
+      // postDataVec.clear();
+      //}
 
-  //    // Terminate thread if ignition is off
-  //    if (!gps.getRealTimeState() && data.ignitionOn == false)
-  //      return 1;
+      // Terminate thread if ignition is off
+      if (!gps.getRealTimeState() && data.ignitionOn == false)
+        return 1;
 
-  //  } // if FD_ISSET()
+    } // if FD_ISSET()
 
-  //  // Close connection if imei-socket pair is not found
-  //  if (imeiSocketMap.find(data.imei)->second != connfd)
-  //    return -5;
+    // Close connection if imei-socket pair is not found
+    if (imeiSocketMap.find(data.imei)->second != connfd)
+      return -5;
 
-  //} // for(;;)
+  } // for(;;)
 
   return 0;
 } // communicate()
