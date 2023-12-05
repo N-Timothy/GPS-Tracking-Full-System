@@ -1,109 +1,108 @@
 #include "GPS-Tracking/database/database.hpp"
+#include "GPS-Tracking/core/config.hpp"
 #include "GPS-Tracking/database/create.hpp"
 #include "GPS-Tracking/database/read.hpp"
-#include "GPS-Tracking/core/config.hpp"
 
-#include <iostream>
 #include <condition_variable>
-
-#include <pwd.h>
-#include <fstream>
-#include <sys/types.h>
-#include <string>
 #include <iostream>
-#include <unistd.h>
 
+#include <fstream>
+#include <iostream>
+#include <pwd.h>
+#include <string>
+#include <sys/types.h>
+#include <unistd.h>
 
 bool ready = true;
 
 namespace karlo {
-  namespace database {
+namespace database {
 
-    std::condition_variable cv;
+std::condition_variable cv;
 
-    json config;
+json config;
 
-    // this is a temporary solution
-    std::string getURI() {
+// this is a temporary solution
+std::string getURI() {
 
-        json data;
-        uid_t userid;
-        struct passwd* pwd;
-        userid = getuid();
-        pwd = getpwuid(userid);
-                
-        std::string config = "/home/" + (std::string)pwd->pw_name + "/.config/tracker/config.json";
-                
-        std::ifstream ifs(config);
-        if(ifs){
-            data = json::parse(ifs);
-        } 
-        return data["database"]["uri"];
-    }
+  json data;
+  uid_t userid;
+  struct passwd *pwd;
+  userid = getuid();
+  pwd = getpwuid(userid);
 
-    std::string URI = getURI();
+  std::string config =
+      "/home/" + (std::string)pwd->pw_name + "/.config/tracker/config.json";
 
-    // Connecting to database
-    mongocxx::instance instance{};
-    mongocxx::uri uri(URI);
-    mongocxx::client client(uri);
-    mongocxx::database db;    
-    mongocxx::collection collection_one;
-    mongocxx::collection collection_two;
+  std::ifstream ifs(config);
+  if (ifs) {
+    data = json::parse(ifs);
+  }
+  return data["database"]["uri"];
+}
 
-    void setDatabaseConfig(json databaseConfig){
-        config = databaseConfig;
-        db = client[(std::string) config["table"]];
-        collection_one = db[(std::string) config["collection_one"]];
-        collection_two = db[(std::string) config["collection_two"]];
-    }
+std::string URI = getURI();
 
+// Connecting to database
+mongocxx::instance instance{};
+mongocxx::uri uri(URI);
+mongocxx::client client(uri);
+mongocxx::database db;
+mongocxx::collection collection_one;
+mongocxx::collection collection_two;
 
-    void createData(trackingData data) {
+void setDatabaseConfig(json databaseConfig) {
+  config = databaseConfig;
+  db = client[(std::string)config["table"]];
+  collection_one = db[(std::string)config["collection_one"]];
+  collection_two = db[(std::string)config["collection_two"]];
+}
 
-      ready = false;
+void createData(trackingData data) {
 
-      create(data, collection_one);
+  ready = false;
 
-      ready = true;
-      cv.notify_one();
-    }
+  create(data, collection_one);
 
-    json readData(std::string imei) {
+  ready = true;
+  cv.notify_one();
+}
 
-      ready = false;
-      
-      json res = readOne(collection_one, imei);
+json readData(std::string imei) {
 
-      ready = true;
-      cv.notify_one();
+  ready = false;
 
-      return res;
-    }
+  json res = readOne(collection_one, imei);
 
-    std::vector<json> readData() {
+  ready = true;
+  cv.notify_one();
 
-      ready = false;
+  return res;
+}
 
-      std::vector<json> res = readAll(collection_one);
+std::vector<json> readData() {
 
-      ready = true;
-      cv.notify_one();
+  ready = false;
 
-      return res;
-    }
+  std::vector<json> res = readAll(collection_one);
 
-    bool confirmImei(std::string imei) {
-	
-	ready = false;
+  ready = true;
+  cv.notify_one();
 
-	bool res =  checkImei(collection_two, imei);
+  return res;
+}
 
-      	ready = true;
-      	cv.notify_one();
+bool confirmImei(std::string imei) {
 
-        return  res;  
-    }
+  // ready = false;
 
-  } // namespace database
-} // namesapce karlo
+  bool res = checkImei(collection_two, imei);
+
+  //	ready = true;
+  //	cv.notify_one();
+
+  return res;
+}
+
+} // namespace database
+} // namespace karlo
