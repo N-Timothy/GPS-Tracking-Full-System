@@ -531,7 +531,7 @@ int communicate(int connfd) {
       //                  [] { return ready; })) {
       // return -6;
       //} else {
-      database::createData(data);
+      // database::createData(data);
       //}
 
       // Post all AVL data one-by-one

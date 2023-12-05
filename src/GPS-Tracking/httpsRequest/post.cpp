@@ -21,12 +21,14 @@ void post(std::string URL, json config) {
 
   std::string staticToken = config["token"];
   std::string URL_STAGING = config["url_staging"];
+  std::string URL_GPS = config["url_gps_backend"];
   std::string battStatus = "\"Normal\"";
 
   try {
 
     httplib::Client cli(URL);
     httplib::Client cli_staging(URL_STAGING);
+    httplib::Client cli_gps(URL_GPS);
 
     cli.set_default_headers(
         {{"Authorization", staticToken}, {"Content-Type", "application/json"}});
@@ -83,6 +85,7 @@ void post(std::string URL, json config) {
 
         auto res = cli.Post(postUrl, Msg, "application/json");
         auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
+        auto res_gps = cli_gps.Post(postUrl, Msg, "application/json");
 
         if (res) {
           std::cout << "production: " << res->body << std::endl;
@@ -102,10 +105,12 @@ void post(std::string URL, json config, json data) {
 
   std::string staticToken = config["token"];
   std::string URL_STAGING = config["url_staging"];
+  std::string URL_GPS = config["url_gps_backend"];
   std::string battStatus = "\"Normal\"";
 
   httplib::Client cli(URL);
   httplib::Client cli_staging(URL_STAGING);
+  httplib::Client cli_gps(URL_GPS);
 
   cli.set_default_headers(
       {{"Authorization", staticToken}, {"Content-Type", "application/json"}});
@@ -161,8 +166,11 @@ void post(std::string URL, json config, json data) {
                     "\"battStatus\":" + battStatus + "," +
                     "\"status\":" + status + "}";
 
+  std::cout << Msg << std::endl;
+
   auto res = cli.Post(postUrl, Msg, "application/json");
   auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
+  auto res_gps = cli_gps.Post("/gps/last-location", Msg, "application/json");
 
   if (res) {
     std::cout << "production: " << res->body << std::endl;
