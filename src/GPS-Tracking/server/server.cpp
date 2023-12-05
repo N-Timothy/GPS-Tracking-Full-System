@@ -71,16 +71,17 @@ public:
   int imeiRecognition(std::string imei_raw) {
     std::string imei = slice_imei(imei_raw);
 
-    if (imei_raw.substr(0, 4) != "000f")
+    if (imei_raw.substr(0, 4) != "000f" || imei.length() != 15)
       return -2;
 
     std::cout << "IMEI\t\t\t: " << imei << std::endl;
 
-    if (database::confirmImei(imei)) {
-      return 0;
-    }
+    // if (database::confirmImei(imei)) {
+    //   return 0;
+    // }
 
-    return -1;
+    // return -1;
+    return 0;
   }
   int imeiConfirmation(int connfd, int recognized) {
     unsigned char ACCEPT[] = {0x01};
@@ -96,15 +97,6 @@ public:
         return -2;
     }
   }
-  int imeiCheckForDatabase(std::string imei) {
-
-    if (database::confirmImei(imei)) {
-      return 0;
-    }
-
-    return -1;
-  }
-
   void sendConfirmation(int connfd, int numOfData) {
     unsigned char bNOD[4];
     bNOD[0] = (numOfData & 0xff000000) >> 24; // 0
