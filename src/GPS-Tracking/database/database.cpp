@@ -94,12 +94,12 @@ std::vector<json> readData() {
 
 bool confirmImei(std::string imei) {
 
-  // ready = false;
+  ready = false;
 
   bool res = checkImei(collection_two, imei);
 
-  //	ready = true;
-  //	cv.notify_one();
+  ready = true;
+  cv.notify_one();
 
   return res;
 }

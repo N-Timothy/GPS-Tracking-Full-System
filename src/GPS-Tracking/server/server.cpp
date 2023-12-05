@@ -526,16 +526,16 @@ int communicate(int connfd) {
       }
 
       // Save newest AVL data to database
-      // std::unique_lock<std::mutex> lk(m);
-      // if (!cv.wait_until(lk, std::chrono::system_clock::now() + 1s,
-      //                 [] { return ready; })) {
-      // return -6;
-      //} else {
-      try {
-        database::createData(data);
-      } catch (...) {
+      std::unique_lock<std::mutex> lk(m);
+      if (!cv.wait_until(lk, std::chrono::system_clock::now() + 1s,
+                         [] { return ready; })) {
+        return -6;
+      } else {
+        try {
+          database::createData(data);
+        } catch (...) {
+        }
       }
-      //}
 
       // Post all AVL data one-by-one
       int postDataCount = 0;
