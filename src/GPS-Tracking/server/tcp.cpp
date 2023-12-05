@@ -36,7 +36,7 @@ void newClient(int socket) {
 
   int comm = 0;
 
-  std::cout << "New thread: " << socket << " initialized " << std::endl;
+  // std::cout << "New thread: " << socket << " initialized " << std::endl;
 
   comm = communicate(socket);
 
@@ -145,9 +145,9 @@ void tcpServer() {
         exit(EXIT_FAILURE);
       }
 
-      std::cout << "\x1b[32m[New connection] Socket: " << new_socket
-                << " | IP: " << inet_ntoa(address.sin_addr)
-                << " | Port: " << ntohs(address.sin_port) << "\x1b[0m\n";
+      // std::cout << "\x1b[32m[New connection] Socket: " << new_socket
+      //           << " | IP: " << inet_ntoa(address.sin_addr)
+      //           << " | Port: " << ntohs(address.sin_port) << "\x1b[0m\n";
 
       // Adding thread on each new connection
       std::thread newClientThread(newClient, std::cref(new_socket));

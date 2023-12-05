@@ -323,6 +323,7 @@ int communicate(int connfd) {
 
   // Get IMEI number from new connection
   imei_raw = gps.getBytes(connfd, IMEI_NOB);
+  std::cout << "imei raw" << imei_raw << std::endl;
   if (imei_raw == "")
     return -3;
 
