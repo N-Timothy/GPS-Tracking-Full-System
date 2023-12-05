@@ -60,12 +60,12 @@ void setDatabaseConfig(json databaseConfig) {
 
 void createData(trackingData data) {
 
-  ready = false;
+  // ready = false;
 
   create(data, collection_one);
 
-  ready = true;
-  cv.notify_one();
+  // ready = true;
+  // cv.notify_one();
 }
 
 json readData(std::string imei) {
