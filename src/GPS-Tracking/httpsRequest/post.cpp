@@ -94,6 +94,7 @@ void post(std::string URL, json config) {
       }
     }
   } catch (...) {
+    std::cout << "HTTP FAILED" << std::endl;
   }
 }
 

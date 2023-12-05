@@ -74,7 +74,7 @@ public:
     if (imei_raw.substr(0, 4) != "000f" || imei.length() != 15)
       return -2;
 
-    std::cout << "IMEI\t\t\t: " << imei << std::endl;
+    // std::cout << "IMEI\t\t\t: " << imei << std::endl;
 
     // if (database::confirmImei(imei)) {
     //   return 0;
