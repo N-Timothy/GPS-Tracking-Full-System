@@ -317,7 +317,7 @@ int communicate(int connfd) {
 
   // Get IMEI number from new connection
   imei_raw = gps.getBytes(connfd, IMEI_NOB);
-  std::cout << "imei raw" << imei_raw << std::endl;
+  // std::cout << "imei raw" << imei_raw << std::endl;
   if (imei_raw == "")
     return -3;
 
@@ -328,7 +328,7 @@ int communicate(int connfd) {
     return -2;
   data.imei = gps.slice_imei(imei_raw);
   postData["imei"] = data.imei;
-  std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
+  // std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
 
   // Register imei and socket file descriptor pair into map
   if (imeiSocketMap.find(data.imei) == imeiSocketMap.end()) {
@@ -336,9 +336,9 @@ int communicate(int connfd) {
   } else {
     imeiSocketMap.find(data.imei)->second = connfd;
   }
-  for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
-    std::cout << it->first << ": " << it->second << std::endl;
-  }
+  // for (auto it = imeiSocketMap.begin(); it != imeiSocketMap.end(); it++) {
+  //   std::cout << it->first << ": " << it->second << std::endl;
+  // }
 
   // Continuously reading AVL Data as long as connection is linked
   for (;;) {
