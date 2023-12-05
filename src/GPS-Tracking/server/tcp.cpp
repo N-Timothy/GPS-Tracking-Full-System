@@ -38,7 +38,7 @@ void newClient(int socket) {
 
   std::cout << "New thread: " << socket << " initialized " << std::endl;
 
-  // comm = communicate(socket);
+  comm = communicate(socket);
 
   if (comm == 1) {
     std::cout << "\x1b[32mSocket " << socket << ": Ignition is off\x1b[0m\n";
