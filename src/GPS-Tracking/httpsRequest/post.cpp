@@ -1,171 +1,176 @@
 #include "GPS-Tracking/httpsRequest/post.hpp"
 
-#include <nlohmann/json.hpp>
-#include <iostream>
-#include <vector>
-#include <mutex>
 #include <condition_variable>
+#include <iostream>
+#include <mutex>
+#include <nlohmann/json.hpp>
+#include <vector>
 
 namespace karlo {
-  namespace httpsRequest {
+namespace httpsRequest {
 
-    std::mutex m;
-    std::condition_variable cv;
+std::mutex m;
+std::condition_variable cv;
 
-    using namespace std::literals::chrono_literals;
+using namespace std::literals::chrono_literals;
 
-    using json = nlohmann::json;
+using json = nlohmann::json;
 
-    std::map<int, std::pair<std::time_t, bool>> TIMEOUT;
-    void post(std::string URL, json config) {
+std::map<int, std::pair<std::time_t, bool>> TIMEOUT;
+void post(std::string URL, json config) {
 
-      std::string staticToken = config["token"];
-      std::string URL_STAGING = config["url_staging"];
-      std::string battStatus = "\"Normal\"";
+  std::string staticToken = config["token"];
+  std::string URL_STAGING = config["url_staging"];
+  std::string battStatus = "\"Normal\"";
 
-      httplib::Client cli(URL);
-      httplib::Client cli_staging(URL_STAGING);
+  try {
 
-      cli.set_default_headers({{"Authorization", staticToken}, {"Content-Type", "application/json"}});
+    httplib::Client cli(URL);
+    httplib::Client cli_staging(URL_STAGING);
 
-      std::string postUrl = config["api"];
+    cli.set_default_headers(
+        {{"Authorization", staticToken}, {"Content-Type", "application/json"}});
 
-      std::unique_lock<std::mutex> lk(m);
-      if (!cv.wait_until(lk, std::chrono::system_clock::now() + 3s, []{ return ready; })) {
-        // std::cout << "HTTPS TIMEOUT" << std::endl;
-        return;
-      } else {
-        std::vector<json> postData = database::readData();
+    std::string postUrl = config["api"];
 
-        for (json data : postData) {
+    std::unique_lock<std::mutex> lk(m);
+    if (!cv.wait_until(lk, std::chrono::system_clock::now() + 3s,
+                       [] { return ready; })) {
+      // std::cout << "HTTPS TIMEOUT" << std::endl;
+      return;
+    } else {
+      std::vector<json> postData = database::readData();
 
-          int tmp = ((float)data["latitude"] * 10000000);
-          float latitude = (float)tmp / 10000000;
+      for (json data : postData) {
 
-          tmp = ((float)data["longitude"] * 10000000);
-          float longitude = (float)tmp / 10000000;
+        int tmp = ((float)data["latitude"] * 10000000);
+        float latitude = (float)tmp / 10000000;
 
-          int batt;
-          data["exBattVoltage"].empty() ? batt = 0 : batt = data["exBattVoltage"];
+        tmp = ((float)data["longitude"] * 10000000);
+        float longitude = (float)tmp / 10000000;
 
-          std::string status;
-          if (data["ignitionOn"]) {
-            if (to_string(data["speed"]) == "0") {
-              status = "\"Idle\"";
-            } else {
-              status = "\"Moving\"";
-            }
+        int batt;
+        data["exBattVoltage"].empty() ? batt = 0 : batt = data["exBattVoltage"];
+
+        std::string status;
+        if (data["ignitionOn"]) {
+          if (to_string(data["speed"]) == "0") {
+            status = "\"Idle\"";
+          } else {
+            status = "\"Moving\"";
           }
-          else {
-            status = "\"Stop\"";
-          }
+        } else {
+          status = "\"Stop\"";
+        }
 
-          if (batt > 22500 && batt < 24500) {
-            battStatus = "\"Warning\"";
-          } else if (batt < 22500) {
-            battStatus = "\"Low\"";
-          } else if (batt == 0) {
-            battStatus = "\"Unplugged\"";
-          }
+        if (batt > 22500 && batt < 24500) {
+          battStatus = "\"Warning\"";
+        } else if (batt < 22500) {
+          battStatus = "\"Low\"";
+        } else if (batt == 0) {
+          battStatus = "\"Unplugged\"";
+        }
 
-          std::string Msg = "{\"timeCreated\":" + to_string(data["timestamp"]) + "," +
-          "\"latitude\":" + std::to_string(latitude) + "," +
-          "\"longitude\":" + std::to_string(longitude) + "," +
-          "\"altitude\":" + std::to_string(0) + "," +
-          "\"speed\":" + to_string(data["speed"]) + "," +
-          "\"bearing\":" + to_string(data["bearing"]) + "," +
-          "\"imeiTracker\":" + to_string(data["imei"]) + "," +
-          "\"battStatus\":" + battStatus + "," +
-          "\"status\":" + status + "}";
+        std::string Msg = "{\"timeCreated\":" + to_string(data["timestamp"]) +
+                          "," + "\"latitude\":" + std::to_string(latitude) +
+                          "," + "\"longitude\":" + std::to_string(longitude) +
+                          "," + "\"altitude\":" + std::to_string(0) + "," +
+                          "\"speed\":" + to_string(data["speed"]) + "," +
+                          "\"bearing\":" + to_string(data["bearing"]) + "," +
+                          "\"imeiTracker\":" + to_string(data["imei"]) + "," +
+                          "\"battStatus\":" + battStatus + "," +
+                          "\"status\":" + status + "}";
 
-          auto res = cli.Post(postUrl, Msg, "application/json");
-          auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
+        auto res = cli.Post(postUrl, Msg, "application/json");
+        auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
 
-          if (res) {
-            std::cout << "production: " << res->body << std::endl;
-          }
+        if (res) {
+          std::cout << "production: " << res->body << std::endl;
+        }
 
-          if (res_staging) {
-            std::cout << "staging: " << res->body << std::endl;
-          }
+        if (res_staging) {
+          std::cout << "staging: " << res->body << std::endl;
         }
       }
     }
+  } catch (...) {
+  }
+}
 
-    void post(std::string URL, json config, json data) {
+void post(std::string URL, json config, json data) {
 
-      std::string staticToken = config["token"];
-      std::string URL_STAGING = config["url_staging"];
-      std::string battStatus = "\"Normal\"";
+  std::string staticToken = config["token"];
+  std::string URL_STAGING = config["url_staging"];
+  std::string battStatus = "\"Normal\"";
 
-      httplib::Client cli(URL);
-      httplib::Client cli_staging(URL_STAGING);
+  httplib::Client cli(URL);
+  httplib::Client cli_staging(URL_STAGING);
 
-      cli.set_default_headers({{"Authorization", staticToken}, {"Content-Type", "application/json"}});
+  cli.set_default_headers(
+      {{"Authorization", staticToken}, {"Content-Type", "application/json"}});
 
-      std::string postUrl = config["api"];
+  std::string postUrl = config["api"];
 
-      // int tmp = ((float)data["latitude"] * 10000000);
-      // float latitude = (float)tmp / 10000000;
+  // int tmp = ((float)data["latitude"] * 10000000);
+  // float latitude = (float)tmp / 10000000;
 
-      // tmp = ((float)data["longitude"] * 10000000);
-      // float longitude = (float)tmp / 10000000;
+  // tmp = ((float)data["longitude"] * 10000000);
+  // float longitude = (float)tmp / 10000000;
 
-      int batt;
-      data["exBattVoltage"].empty() ? batt = 0 : batt = data["exBattVoltage"];
+  int batt;
+  data["exBattVoltage"].empty() ? batt = 0 : batt = data["exBattVoltage"];
 
-      std::string status;
-      if (data["ignitionOn"]) {
-        if (to_string(data["speed"]) == "0") {
-          status = "\"Idle\"";
-        }
-        else {
-          status = "\"Moving\"";
-        }
-      }
-      else {
-        status = "\"Stop\"";
-      }
-
-      if (batt < 24500 && batt > 22500) {
-        battStatus = "\"Warning\"";
-      } else if (batt < 22500) {
-        battStatus = "\"Low\"";
-      } else if (batt == 0) {
-        battStatus = "\"Unplugged\"";
-      }
-
-      // std::string Msg = "{\"timeCreated\":" + to_string(data["timestamp"]) + "," +
-      // "\"latitude\":" + std::to_string(latitude) + "," +
-      // "\"longitude\":" + std::to_string(longitude) + "," +
-      // "\"altitude\":" + to_string(data["altitude"]) + "," +
-      // "\"speed\":" + to_string(data["speed"]) + "," +
-      // "\"bearing\":" + to_string(data["bearing"]) + "," +
-      // "\"imeiTracker\":" + to_string(data["imei"]) + "," +
-      // "\"battStatus\":" + battStatus + "," +
-      // "\"status\":" + status + "}";
-
-      std::string Msg = "{\"timeCreated\":" + to_string(data["timestamp"]) + "," +
-      "\"latitude\":" + to_string(data["latitude"]) + "," +
-      "\"longitude\":" + to_string(data["longitude"]) + "," +
-      "\"altitude\":" + to_string(data["altitude"]) + "," +
-      "\"speed\":" + to_string(data["speed"]) + "," +
-      "\"bearing\":" + to_string(data["bearing"]) + "," +
-      "\"imeiTracker\":" + to_string(data["imei"]) + "," +
-      "\"battStatus\":" + battStatus + "," +
-      "\"status\":" + status + "}";
-
-      auto res = cli.Post(postUrl, Msg, "application/json");
-      auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
-
-      if (res) {
-        std::cout << "production: " << res->body << std::endl;
-      }
-
-      if (res_staging) {
-        std::cout << "staging: " << res->body << std::endl;
-      }
+  std::string status;
+  if (data["ignitionOn"]) {
+    if (to_string(data["speed"]) == "0") {
+      status = "\"Idle\"";
+    } else {
+      status = "\"Moving\"";
     }
+  } else {
+    status = "\"Stop\"";
+  }
 
-  } // namespace httpRequest
+  if (batt < 24500 && batt > 22500) {
+    battStatus = "\"Warning\"";
+  } else if (batt < 22500) {
+    battStatus = "\"Low\"";
+  } else if (batt == 0) {
+    battStatus = "\"Unplugged\"";
+  }
+
+  // std::string Msg = "{\"timeCreated\":" + to_string(data["timestamp"]) + ","
+  // +
+  // "\"latitude\":" + std::to_string(latitude) + "," +
+  // "\"longitude\":" + std::to_string(longitude) + "," +
+  // "\"altitude\":" + to_string(data["altitude"]) + "," +
+  // "\"speed\":" + to_string(data["speed"]) + "," +
+  // "\"bearing\":" + to_string(data["bearing"]) + "," +
+  // "\"imeiTracker\":" + to_string(data["imei"]) + "," +
+  // "\"battStatus\":" + battStatus + "," +
+  // "\"status\":" + status + "}";
+
+  std::string Msg = "{\"timeCreated\":" + to_string(data["timestamp"]) + "," +
+                    "\"latitude\":" + to_string(data["latitude"]) + "," +
+                    "\"longitude\":" + to_string(data["longitude"]) + "," +
+                    "\"altitude\":" + to_string(data["altitude"]) + "," +
+                    "\"speed\":" + to_string(data["speed"]) + "," +
+                    "\"bearing\":" + to_string(data["bearing"]) + "," +
+                    "\"imeiTracker\":" + to_string(data["imei"]) + "," +
+                    "\"battStatus\":" + battStatus + "," +
+                    "\"status\":" + status + "}";
+
+  auto res = cli.Post(postUrl, Msg, "application/json");
+  auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
+
+  if (res) {
+    std::cout << "production: " << res->body << std::endl;
+  }
+
+  if (res_staging) {
+    std::cout << "staging: " << res->body << std::endl;
+  }
+}
+
+} // namespace httpsRequest
 } // namespace karlo
