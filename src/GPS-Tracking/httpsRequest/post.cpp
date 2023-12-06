@@ -180,7 +180,7 @@ void post(std::string URL, json config, json data) {
 
   std::string imei = to_string(data["imei"]);
 
-  if (!(std::find(beta.begin(), beta.end(), imei) != beta.end())) {
+  if (std::find(beta.begin(), beta.end(), imei) != beta.end()) {
     auto res_beta = cli_beta.Post(postUrl, Msg, "application/json");
     if (res_beta) {
       std::cout << "beta: " << res_beta->body << std::endl;
