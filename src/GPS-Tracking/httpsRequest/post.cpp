@@ -199,13 +199,13 @@ void post(std::string URL, json config, json data) {
     }
   }
 
-  if (res) {
-    std::cout << "production: " << res->body << std::endl;
-  }
+  // if (res) {
+  //   std::cout << "production: " << res->body << std::endl;
+  // }
 
-  if (res_staging) {
-    std::cout << "staging: " << res->body << std::endl;
-  }
+  // if (res_staging) {
+  //   std::cout << "staging: " << res->body << std::endl;
+  // }
 }
 
 } // namespace httpsRequest
