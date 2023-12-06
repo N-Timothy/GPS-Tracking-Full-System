@@ -41,21 +41,24 @@ void newClient(int socket) {
   comm = communicate(socket);
 
   if (comm == 1) {
-    std::cout << "\x1b[32mSocket " << socket << ": Ignition is off\x1b[0m\n";
+    // std::cout << "\x1b[32mSocket " << socket << ": Ignition is off\x1b[0m\n";
   } else if (comm == -1) {
-    std::cout << "\x1b[32mSocket " << socket
-              << ": Proceed to read IMEI JSON file\x1b[0m\n";
+    // std::cout << "\x1b[32mSocket " << socket
+    //           << ": Proceed to read IMEI JSON file\x1b[0m\n";
   } else if (comm == -2) {
-    std::cout << "\x1b[31mSocket " << socket
-              << ": IMEI not recognized\x1b[0m\n";
+    // std::cout << "\x1b[31mSocket " << socket
+    //           << ": IMEI not recognized\x1b[0m\n";
   } else if (comm == -3) {
-    std::cout << "\x1b[31mSocket " << socket << ": error in reading\x1b[0m\n";
+    // std::cout << "\x1b[31mSocket " << socket << ": error in
+    // reading\x1b[0m\n";
   } else if (comm == -4) {
-    std::cout << "\x1b[31mSocket " << socket << ": stoi out of range\x1b[0m\n";
+    // std::cout << "\x1b[31mSocket " << socket << ": stoi out of
+    // range\x1b[0m\n";
   } else if (comm == -5) {
-    std::cout << "\x1b[31mSocket " << socket << ": socket is not used\x1b[0m\n";
+    // std::cout << "\x1b[31mSocket " << socket << ": socket is not
+    // used\x1b[0m\n";
   } else if (comm == -6) {
-    std::cout << "\x1b[31mSocket " << socket << ": timeout\x1b[0m\n";
+    // std::cout << "\x1b[31mSocket " << socket << ": timeout\x1b[0m\n";
   }
 
   removeSocket(socket);

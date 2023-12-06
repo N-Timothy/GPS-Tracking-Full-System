@@ -181,14 +181,10 @@ void post(std::string URL, json config, json data) {
       "\"createdAt\":" + to_string(data["timestamp"]) + "," + "\"_v\":" + "0" +
       "}";
 
-  std::cout << MsgBackend << std::endl;
-
   auto res = cli.Post(postUrl, Msg, "application/json");
   auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
   auto res_gps_backend = cli_gps_backend.Post("/gps/last-location", MsgBackend,
                                               "application/json");
-
-  std::cout << "gps_backend: " << res_gps_backend->body << std::endl;
 
   std::string imei = to_string(data["imei"]);
 
@@ -199,12 +195,19 @@ void post(std::string URL, json config, json data) {
     }
   }
 
-  // if (res) {
-  //   std::cout << "production: " << res->body << std::endl;
-  // }
+  if (res) {
+    //   std::cout << "production: " << res->body << std::endl;
+    std::cout << "production: " << data["imei"] << std::endl;
+  }
 
   // if (res_staging) {
   //   std::cout << "staging: " << res->body << std::endl;
+  std::cout << "staging: " << data["imei"] << std::endl;
+  // }
+
+  // if(res_gps_backend) {
+  //   std::cout << "gps_backend: " << res_gps_backend->body << std::endl;
+  std::cout << "gps_backend: " << data["imei"] << std::endl;
   // }
 }
 
