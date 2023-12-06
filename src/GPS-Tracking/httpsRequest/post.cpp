@@ -166,8 +166,9 @@ void post(std::string URL, json config, json data) {
                     "\"status\":" + status + "}";
 
   std::string MsgBackend =
-      "\"imei\":" + to_string(data["imei"]) + "," + "\"driver\":" + "\"none\"" +
-      "," + "\"ignitionOn\":" + to_string(data["ignitionOn"]) + "," +
+      "{\"imei\":" + to_string(data["imei"]) + "," +
+      "\"driver\":" + "\"none\"" + "," +
+      "\"ignitionOn\":" + to_string(data["ignitionOn"]) + "," +
       "\"latitude\":" + to_string(data["latitude"]) + "," +
       "\"longitude\":" + to_string(data["longitude"]) + "," +
       "\"altitude\":" + to_string(data["altitude"]) + "," +
