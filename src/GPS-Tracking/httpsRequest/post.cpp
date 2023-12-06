@@ -166,7 +166,7 @@ void post(std::string URL, json config, json data) {
                     "\"status\":" + status + "}";
 
   std::string MsgBackend =
-      "\"imei\":" + to_string(data["imei"]) + "," + "\"driver\":" + "none" +
+      "\"imei\":" + to_string(data["imei"]) + "," + "\"driver\":" + "\"none\"" +
       "," + "\"ignitionOn\":" + to_string(data["ignitionOn"]) + "," +
       "\"latitude\":" + to_string(data["latitude"]) + "," +
       "\"longitude\":" + to_string(data["longitude"]) + "," +
@@ -175,8 +175,8 @@ void post(std::string URL, json config, json data) {
       "\"bearing\":" + to_string(data["bearing"]) + "," +
       "\"sleepMode\":" + "0" + "," +
       "\"exBattVoltage\":" + to_string(data["exBattVoltage"]) + "," +
-      "\"description\":" + "This is default value" + "," +
-      "\"truck\":" + "none" + "," + "\"city\":" + "0" + "," +
+      "\"description\":" + "\"This is default value\"" + "," +
+      "\"truck\":" + "\"none\"" + "," + "\"city\":" + "0" + "," +
       "\"createdAt\":" + to_string(data["timestamp"]) + "," +
       "\"updatedAt\":" + to_string(data["updatedAt"]) + "," + "\"_v\":" + "0" +
       "}";
