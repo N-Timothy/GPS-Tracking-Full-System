@@ -177,8 +177,7 @@ void post(std::string URL, json config, json data) {
       "\"exBattVoltage\":" + to_string(data["exBattVoltage"]) + "," +
       "\"description\":" + "\"This is default value\"" + "," +
       "\"truck\":" + "\"none\"" + "," + "\"city\":" + "0" + "," +
-      "\"createdAt\":" + to_string(data["timestamp"]) + "," +
-      "\"updatedAt\":" + to_string(data["updatedAt"]) + "," + "\"_v\":" + "0" +
+      "\"createdAt\":" + to_string(data["timestamp"]) + "," + "\"_v\":" + "0" +
       "}";
 
   std::cout << MsgBackend << std::endl;
