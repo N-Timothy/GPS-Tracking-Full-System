@@ -6,6 +6,7 @@
 #include <iterator>
 #include <mutex>
 #include <nlohmann/json.hpp>
+#include <string>
 #include <vector>
 
 namespace karlo {
@@ -105,6 +106,7 @@ void post(std::string URL, json config, json data) {
   std::string staticToken = config["token"];
   std::string URL_STAGING = config["url_staging"];
   std::string URL_BETA = config["url_beta"];
+  std::string URL_GPS_BACKEND = config["url_gps_backend"];
   std::string battStatus = "\"Normal\"";
 
   std::vector<std::string> beta{
@@ -118,6 +120,7 @@ void post(std::string URL, json config, json data) {
   httplib::Client cli(URL);
   httplib::Client cli_staging(URL_STAGING);
   httplib::Client cli_beta(URL_BETA);
+  httplib::Client cli_gps_backend(URL_GPS_BACKEND);
 
   cli.set_default_headers(
       {{"Authorization", staticToken}, {"Content-Type", "application/json"}});
@@ -152,17 +155,6 @@ void post(std::string URL, json config, json data) {
     battStatus = "\"Unplugged\"";
   }
 
-  // std::string Msg = "{\"timeCreated\":" + to_string(data["timestamp"]) + ","
-  // +
-  // "\"latitude\":" + std::to_string(latitude) + "," +
-  // "\"longitude\":" + std::to_string(longitude) + "," +
-  // "\"altitude\":" + to_string(data["altitude"]) + "," +
-  // "\"speed\":" + to_string(data["speed"]) + "," +
-  // "\"bearing\":" + to_string(data["bearing"]) + "," +
-  // "\"imeiTracker\":" + to_string(data["imei"]) + "," +
-  // "\"battStatus\":" + battStatus + "," +
-  // "\"status\":" + status + "}";
-
   std::string Msg = "{\"timeCreated\":" + to_string(data["timestamp"]) + "," +
                     "\"latitude\":" + to_string(data["latitude"]) + "," +
                     "\"longitude\":" + to_string(data["longitude"]) + "," +
@@ -173,10 +165,30 @@ void post(std::string URL, json config, json data) {
                     "\"battStatus\":" + battStatus + "," +
                     "\"status\":" + status + "}";
 
-  std::cout << Msg << std::endl;
+  std::string MsgBackend =
+      "\"imei\":" + to_string(data["imei"]) + "," + "\"driver\":" + "none" +
+      "," + "\"ignitionOn\":" + to_string(data["ignitionOn"]) + "," +
+      "\"latitude\":" + to_string(data["latitude"]) + "," +
+      "\"longitude\":" + to_string(data["longitude"]) + "," +
+      "\"altitude\":" + to_string(data["altitude"]) + "," +
+      "\"speed\":" + to_string(data["speed"]) + "," +
+      "\"bearing\":" + to_string(data["bearing"]) + "," +
+      "\"sleepMode\":" + "0" + "," +
+      "\"exBattVoltage\":" + to_string(data["exBattVoltage"]) + "," +
+      "\"description\":" + "This is default value" + "," +
+      "\"truck\":" + "none" + "," + "\"city\":" + "0" + "," +
+      "\"createdAt\":" + to_string(data["timestamp"]) + "," +
+      "\"updatedAt\":" + to_string(data["updatedAt"]) + "," + "\"_v\":" + "0" +
+      "}";
+
+  std::cout << MsgBackend << std::endl;
 
   auto res = cli.Post(postUrl, Msg, "application/json");
   auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
+  auto res_gps_backend = cli_gps_backend.Post("/gps/last-location", MsgBackend,
+                                              "application/json");
+
+  std::cout << "gps_backend: " << res_gps_backend->body << std::endl;
 
   std::string imei = to_string(data["imei"]);
 

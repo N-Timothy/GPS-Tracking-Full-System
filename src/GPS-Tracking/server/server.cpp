@@ -519,6 +519,7 @@ int communicate(int connfd) {
 
         // Print time right after AVL data is received
         data.updatedAt = dateAndTimeNow("WIB");
+        postData["updatedAt"] = data.updatedAt;
         std::cout << "Updated At: " << data.updatedAt << "\n\n";
       } else if (codec == "0c") {
         std::cout << "GPRS RESPONSE:\n";
@@ -532,7 +533,7 @@ int communicate(int connfd) {
         return -6;
       } else {
         try {
-          database::createData(data);
+          // database::createData(data);
         } catch (...) {
         }
       }
