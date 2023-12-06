@@ -8,15 +8,15 @@
 
 #include <string>
 namespace karlo {
-    namespace httpsRequest {
-        
-        using json = nlohmann::json;
+namespace httpsRequest {
 
-        void post(std::string URL, json config);
+using json = nlohmann::json;
 
-        void post(std::string URL, json config, json data);
+void post(std::string URL, json config);
 
-    } // namespace httpRequest
+void post(std::string URL, json config, json data);
+
+} // namespace httpsRequest
 } // namespace karlo
 
 #endif // _GPS_TRACKING_HTTPS_POST_HPP_
