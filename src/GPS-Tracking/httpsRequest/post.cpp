@@ -181,24 +181,24 @@ void post(std::string URL, json config, json data) {
       "\"createdAt\":" + to_string(data["timestamp"]) + "," + "\"_v\":" + "0" +
       "}";
 
-  auto res = cli.Post(postUrl, Msg, "application/json");
+  //  auto res = cli.Post(postUrl, Msg, "application/json");
   auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
   auto res_gps_backend = cli_gps_backend.Post("/gps/last-location", MsgBackend,
                                               "application/json");
 
   std::string imei = to_string(data["imei"]);
 
-  if (std::find(beta.begin(), beta.end(), imei) != beta.end()) {
-    auto res_beta = cli_beta.Post(postUrl, Msg, "application/json");
-    if (res_beta) {
-      std::cout << "beta: " << res_beta->body << std::endl;
-    }
+  // if (std::find(beta.begin(), beta.end(), imei) != beta.end()) {
+  auto res_beta = cli_beta.Post(postUrl, Msg, "application/json");
+  if (res_beta) {
+    std::cout << "beta: " << res_beta->body << std::endl;
   }
+  //}
 
-  if (res) {
-    //   std::cout << "production: " << res->body << std::endl;
-    std::cout << "production: " << data["imei"] << std::endl;
-  }
+  // if (res) {
+  //   //   std::cout << "production: " << res->body << std::endl;
+  //   std::cout << "production: " << data["imei"] << std::endl;
+  // }
 
   // if (res_staging) {
   //   std::cout << "staging: " << res->body << std::endl;
