@@ -162,13 +162,14 @@ void post(std::string URL, json config, json data) {
       "\"bearing\":" + to_string(data["bearing"]) + "," +
       "\"sleepMode\":" + "0" + "," +
       "\"exBattVoltage\":" + to_string(data["exBattVoltage"]) + "," +
+      "\"battStatus\":" + battStatus + "," + "\"status\":" + status + "," +
       "\"description\":" + "\"This is default value\"" + "," +
       "\"truck\":" + "\"none\"" + "," + "\"city\":" + "0" + "," +
       "\"createdAt\":" + to_string(data["timestamp"]) + "," + "\"_v\":" + "0" +
       "}";
 
-  auto res = cli.Post(postUrl, Msg, "application/json");
-  auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
+  // auto res = cli.Post(postUrl, Msg, "application/json");
+  // auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
   auto res_gps_backend = cli_gps_backend.Post("/gps/last-location", MsgBackend,
                                               "application/json");
 
@@ -179,13 +180,13 @@ void post(std::string URL, json config, json data) {
   //   std::cout << "beta: " << res_beta->body << std::endl;
   // }
 
-  if (res) {
-    std::cout << "production: " << data["imei"] << std::endl;
-  }
+  // if (res) {
+  //   std::cout << "production: " << data["imei"] << std::endl;
+  // }
 
-  if (res_staging) {
-    std::cout << "staging: " << data["imei"] << std::endl;
-  }
+  // if (res_staging) {
+  //   std::cout << "staging: " << data["imei"] << std::endl;
+  // }
 
   if (res_gps_backend) {
     //   std::cout << "gps_backend: " << res_gps_backend->body << std::endl;
