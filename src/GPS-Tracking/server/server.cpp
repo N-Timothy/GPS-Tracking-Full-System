@@ -409,6 +409,8 @@ int communicate(int connfd) {
         if (numOfData1 != numOfData2)
           return -3;
 
+        postData["noData"] = numOfData1;
+
         AVL_NOB = data_NOB - CODEC_ID_NOB - 2 * NUM_OF_DATA_NOB;
 
         for (dataCount = 0; dataCount < numOfData1; dataCount++) {
@@ -519,6 +521,7 @@ int communicate(int connfd) {
 
         // Print time right after AVL data is received
         data.updatedAt = dateAndTimeNow("WIB");
+        postData["updatedAt"] = data.updatedAt;
         std::cout << "Updated At: " << data.updatedAt << "\n\n";
       } else if (codec == "0c") {
         std::cout << "GPRS RESPONSE:\n";

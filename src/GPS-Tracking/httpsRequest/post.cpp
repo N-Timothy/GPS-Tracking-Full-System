@@ -155,6 +155,7 @@ void post(std::string URL, json config, json data) {
       "{\"imei\":" + to_string(data["imei"]) + "," +
       "\"driver\":" + "\"none\"" + "," +
       "\"ignitionOn\":" + to_string(data["ignitionOn"]) + "," +
+      "\"noData\":" + to_string(data["noData"]) + "," +
       "\"latitude\":" + to_string(data["latitude"]) + "," +
       "\"longitude\":" + to_string(data["longitude"]) + "," +
       "\"altitude\":" + to_string(data["altitude"]) + "," +
