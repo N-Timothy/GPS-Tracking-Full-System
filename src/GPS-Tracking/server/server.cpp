@@ -373,14 +373,14 @@ int communicate(int connfd) {
 
       hex = gps.getBytes(connfd, ZERO_NOB);
       if (hex == "" || hex != "00000000") {
-        std::cout << "Zero Bytes\t\t: " << hex << std::endl;
-        std::cout << dateAndTimeNow("WIB") << std::endl;
+        // std::cout << "Zero Bytes\t\t: " << hex << std::endl;
+        // std::cout << dateAndTimeNow("WIB") << std::endl;
         return -3;
       }
 
       hex = gps.getBytes(connfd, DATA_FIELD_NOB);
       if (hex == "") {
-        std::cout << "Data Field Length\t: " << hex << std::endl;
+        // std::cout << "Data Field Length\t: " << hex << std::endl;
         return -3;
       }
 
@@ -512,10 +512,10 @@ int communicate(int connfd) {
           //}
         }
 
-        std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
-        std::cout << "Number of Data\t\t: " << numOfData1 << std::endl;
-        std::cout << "Timestamp\t\t: "
-                  << "" << data.createdAt << std::endl;
+        // std::cout << "IMEI\t\t\t: " << data.imei << std::endl;
+        // std::cout << "Number of Data\t\t: " << numOfData1 << std::endl;
+        // std::cout << "Timestamp\t\t: "
+        //<< "" << data.createdAt << std::endl;
 
         gps.sendConfirmation(connfd, numOfData2);
 
@@ -524,8 +524,8 @@ int communicate(int connfd) {
         postData["updatedAt"] = data.updatedAt;
         std::cout << "Updated At: " << data.updatedAt << "\n\n";
       } else if (codec == "0c") {
-        std::cout << "GPRS RESPONSE:\n";
-        std::cout << hex_stream << "\n\n";
+        // std::cout << "GPRS RESPONSE:\n";
+        // std::cout << hex_stream << "\n\n";
       }
 
       // Save newest AVL data to database
