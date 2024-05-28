@@ -109,7 +109,7 @@ void onConnectPub(void *context, MQTTAsync_successData *response) {
 
   const char *data_msg = msg.c_str();
 
-  std::cout << "msg : " << data_msg << std::endl;
+  // std::cout << "msg : " << data_msg << std::endl;
 
   opts.onSuccess = onSend;
   opts.onFailure = onSendFailure;
@@ -232,7 +232,7 @@ void publisher(std::string _imei) {
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
   }
 
-  std::cout << "destroying client : " << rc << std::endl;
+  // std::cout << "destroying client : " << rc << std::endl;
 
 Exit:
   MQTTAsync_destroy(&client);
