@@ -53,7 +53,7 @@ public:
     for (n = 0; n < byteslen; n++) {
       connectivity = recv(connfd, (char *)&number, 1, 0);
       if (connectivity == 0) {
-        std::cout << "\x1b[31mConnection is closed\x1b[0m\n";
+        // std::cout << "\x1b[31mConnection is closed\x1b[0m\n";
         break;
       }
       buff << std::setw(2) << std::setfill('0') << std::hex << number;
@@ -522,7 +522,7 @@ int communicate(int connfd) {
         // Print time right after AVL data is received
         data.updatedAt = dateAndTimeNow("WIB");
         postData["updatedAt"] = data.updatedAt;
-        std::cout << "Updated At: " << data.updatedAt << "\n\n";
+        // std::cout << "Updated At: " << data.updatedAt << "\n\n";
       } else if (codec == "0c") {
         // std::cout << "GPRS RESPONSE:\n";
         // std::cout << hex_stream << "\n\n";
@@ -545,7 +545,7 @@ int communicate(int connfd) {
       // if (!postDataVec.empty() && !gps.getRealTimeState()) {
       // for (auto postDataIt : postDataVec) {
       // postDataCount++;
-      std::cout << "POSTING DATA " << postDataCount << "\n";
+      // std::cout << "POSTING DATA " << postDataCount << "\n";
       try {
         httpsRequest::singleConnect(postData);
         mqtt::publisher(data.imei);

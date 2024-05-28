@@ -88,11 +88,11 @@ void post(std::string URL, json config) {
         auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
 
         if (res) {
-          std::cout << "production: " << res->body << std::endl;
+          // std::cout << "production: " << res->body << std::endl;
         }
 
         if (res_staging) {
-          std::cout << "staging: " << res->body << std::endl;
+          // std::cout << "staging: " << res->body << std::endl;
         }
       }
     }
