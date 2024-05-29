@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include <condition_variable>
-#include <iostream>
+// #include <iostream>
 #include <iterator>
 #include <mutex>
 #include <nlohmann/json.hpp>
@@ -192,7 +192,8 @@ void post(std::string URL, json config, json data) {
   // }
 
   if (res_gps_backend) {
-    //   std::cout << "gps_backend: " << res_gps_backend->body << std::endl;
+    //    //   std::cout << "gps_backend: " << res_gps_backend->body <<
+    //    std::endl;
     std::cout << "gps_backend: " << data["imei"] << std::endl;
   }
 }

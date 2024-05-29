@@ -548,7 +548,7 @@ int communicate(int connfd) {
       // std::cout << "POSTING DATA " << postDataCount << "\n";
       try {
         httpsRequest::singleConnect(postData);
-        mqtt::publisher(data.imei);
+        //        mqtt::publisher(data.imei);
       } catch (...) {
         // continue;
       }

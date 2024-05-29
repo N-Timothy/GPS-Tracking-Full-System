@@ -105,7 +105,7 @@ void onConnectPub(void *context, MQTTAsync_successData *response) {
 
   std::string pub_topic = imei;
 
-  std::cout << "We are now connected to the broker! " << std::endl;
+  // std::cout << "We are now connected to the broker! " << std::endl;
 
   const char *data_msg = msg.c_str();
 
