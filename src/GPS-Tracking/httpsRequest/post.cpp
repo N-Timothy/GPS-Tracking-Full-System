@@ -176,7 +176,7 @@ void post(std::string URL, json config, json data) {
   auto res_gps_backend = cli_gps_backend.Post("/gps/last-location", MsgBackend,
                                               "application/json");
 
-  // std::string imei = to_string(data["imei"]);
+  std::string imei = to_string(data["imei"]);
 
   // auto res_beta = cli_beta.Post(postUrl, Msg, "application/json");
   // if (res_beta) {
@@ -191,11 +191,11 @@ void post(std::string URL, json config, json data) {
   //   std::cout << "staging: " << data["imei"] << std::endl;
   // }
 
-  // if (res_gps_backend) {
-  //     //   std::cout << "gps_backend: " << res_gps_backend->body <<
-  //     std::endl;
-  // std::cout << "gps_backend: " << data["imei"] << std::endl;
-  //}
+  if (res_gps_backend) {
+    //   std::cout << "gps_backend: " << res_gps_backend->body <<
+    //     std::endl;
+    std::cout << "gps_backend: " << data["imei"] << std::endl;
+  }
 }
 
 } // namespace httpsRequest
