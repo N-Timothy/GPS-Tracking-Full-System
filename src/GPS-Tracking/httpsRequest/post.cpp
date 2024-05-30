@@ -87,13 +87,13 @@ void post(std::string URL, json config) {
         auto res = cli.Post(postUrl, Msg, "application/json");
         auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
 
-        if (res) {
-          // std::cout << "production: " << res->body << std::endl;
-        }
+        //        if (res) {
+        // std::cout << "production: " << res->body << std::endl;
+        //      }
 
-        if (res_staging) {
-          // std::cout << "staging: " << res->body << std::endl;
-        }
+        //    if (res_staging) {
+        // std::cout << "staging: " << res->body << std::endl;
+        //  }
       }
     }
   } catch (...) {
@@ -176,7 +176,7 @@ void post(std::string URL, json config, json data) {
   auto res_gps_backend = cli_gps_backend.Post("/gps/last-location", MsgBackend,
                                               "application/json");
 
-  std::string imei = to_string(data["imei"]);
+  // std::string imei = to_string(data["imei"]);
 
   // auto res_beta = cli_beta.Post(postUrl, Msg, "application/json");
   // if (res_beta) {
