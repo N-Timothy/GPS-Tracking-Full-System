@@ -191,11 +191,11 @@ void post(std::string URL, json config, json data) {
   //   std::cout << "staging: " << data["imei"] << std::endl;
   // }
 
-  if (res_gps_backend) {
-    //   std::cout << "gps_backend: " << res_gps_backend->body <<
-    //     std::endl;
-    std::cout << "gps_backend: " << data["imei"] << std::endl;
-  }
+  // if (res_gps_backend) {
+  //   std::cout << "gps_backend: " << res_gps_backend->body <<
+  //     std::endl;
+  // std::cout << "gps_backend: " << data["imei"] << std::endl;
+  //}
 }
 
 } // namespace httpsRequest
