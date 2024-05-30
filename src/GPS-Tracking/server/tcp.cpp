@@ -132,7 +132,7 @@ void tcpServer() {
 
     // Assign time val every loop
     tv.tv_sec = 0;
-    tv.tv_usec = 100000;
+    tv.tv_usec = 10000;
 
     // Check if there's activity on socket
     select(master_socket + 1, &readfds, NULL, NULL, &tv);
