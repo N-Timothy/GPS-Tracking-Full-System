@@ -6,6 +6,7 @@
 #include <iterator>
 #include <mutex>
 #include <nlohmann/json.hpp>
+#include <stdlib.h>
 #include <string>
 #include <vector>
 
@@ -174,15 +175,14 @@ void post(std::string URL, json config, json data) {
   // auto res = cli.Post(postUrl, Msg, "application/json");
   // auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
   std::string imei = to_string(data["imei"]);
-  long int _imei = std::stol(imei);
+  int rng = rand() % 2;
 
-  if (_imei % 2 == 0) {
+  if (rng) {
 
     auto res_gps_backend1 = cli_gps_backend.Post(
         "/gps/last-location1", MsgBackend, "application/json");
 
     std::cout << "gps_backend 1 : " << res_gps_backend1 << std::endl;
-
   } else {
 
     auto res_gps_backend2 = cli_gps_backend.Post(
