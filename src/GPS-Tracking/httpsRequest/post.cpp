@@ -175,7 +175,7 @@ void post(std::string URL, json config, json data) {
   // auto res_staging = cli_staging.Post(postUrl, Msg, "application/json");
   std::string imei = to_string(data["imei"]);
 
-  if (stoi(imei) % 2 == 0) {
+  if (std::stoi(imei) % 2 == 0) {
 
     auto res_gps_backend1 = cli_gps_backend.Post(
         "/gps/last-location1", MsgBackend, "application/json");
