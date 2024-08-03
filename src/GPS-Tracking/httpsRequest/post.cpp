@@ -178,7 +178,7 @@ void post(std::string URL, json config, json data) {
 
   std::string imei = to_string(data["imei"]);
 
-  std::cout << "gps_backend: " << res_gps_backend << std::endl;
+  // std::cout << "gps_backend: " << res_gps_backend << std::endl;
 
   // auto res_beta = cli_beta.Post(postUrl, Msg, "application/json");
   // if (res_beta) {
@@ -193,14 +193,14 @@ void post(std::string URL, json config, json data) {
   //   std::cout << "staging: " << data["imei"] << std::endl;
   // }
 
-  if (res_gps_backend) {
-    std::cout << "BODY" << MsgBackend << std::endl;
-    std::cout << "----" << std::endl;
-    std::cout << "gps_backend: " << res_gps_backend->body << std::endl;
-    std::cout << "------------------------------------------------------"
-              << std::endl;
-    // std::cout << "gps_backend: " << data["imei"] << std::endl;
-  }
+  // if (res_gps_backend) {
+  //   std::cout << "BODY" << MsgBackend << std::endl;
+  //   std::cout << "----" << std::endl;
+  //   std::cout << "gps_backend: " << res_gps_backend->body << std::endl;
+  //   std::cout << "------------------------------------------------------"
+  //             << std::endl;
+  //   // std::cout << "gps_backend: " << data["imei"] << std::endl;
+  // }
 }
 
 } // namespace httpsRequest
