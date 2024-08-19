@@ -24,15 +24,15 @@ void Session::do_read() {
 
           std::cout << "Received data: " << std::string(data_, length)
                     << std::endl;
-          do_write(length);
+          do_write(length, 0x01);
         }
       });
 }
 
-void Session::do_write(std::size_t length) {
+void Session::do_write(std::size_t length, uint8_t msg) {
   auto self(shared_from_this());
   boost::asio::async_write(
-      socket_, boost::asio::buffer(data_, length),
+      socket_, boost::asio::buffer(&msg, sizeof(msg)),
       [this, self](boost::system::error_code ec, std::size_t) {
         if (!ec) {
           do_read();

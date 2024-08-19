@@ -20,7 +20,7 @@ public:
 
 private:
   void do_read();
-  void do_write(std::size_t length);
+  void do_write(std::size_t length, uint8_t msg);
 
   tcp::socket socket_;
   enum { max_length = 1024 };
