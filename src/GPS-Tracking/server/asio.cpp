@@ -1,6 +1,7 @@
 #include "GPS-Tracking/server/asio.hpp"
 
 #include <boost/asio.hpp>
+#include <iomanip>
 #include <iostream>
 #include <memory>
 #include <queue>
@@ -27,7 +28,12 @@ void Session::do_read() {
                       << std::endl;
             do_write();
           } else {
-            std::cout << "Raw Data: " << data_ << std::endl;
+            for (std::size_t i = 0; i < length; ++i) {
+              std::cout << std::hex << std::uppercase << std::setw(2)
+                        << std::setfill('0') << static_cast<int>(data_[i])
+                        << " ";
+            }
+            std::cout << "Raw Data: " << std::dec << std::endl;
             std::cout << "Raw Length: " << length << std::endl;
           }
         }
