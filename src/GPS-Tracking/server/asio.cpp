@@ -25,7 +25,7 @@ void Session::do_read() {
           std::cout << "Received data: " << std::string(data_, length)
                     << std::endl;
           if (length == 17) {
-            do_write(length, 0x01);
+            // do_write(length, 0x01);
           } else {
             std::cout << "supposed to be message" << std::endl;
           }
