@@ -46,6 +46,7 @@ find_package(OpenSSL REQUIRED)
 if(OPENSSL_FOUND)
     set(CPPHTTPLIB_OPENSSL_SUPPORT TRUE)
 endif()
+find_package(Boost 1.40.0 REQUIRED system)
 
 ## END OF PACKAGES -------------------------------------
 
