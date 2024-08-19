@@ -26,12 +26,13 @@ void Session::do_read() {
           if (length == 17) {
             std::cout << "Received data: " << std::string(data_, length)
                       << std::endl;
-            do_write();
+            do_write(0x01); // accept imei
+
           } else {
+
             for (std::size_t i = 0; i < length; ++i) {
               std::cout << std::hex << std::uppercase << std::setw(2)
-                        << std::setfill('0') << static_cast<int>(data_[i])
-                        << " ";
+                        << std::setfill('0') << static_cast<int>(data_[i]);
             }
             std::cout << "Raw Data: " << std::dec << std::endl;
             std::cout << "Raw Length: " << length << std::endl;
@@ -40,13 +41,12 @@ void Session::do_read() {
       });
 }
 
-void Session::do_write() {
+void Session::do_write(uing8_t msg) {
 
   auto self(shared_from_this());
 
-  unsigned char ACCEPT[] = {0x01};
   boost::asio::async_write(
-      socket_, boost::asio::buffer(&ACCEPT, sizeof(ACCEPT)),
+      socket_, boost::asio::buffer(&msg, sizeof(msg)),
       [this, self](boost::system::error_code ec, std::size_t) {
         if (!ec) {
           do_read();
