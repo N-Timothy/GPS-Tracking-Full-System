@@ -25,7 +25,7 @@ void Session::do_read() {
           std::cout << "Received data: " << std::string(data_, length)
                     << std::endl;
           if (length == 17) {
-            // do_write(length, 0x01);
+            do_write();
           } else {
             std::cout << "supposed to be message" << std::endl;
           }
@@ -33,10 +33,13 @@ void Session::do_read() {
       });
 }
 
-void Session::do_write(std::size_t length, uint8_t msg) {
+void Session::do_write() {
+
   auto self(shared_from_this());
+
+  unsigned char ACCEPT[] = {0x01};
   boost::asio::async_write(
-      socket_, boost::asio::buffer(&msg, sizeof(msg)),
+      socket_, boost::asio::buffer(&ACCEPT, sizeof(ACCEPT)),
       [this, self](boost::system::error_code ec, std::size_t) {
         if (!ec) {
           do_read();
