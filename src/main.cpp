@@ -11,9 +11,8 @@ int main(int argc, char *argv[]) {
   //  karlo::core::multiThread();
   try {
     boost::asio::io_context io_context;
-    karlo::tcp::Server server(io_context, 12345,
-                              10); // Port 12345, pool size 10
-    io_context.run();              // Single-threaded event loop
+    karlo::tcp::Server server(io_context, 8080, 100);
+    io_context.run();
   } catch (std::exception &e) {
     std::cerr << "Exception: " << e.what() << "\n";
   }
