@@ -22,12 +22,12 @@ void Session::do_read() {
       [this, self](boost::system::error_code ec, std::size_t length) {
         if (!ec) {
 
-          std::cout << "Received data: " << std::string(data_, length)
-                    << std::endl;
           if (length == 17) {
+            std::cout << "Received data: " << std::string(data_, length)
+                      << std::endl;
             do_write();
           } else {
-            std::cout << "supposed to be message" << std::endl;
+            std::cout << "Raw Data: " << data_ << std::endl;
           }
         }
       });
