@@ -2,11 +2,15 @@ add_library(GPS-Tracking-server
             tcp.cpp
             data.hpp
             server.cpp
+            asio.cpp
             read_imei_json.cpp)
 
 target_link_libraries(GPS-Tracking-server PRIVATE
                       GPS-Tracking-database
                       GPS-Tracking-httpsRequest
+                      ${Boost_SYSTEM_LIBRARY} 
+                      ${Boost_THREAD_LIBRARY} 
+                      ${Boost_REGEX_LIBRARY}
                       pthread)
 
 target_include_directories(GPS-Tracking-server PUBLIC
