@@ -546,7 +546,7 @@ int communicate(int connfd) {
       // for (auto postDataIt : postDataVec) {
       // postDataCount++;
       // std::cout << "POSTING DATA " << postDataCount << "\n";
-      std::cout << "hex stream" << hex_stream << std::endl;
+      std::cout << "hex stream :   " << hex_stream << std::endl;
       try {
         httpsRequest::singleConnect(postData);
         //        mqtt::publisher(data.imei);
