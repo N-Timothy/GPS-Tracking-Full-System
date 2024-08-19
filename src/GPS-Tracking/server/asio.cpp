@@ -24,6 +24,7 @@ void Session::do_read() {
 
           std::cout << "Received data: " << std::string(data_, length)
                     << std::endl;
+          std::cout << "LENGTH : " << length << std::endl;
           do_write(length, 0x01);
         }
       });
