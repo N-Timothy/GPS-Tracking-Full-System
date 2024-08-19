@@ -28,6 +28,7 @@ void Session::do_read() {
             do_write();
           } else {
             std::cout << "Raw Data: " << data_ << std::endl;
+            std::cout << "Raw Length: " << length << std::endl;
           }
         }
       });
